@@ -1,0 +1,6 @@
+python-telegram-bot==21.5
+motor==3.7.1
+fsrs==6.3.1
+apscheduler==3.10.4
+python-dotenv==1.0.1
+pytz==2024.1
