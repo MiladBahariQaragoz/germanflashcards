@@ -1,0 +1,4825 @@
+[
+  {
+    "word": "-jährig",
+    "translation": "-year, -year-old",
+    "german_sentence": "Ich bin ein 25-jährig Mann.",
+    "english_translation": "I am a 25-year-old man.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "-stündig",
+    "translation": "-hour",
+    "german_sentence": "Ich komme stündig ins Kino.",
+    "english_translation": "I go to the cinema hourly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "-tägig",
+    "translation": "-day",
+    "german_sentence": "Die Schule ist täglich geöffnet.",
+    "english_translation": "The school is open daily.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Abend",
+    "translation": "der - evening",
+    "german_sentence": "Wir gehen ins Kino am Abend.",
+    "english_translation": "We're going to the movies in the evening.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "abends",
+    "translation": "in the evening",
+    "german_sentence": "Ich gehe abends zum Strand.",
+    "english_translation": "I go to the beach in the evening.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "achtzehn -18",
+    "translation": "eighteen",
+    "german_sentence": "Ich bin achtzehn Jahre alt.",
+    "english_translation": "I am eighteen years old.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "achtzig -80",
+    "translation": "eighty",
+    "german_sentence": "Er ist achtzig Jahre alt.",
+    "english_translation": "He is eighty years old.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Agentur",
+    "translation": "die - agency",
+    "german_sentence": "Ich arbeite bei einer Agentur.",
+    "english_translation": "I work at an agency.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Akademie",
+    "translation": "die - academy",
+    "german_sentence": "Sie besuchte die Akademie.",
+    "english_translation": "She visited the academy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Akku",
+    "translation": "der - battery, accumulator",
+    "german_sentence": "Der Akku ist leer.",
+    "english_translation": "The battery is empty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "aktiv",
+    "translation": "active",
+    "german_sentence": "Sie ist aktiv im Sport.",
+    "english_translation": "She is active in sports.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "akut",
+    "translation": "acute, urgent, pressing",
+    "german_sentence": "Der Arzt muss sich um die akute Erkrankung kümmern.",
+    "english_translation": "The doctor must take care of the acute illness.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "albern",
+    "translation": "silly, stupid, ridiculous, foolish, goofy",
+    "german_sentence": "Er ist albern, wenn er tanzt.",
+    "english_translation": "He is silly when he dances.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Albtraum, Alptraum",
+    "translation": "der - nightmare",
+    "german_sentence": "Ich hatte einen Albtraum letzte Nacht.",
+    "english_translation": "I had a nightmare last night.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Alphabet",
+    "translation": "das - alphabet",
+    "german_sentence": "Das Alphabet besteht aus 26 Buchstaben.",
+    "english_translation": "The alphabet consists of 26 letters.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "als",
+    "translation": "as, when, than, as if; when",
+    "german_sentence": "Ich komme als Tourist nach Deutschland.",
+    "english_translation": "I come as a tourist to Germany.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "amerikanisch",
+    "translation": "American",
+    "german_sentence": "Die Frau ist amerikanisch.",
+    "english_translation": "The woman is American.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "amtlich",
+    "translation": "official",
+    "german_sentence": "Die Urkunde ist amtlich.",
+    "english_translation": "The document is official.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Angst",
+    "translation": "die - fear, anxiety",
+    "german_sentence": "Ich habe Angst vor dem Hund.",
+    "english_translation": "I am afraid of the dog.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ankreuzen",
+    "translation": "to check, to mark, to tick",
+    "german_sentence": "Ich möchte das Feld ankreuzen.",
+    "english_translation": "I'd like to check the field.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ankunft",
+    "translation": "die - arrival",
+    "german_sentence": "Die Ankunft ist morgen um 10 Uhr.",
+    "english_translation": "The arrival is tomorrow at 10 o'clock.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "anrufen",
+    "translation": "to call, to phone; to call",
+    "german_sentence": "Ich rufe ihn an.",
+    "english_translation": "I will call him.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Araber",
+    "translation": "der - Arab",
+    "german_sentence": "Der Araber ist ein Einwohner des Nahen Ostens.",
+    "english_translation": "The Arab is a resident of the Middle East.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Arbeit",
+    "translation": "die - work, job, labour, labor, paper",
+    "german_sentence": "Ich habe eine Arbeit.",
+    "english_translation": "I have a job.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "arbeiten",
+    "translation": "to work",
+    "german_sentence": "Ich arbeite morgen.",
+    "english_translation": "I will work tomorrow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Arbeiter",
+    "translation": "der - worker",
+    "german_sentence": "Der Arbeiter ist müde.",
+    "english_translation": "The worker is tired.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "arbeitslos",
+    "translation": "unemployed, jobless",
+    "german_sentence": "Er ist arbeitslos.",
+    "english_translation": "He is unemployed.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Art",
+    "translation": "die - kind, type, sort, way, nature, species",
+    "german_sentence": "Sie ist eine besondere Art von Pflanze.",
+    "english_translation": "She is a special kind of plant.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "auch",
+    "translation": "also, too, as well",
+    "german_sentence": "Ich esse auch ein Sandwich.",
+    "english_translation": "I'm eating a sandwich too.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "auf",
+    "translation": "on, at, in, for, to; open, up; on",
+    "german_sentence": "Ich gehe auf die Straße.",
+    "english_translation": "I am going out onto the street.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "aufrecht",
+    "translation": "upright, erect",
+    "german_sentence": "Der Baum steht aufrecht im Garten.",
+    "english_translation": "The tree stands upright in the garden.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "aufwärmen",
+    "translation": "to heat up",
+    "german_sentence": "Den Kaffee aufwärmen, bevor du ihn trinkst.",
+    "english_translation": "Heat up the coffee before you drink it.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "aus der Uni",
+    "translation": "from uni",
+    "german_sentence": "Ich komme aus der Uni.",
+    "english_translation": "I come from uni.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ausfall",
+    "translation": "der - failure, breakdown, outage, loss",
+    "german_sentence": "Der Ausfall des Stroms hat uns gestört.",
+    "english_translation": "The power outage has disturbed us.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ausfallen",
+    "translation": "to drop out, to fall out, to be cancelled",
+    "german_sentence": "Der Konzert ist ausgefallen.",
+    "english_translation": "The concert was cancelled.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ausflug",
+    "translation": "der - trip, excursion, tour, outing",
+    "german_sentence": "Wir machen einen Ausflug ins Bergdorf.",
+    "english_translation": "We are going on a trip to the mountain village.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "auspacken",
+    "translation": "to unpack",
+    "german_sentence": "Die Kiste muss auspacken.",
+    "english_translation": "The box must unpack.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "auswählen",
+    "translation": "to choose, to select",
+    "german_sentence": "Ich muss auswählen, welches Restaurant wir besuchen.",
+    "english_translation": "I have to choose which restaurant we visit.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ausziehen",
+    "translation": "to undress, to get undressed, to take off, to move out",
+    "german_sentence": "Sie muss sich ausziehen.",
+    "english_translation": "She must undress.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ausüben",
+    "translation": "to practise, to practice, to exercise, to exert",
+    "german_sentence": "Sie übt ihre Sprachkenntnisse aus.",
+    "english_translation": "She is practising her language skills.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "außen",
+    "translation": "outside",
+    "german_sentence": "Ich gehe außen spazieren.",
+    "english_translation": "I am going for a walk outside.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Avocado",
+    "translation": "die - avocado",
+    "german_sentence": "Die Avocado ist ein leckeres Obst.",
+    "english_translation": "The avocado is a delicious fruit.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Babysitter",
+    "translation": "der - babysitter",
+    "german_sentence": "Die Babysitterin kümmert sich um mein Baby.",
+    "english_translation": "The babysitter is taking care of my baby.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bald",
+    "translation": "soon, almost; soon",
+    "german_sentence": "Er wird bald kommen.",
+    "english_translation": "He will come soon.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Becher",
+    "translation": "der - cup, mug, beaker, tub",
+    "german_sentence": "Ich trinke aus diesem Becher.",
+    "english_translation": "I drink from this cup.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Becken",
+    "translation": "das - basin, sink, pool, pelvis, cymbal",
+    "german_sentence": "Der Becken ist sehr groß.",
+    "english_translation": "The basin is very large.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Bedarf",
+    "translation": "der - need, demand, requirement",
+    "german_sentence": "Der Bedarf an Wasser ist groß.",
+    "english_translation": "The need for water is great.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bedauern",
+    "translation": "to regret, to deplore, to be sorry, to feel sorry",
+    "german_sentence": "Ich bedaure, dass ich nicht kommen konnte.",
+    "english_translation": "I regret not being able to come.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "behaart",
+    "translation": "hairy",
+    "german_sentence": "Der Hund ist behaart.",
+    "english_translation": "The dog is hairy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "beide",
+    "translation": "both, two",
+    "german_sentence": "Ich esse beide Brötchen.",
+    "english_translation": "I eat both rolls.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Benzin",
+    "translation": "das - petrol, gas(oline)",
+    "german_sentence": "Ich fülle das Benzintank auf.",
+    "english_translation": "I fill up the petrol tank.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bequem",
+    "translation": "comfortable",
+    "german_sentence": "Das Hotelzimmer ist bequem.",
+    "english_translation": "The hotel room is comfortable.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bereits",
+    "translation": "already",
+    "german_sentence": "Ich bin bereits hier.",
+    "english_translation": "I am already here.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "besser",
+    "translation": "better",
+    "german_sentence": "Das Wetter ist besser heute.",
+    "english_translation": "The weather is better today.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Besuch",
+    "translation": "der - visit",
+    "german_sentence": "Ich gehe auf den Besuch meiner Schwester.",
+    "english_translation": "I'm going to visit my sister.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "besuchen",
+    "translation": "to visit, to attend",
+    "german_sentence": "Ich besuche meine Eltern.",
+    "english_translation": "I visit my parents.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Besucher",
+    "translation": "der - visitor, guest",
+    "german_sentence": "Der Besucher kam gestern an.",
+    "english_translation": "The visitor came yesterday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "betreten",
+    "translation": "to enter, to walk into, to step into, to set foot",
+    "german_sentence": "Die Tür ist abgesperrt, betrete nicht!",
+    "english_translation": "The door is locked, don't enter!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "beugen",
+    "translation": "to bend",
+    "german_sentence": "Die Stange beugt sich leicht.",
+    "english_translation": "The rod bends slightly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Beule",
+    "translation": "die - bump, dent",
+    "german_sentence": "Ich habe eine Beule auf dem Kopf.",
+    "english_translation": "I have a bump on the head.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Bevölkerung",
+    "translation": "die - population, people",
+    "german_sentence": "Die Bevölkerung der Stadt ist sehr groß.",
+    "english_translation": "The population of the city is very large.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bewahren",
+    "translation": "to keep, to preserve, to maintain, to protect",
+    "german_sentence": "Wir müssen die Umwelt bewahren.",
+    "english_translation": "We must preserve the environment.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Bibliothek",
+    "translation": "die - library",
+    "german_sentence": "Ich gehe in die Bibliothek.",
+    "english_translation": "I am going to the library.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Biene",
+    "translation": "die - bee",
+    "german_sentence": "Die Biene ist sehr wichtig für die Umwelt.",
+    "english_translation": "The bee is very important for the environment.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "billig",
+    "translation": "cheap",
+    "german_sentence": "Das ist ein günstiges Restaurant, aber die Speisen sind billig.",
+    "english_translation": "That's a cheap restaurant, but the food is affordable.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bisschen",
+    "translation": "a little, a bit, a bit of",
+    "german_sentence": "Ich brauche ein bisschen Wasser.",
+    "english_translation": "I need a little water.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "blau",
+    "translation": "blue",
+    "german_sentence": "Der Himmel ist blau.",
+    "english_translation": "The sky is blue.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Block",
+    "translation": "der - block, bloc, pad",
+    "german_sentence": "Ich lege einen Block vor die Tür.",
+    "english_translation": "I put a pad in front of the door.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "blond",
+    "translation": "blond",
+    "german_sentence": "Sie ist blond.",
+    "english_translation": "She is blond.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Blumenkohl",
+    "translation": "der - cauliflower",
+    "german_sentence": "Ich esse Blumenkohl zum Abendessen.",
+    "english_translation": "I eat cauliflower for dinner.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Bluse",
+    "translation": "die - blouse",
+    "german_sentence": "Ich trage eine Bluse.",
+    "english_translation": "I'm wearing a blouse.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bluten",
+    "translation": "to bleed",
+    "german_sentence": "Der Schnitt begann zu bluten.",
+    "english_translation": "The cut began to bleed.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Bohne",
+    "translation": "die - bean",
+    "german_sentence": "Die Bohne ist sehr nahrhaft.",
+    "english_translation": "The bean is very nutritious.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Brasilien",
+    "translation": "das - Brazil",
+    "german_sentence": "Ich liebe Brasilien.",
+    "english_translation": "I love Brazil.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Braten",
+    "translation": "der - roast, joint",
+    "german_sentence": "Wir braten ein Hähnchen zum Abendessen.",
+    "english_translation": "We are roasting a chicken for dinner.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Brauch",
+    "translation": "der - custom, tradition",
+    "german_sentence": "Die Brauch ist sehr wichtig für uns.",
+    "english_translation": "The custom is very important for us.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bravo",
+    "translation": "well done, bravo",
+    "german_sentence": "Bravo!",
+    "english_translation": "Well done!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bremsen",
+    "translation": "to brake, to slow down, to decelerate",
+    "german_sentence": "Sie muss bremsen, bevor sie in die Kurve fährt.",
+    "english_translation": "She must brake before she turns into the curve.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "brennen",
+    "translation": "to burn",
+    "german_sentence": "Das Feuer brennt.",
+    "english_translation": "The fire is burning.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Buchung",
+    "translation": "die - booking, posting, reservation",
+    "german_sentence": "Ich habe die Buchung bestätigt.",
+    "english_translation": "I have confirmed the booking.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Bund",
+    "translation": "der - association, alliance, federal government, covenant, waistband",
+    "german_sentence": "Die Bundesregierung ist für die Politik zuständig.",
+    "english_translation": "The federal government is responsible for the policy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bunt",
+    "translation": "colourful, colorful",
+    "german_sentence": "Das Bild ist bunt.",
+    "english_translation": "The picture is colourful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Burg",
+    "translation": "die - castle, fortress",
+    "german_sentence": "Die Burg liegt auf dem Berg.",
+    "english_translation": "The castle lies on the mountain.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Butterbrot",
+    "translation": "das - bread and butter, sandwich",
+    "german_sentence": "Ich esse ein Butterbrot zum Frühstück.",
+    "english_translation": "I'm eating a bread and butter sandwich for breakfast.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "böse",
+    "translation": "bad, mad, angry, evil",
+    "german_sentence": "Der Hund ist böse.",
+    "english_translation": "The dog is evil.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bügeln",
+    "translation": "to iron",
+    "german_sentence": "Ich muss das Hemd bügeln.",
+    "english_translation": "I have to iron the shirt.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Büro",
+    "translation": "das - office; das - the office",
+    "german_sentence": "Ich arbeite im Büro.",
+    "english_translation": "I work in the office.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Bürste",
+    "translation": "die - brush",
+    "german_sentence": "Ich brauche eine Bürste.",
+    "english_translation": "I need a brush.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "bürsten",
+    "translation": "to brush",
+    "german_sentence": "Ich bürste mein Haar.",
+    "english_translation": "I brush my hair.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Café",
+    "translation": "das - coffee house, café, coffee shop",
+    "german_sentence": "Ich gehe ins Café.",
+    "english_translation": "I'm going to the coffee house.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "chatten",
+    "translation": "to chat",
+    "german_sentence": "Wir chatten jeden Abend.",
+    "english_translation": "We chat every evening.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Clown",
+    "translation": "der - clown",
+    "german_sentence": "Der Clown ist sehr lustig.",
+    "english_translation": "The clown is very funny.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Club",
+    "translation": "der - club",
+    "german_sentence": "Ich bin Mitglied im Club.",
+    "english_translation": "I am a member of the club.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Comic",
+    "translation": "der - comic",
+    "german_sentence": "Ich lese gerne Comics.",
+    "english_translation": "I like to read comics.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Computer",
+    "translation": "der - computer; der - the computer",
+    "german_sentence": "Ich benutze den Computer.",
+    "english_translation": "I use the computer.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Cousin",
+    "translation": "der - cousin",
+    "german_sentence": "Mein Cousin ist sehr nett.",
+    "english_translation": "My cousin is very nice.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "dann",
+    "translation": "then, afterwards",
+    "german_sentence": "Wir essen dann zu Abend.",
+    "english_translation": "We eat then for dinner.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "davon",
+    "translation": "of it, from that, from it, about it, thereof",
+    "german_sentence": "Ich esse davon.",
+    "english_translation": "I eat of it.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "davor",
+    "translation": "before it, before that, prior to that, in front of",
+    "german_sentence": "Ich esse vor dem Essen ein Stück Kuchen.",
+    "english_translation": "I eat a piece of cake before dinner.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "dazu",
+    "translation": "in addition, furthermore, to that, for this",
+    "german_sentence": "Ich esse ein Sandwich, dazu trinke ich einen Kaffee.",
+    "english_translation": "I eat a sandwich, and I drink a coffee.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Decke",
+    "translation": "die - ceiling, blanket, cover, mantle",
+    "german_sentence": "Die Decke ist weiß.",
+    "english_translation": "The ceiling is white.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Deckel",
+    "translation": "der - lid, cover, cap, top",
+    "german_sentence": "Das ist der Deckel des Topfes.",
+    "english_translation": "That is the lid of the pot.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "decken",
+    "translation": "to cover, to meet, to satisfy",
+    "german_sentence": "Das Problem wird durch die Lösung gedeckt.",
+    "english_translation": "The problem is covered by the solution.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "defekt",
+    "translation": "faulty, defective, broken",
+    "german_sentence": "Das Gerät ist defekt.",
+    "english_translation": "The device is faulty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "dein",
+    "translation": "your (informal)",
+    "german_sentence": "Das ist dein Auto.",
+    "english_translation": "That's your car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "den Müll rausbringen",
+    "translation": "to take out the rubbish",
+    "german_sentence": "Wir bringen den Müll raus.",
+    "english_translation": "We take out the rubbish.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "den Tisch decken",
+    "translation": "to lay the table",
+    "german_sentence": "Wir decken den Tisch.",
+    "english_translation": "We lay the table.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Design",
+    "translation": "das - design",
+    "german_sentence": "Das Design ist sehr wichtig für mich.",
+    "english_translation": "Design is very important to me.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "deuten",
+    "translation": "to indicate, to point, to interpret",
+    "german_sentence": "Der Finger deutet auf die Uhr.",
+    "english_translation": "The finger points to the clock.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "deutlich",
+    "translation": "clear(ly), significant(ly)",
+    "german_sentence": "Die Aussage ist deutlich falsch.",
+    "english_translation": "The statement is clearly false.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "dich",
+    "translation": "you (informal), yourself",
+    "german_sentence": "Ich sehe dich",
+    "english_translation": "I see you",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ding",
+    "translation": "das - thing, item",
+    "german_sentence": "Das Ding ist groß.",
+    "english_translation": "The thing is big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Dingsbums",
+    "translation": "das - gizmo, thingamabob, doodah, doohickey",
+    "german_sentence": "Ich brauche ein Dingsbums, um das zu reparieren.",
+    "english_translation": "I need a gizmo to fix that.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Donner",
+    "translation": "der - thunder",
+    "german_sentence": "Der Donner donnerte laut.",
+    "english_translation": "The thunder thundered loudly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "donnern",
+    "translation": "to thunder",
+    "german_sentence": "Der Donner donnert laut über den Himmel.",
+    "english_translation": "The thunder is thundering loudly over the sky.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Donnerstag",
+    "translation": "der - Thursday",
+    "german_sentence": "Ich gehe am Donnerstag ins Kino.",
+    "english_translation": "I'm going to the movies on Thursday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "donnerstags",
+    "translation": "(on) Thursdays",
+    "german_sentence": "Ich gehe jeden Donnerstag ins Kino.",
+    "english_translation": "I go to the cinema every Thursday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "dorthin",
+    "translation": "there",
+    "german_sentence": "Ich gehe dorthin.",
+    "english_translation": "I am going there.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "draußen",
+    "translation": "outside, outdoors",
+    "german_sentence": "Ich gehe draußen spazieren.",
+    "english_translation": "I'm going for a walk outside.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Dreck",
+    "translation": "der - dirt, mud, filth, crud",
+    "german_sentence": "Der Dreck auf der Straße ist schmutzig.",
+    "english_translation": "The dirt on the street is dirty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "dreckig",
+    "translation": "dirty, filthy; dirty",
+    "german_sentence": "Der Hund ist dreckig.",
+    "english_translation": "The dog is dirty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "drehen",
+    "translation": "to turn, to rotate",
+    "german_sentence": "Drehen Sie das Rad.",
+    "english_translation": "Turn the wheel.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "dumm",
+    "translation": "stupid, silly, dumb",
+    "german_sentence": "Er ist sehr dumm, wenn er so etwas sagt.",
+    "english_translation": "He is very stupid when he says something like that.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "durstig",
+    "translation": "thirsty",
+    "german_sentence": "Ich bin sehr durstig.",
+    "english_translation": "I am very thirsty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "duschen",
+    "translation": "to shower, to have a shower, to take a shower",
+    "german_sentence": "Ich gehe duschen.",
+    "english_translation": "I'm going to take a shower.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "dünn",
+    "translation": "thin, slim, lean, fine",
+    "german_sentence": "Der Film ist sehr dünn.",
+    "english_translation": "The film is very thin.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ecke",
+    "translation": "die - corner",
+    "german_sentence": "Die Ecke der Straße ist sehr eng.",
+    "english_translation": "The corner of the street is very narrow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ehe",
+    "translation": "before",
+    "german_sentence": "Ich esse vor der Ehe ein letztes Mal Pizza.",
+    "english_translation": "I eat before the marriage one last time a pizza.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "eigen",
+    "translation": "own",
+    "german_sentence": "Dies ist mein eigenes Auto.",
+    "english_translation": "This is my own car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Eile",
+    "translation": "die - haste, hurry, rush",
+    "german_sentence": "Ich muss mich beeilen.",
+    "english_translation": "I must hurry.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "eilen",
+    "translation": "to hurry, to rush, to hasten",
+    "german_sentence": "Wir müssen eilen, das Flugzeug geht bald ab.",
+    "english_translation": "We have to hurry, the plane is leaving soon.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "eilig",
+    "translation": "urgent, rushed, hasty",
+    "german_sentence": "Wir müssen schnell handeln, es ist eilig.",
+    "english_translation": "We must act quickly, it's urgent.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ein paar",
+    "translation": "a few",
+    "german_sentence": "Ich habe ein paar Bücher.",
+    "english_translation": "I have a few books.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "eincremen",
+    "translation": "to cream, to put cream on, to moisturize",
+    "german_sentence": "Ich creme mich ein.",
+    "english_translation": "I moisturize myself.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "eingekauft",
+    "translation": "bought groceries",
+    "german_sentence": "Wir haben die Einkäufe eingekauft.",
+    "english_translation": "We have bought the groceries.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "einmal",
+    "translation": "once, one day",
+    "german_sentence": "Ich werde es einmal versuchen.",
+    "english_translation": "I will try it once.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "einst",
+    "translation": "once, at one time, one day",
+    "german_sentence": "Ich werde mich einst in Berlin niederlassen.",
+    "english_translation": "I will settle in Berlin one day.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "einstig",
+    "translation": "former",
+    "german_sentence": "Er war einstig ein guter Freund.",
+    "english_translation": "He was a former good friend.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "einundzwanzig -21",
+    "translation": "twenty-one",
+    "german_sentence": "Ich habe einundzwanzig Jahre.",
+    "english_translation": "I am twenty-one years old.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Eisberg",
+    "translation": "der - iceberg",
+    "german_sentence": "Der Eisberg ragt aus dem Wasser.",
+    "english_translation": "The iceberg is sticking out of the water.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "eiskalt",
+    "translation": "freezing (cold), ice-cold",
+    "german_sentence": "Das Wasser ist eiskalt.",
+    "english_translation": "The water is freezing.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Elefant",
+    "translation": "der - elephant",
+    "german_sentence": "Der Elefant ist groß.",
+    "english_translation": "The elephant is big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "enden",
+    "translation": "to end, to terminate, to cease",
+    "german_sentence": "Der Kurs wird bald enden.",
+    "english_translation": "The course will end soon.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "eng",
+    "translation": "narrow, tight, close; tight",
+    "german_sentence": "Der Weg ist eng.",
+    "english_translation": "The path is narrow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Enkelsohn",
+    "translation": "der - grandson",
+    "german_sentence": "Mein Enkelsohn ist sehr intelligent.",
+    "english_translation": "My grandson is very intelligent.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Enkeltochter",
+    "translation": "die - granddaughter",
+    "german_sentence": "Meine Enkeltochter ist sehr intelligent.",
+    "english_translation": "My granddaughter is very intelligent.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "entlang",
+    "translation": "along",
+    "german_sentence": "Ich gehe entlang des Flusses.",
+    "english_translation": "I walk along the river.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Erhalt",
+    "translation": "der - receipt, preservation",
+    "german_sentence": "Der Erhalt des Dokuments ist wichtig.",
+    "english_translation": "The preservation of the document is important.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ernst",
+    "translation": "serious",
+    "german_sentence": "Er ist sehr ernst.",
+    "english_translation": "He is very serious.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ernten",
+    "translation": "to harvest, to reap, to pick",
+    "german_sentence": "Die Ernte ist reif, wir müssen ernten.",
+    "english_translation": "The harvest is ripe, we have to harvest.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "erst",
+    "translation": "first, only, not until",
+    "german_sentence": "Erst morgen gehe ich ins Kino.",
+    "english_translation": "I'll go to the cinema tomorrow, first.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Es regnet.",
+    "translation": "It's raining.",
+    "german_sentence": "Es regnet.",
+    "english_translation": "It's raining.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Esel",
+    "translation": "der - donkey, ass, idiot",
+    "german_sentence": "Der Esel ist sehr alt.",
+    "english_translation": "The donkey is very old.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fabrik",
+    "translation": "die - factory",
+    "german_sentence": "Die Fabrik ist sehr groß.",
+    "english_translation": "The factory is very big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fahrrad",
+    "translation": "das - bicycle, bike",
+    "german_sentence": "Ich fahre mein Fahrrad zum Strand.",
+    "english_translation": "I ride my bike to the beach.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "fair",
+    "translation": "fair",
+    "german_sentence": "Das ist fair.",
+    "english_translation": "That's fair.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fakt",
+    "translation": "der - fact",
+    "german_sentence": "Die Tatsache ist ein Fakt.",
+    "english_translation": "The fact is a fact.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fall",
+    "translation": "der - fall, case",
+    "german_sentence": "Der Fall ist wichtig.",
+    "english_translation": "The case is important.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "fangen",
+    "translation": "to catch",
+    "german_sentence": "Ich fange einen Fisch.",
+    "english_translation": "I catch a fish.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fasching",
+    "translation": "der - carnival",
+    "german_sentence": "Wir feiern Fasching in zwei Wochen.",
+    "english_translation": "We're celebrating carnival in two weeks.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "fassen",
+    "translation": "to grasp, to seize, to catch, to hold",
+    "german_sentence": "Sie fasst das Buch.",
+    "english_translation": "She catches the book.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "faul",
+    "translation": "lazy, rotten, foul; lazy",
+    "german_sentence": "Er ist sehr faul.",
+    "english_translation": "He is very lazy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "fehlen",
+    "translation": "to lack, to be missing, to be absent",
+    "german_sentence": "Der Schlüssel fehlt.",
+    "english_translation": "The key is missing.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "fein",
+    "translation": "fine",
+    "german_sentence": "Das Essen ist fein.",
+    "english_translation": "The food is fine.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fenster",
+    "translation": "das - window",
+    "german_sentence": "Das Fenster ist groß.",
+    "english_translation": "The window is big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ferien",
+    "translation": "die - holiday, vacation",
+    "german_sentence": "Ich gehe in den Ferien.",
+    "english_translation": "I'm going on holiday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "fest",
+    "translation": "firm, solid, fixed",
+    "german_sentence": "Das Haus ist fest gebaut.",
+    "english_translation": "The house is solidly built.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fett",
+    "translation": "das - fat, grease",
+    "german_sentence": "Das Fett ist sehr gesund.",
+    "english_translation": "The fat is very healthy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "fett",
+    "translation": "fat, fatty, rich, bold",
+    "german_sentence": "Das Essen ist fett.",
+    "english_translation": "The food is rich.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "feucht",
+    "translation": "damp, moist, humid, clammy",
+    "german_sentence": "Die Luft ist feucht.",
+    "english_translation": "The air is humid.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Figur",
+    "translation": "die - figure, figurine, character, shape",
+    "german_sentence": "Die Figur ist sehr schön.",
+    "english_translation": "The figure is very beautiful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Film",
+    "translation": "der - film, movie; der - film",
+    "german_sentence": "Ich sehe einen Film heute Abend.",
+    "english_translation": "I'm seeing a movie tonight.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fisch",
+    "translation": "der - fish, Pisces; der - the fish",
+    "german_sentence": "Ich esse Fisch.",
+    "english_translation": "I eat fish.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "flach",
+    "translation": "flat, low, shallow",
+    "german_sentence": "Das Wasser ist flach.",
+    "english_translation": "The water is flat.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Flagge",
+    "translation": "die - flag",
+    "german_sentence": "Die Flagge weht im Wind.",
+    "english_translation": "The flag is waving in the wind.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Flasche",
+    "translation": "die - bottle",
+    "german_sentence": "Ich trinke aus der Flasche.",
+    "english_translation": "I drink from the bottle.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fleck",
+    "translation": "der - stain, spot, speckle",
+    "german_sentence": "Der Fleck auf dem Teppich ist schwarz.",
+    "english_translation": "The stain on the carpet is black.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fleisch",
+    "translation": "das - meat, flesh",
+    "german_sentence": "Ich esse Fleisch zum Abendessen.",
+    "english_translation": "I eat meat for dinner.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Flöte",
+    "translation": "die - flute, pipe",
+    "german_sentence": "Die Flöte ist sehr schön.",
+    "english_translation": "The flute is very beautiful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Folie",
+    "translation": "die - foil, film, slide",
+    "german_sentence": "Die Folie ist sehr dünn.",
+    "english_translation": "The foil is very thin.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Form",
+    "translation": "die - form, shape",
+    "german_sentence": "Die Form ist wichtig für die Gestaltung.",
+    "english_translation": "The form is important for the design.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "frech",
+    "translation": "cheeky, fresh, impudent, insolent",
+    "german_sentence": "Er ist sehr frech, wenn er mit seinem Bruder spricht.",
+    "english_translation": "He is very cheeky when he talks to his brother.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "freitags",
+    "translation": "(on) Fridays",
+    "german_sentence": "Ich gehe am Freitag ins Kino.",
+    "english_translation": "I am going to the movies on Friday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "fremd",
+    "translation": "foreign, strange, unfamiliar",
+    "german_sentence": "Ich bin in diesem Land fremd.",
+    "english_translation": "I am a stranger in this country.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Frieden",
+    "translation": "der - peace",
+    "german_sentence": "Wir suchen nach Frieden.",
+    "english_translation": "We are looking for peace.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Friedhof",
+    "translation": "der - cemetery, graveyard",
+    "german_sentence": "Der Friedhof ist sehr schön.",
+    "english_translation": "The cemetery is very beautiful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "friedlich",
+    "translation": "peaceful, peaceable",
+    "german_sentence": "Der Friedensprozess verlief friedlich.",
+    "english_translation": "The peace process proceeded peacefully.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "früh",
+    "translation": "early",
+    "german_sentence": "Ich gehe früh ins Bett.",
+    "english_translation": "I go to bed early.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Fuchs",
+    "translation": "der - fox, chestnut",
+    "german_sentence": "Der Fuchs ist ein cleveres Tier.",
+    "english_translation": "The fox is a clever animal.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "furzen",
+    "translation": "to fart",
+    "german_sentence": "Er hat gerade gefurzt.",
+    "english_translation": "He just farted.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "füttern",
+    "translation": "to feed",
+    "german_sentence": "Ich füttere meinen Hund.",
+    "english_translation": "I feed my dog.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gans",
+    "translation": "die - goose",
+    "german_sentence": "Die Gans ist ein Vogel.",
+    "english_translation": "The goose is a bird.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gebäck",
+    "translation": "das - pastries, biscuits",
+    "german_sentence": "Ich esse gerne Gebäck.",
+    "english_translation": "I like to eat pastries.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "gegen",
+    "translation": "against, towards, to",
+    "german_sentence": "Ich gehe gegen den Berg.",
+    "english_translation": "I'm going against the mountain.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gehsteig",
+    "translation": "der - sidewalk, pavement",
+    "german_sentence": "Der Gehsteig ist sehr schmal.",
+    "english_translation": "The sidewalk is very narrow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Geisel",
+    "translation": "die - hostage",
+    "german_sentence": "Die Geiseln wurden gefangen genommen.",
+    "english_translation": "The hostages were taken captive.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Geist",
+    "translation": "der - mind, spirit, phantom, ghost",
+    "german_sentence": "Der Geist ist in der Wand",
+    "english_translation": "The ghost is in the wall",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Geiz",
+    "translation": "der - meanness, stinginess, miserliness",
+    "german_sentence": "Er ist sehr geizig.",
+    "english_translation": "He is very stingy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "geizen",
+    "translation": "to be stingy with",
+    "german_sentence": "Er ist sehr geizig.",
+    "english_translation": "He is very stingy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "geizig",
+    "translation": "mean, miserly, stingy, cheap",
+    "german_sentence": "Er ist sehr geizig mit seinem Geld.",
+    "english_translation": "He is very stingy with his money.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "gekauft",
+    "translation": "bought",
+    "german_sentence": "Ich habe das Buch gekauft.",
+    "english_translation": "I bought the book.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gelenk",
+    "translation": "das - joint",
+    "german_sentence": "Das Gelenk tut weh.",
+    "english_translation": "The joint hurts.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "genau",
+    "translation": "exact, precise, accurate",
+    "german_sentence": "Die Maßnahme ist genau geplant.",
+    "english_translation": "The measure is precisely planned.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "genauso",
+    "translation": "just as, just the same, equally",
+    "german_sentence": "Ich bin genauso müde wie du.",
+    "english_translation": "I am just as tired as you.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "genug",
+    "translation": "enough",
+    "german_sentence": "Das ist genug.",
+    "english_translation": "That's enough.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gepäck",
+    "translation": "das - luggage, baggage",
+    "german_sentence": "Ich habe mein Gepäck im Flugzeug vergessen.",
+    "english_translation": "I forgot my luggage in the plane.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gern!",
+    "translation": "My pleasure! / Of course!",
+    "german_sentence": "Gern!",
+    "english_translation": "My pleasure! / Of course!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "gern, gerne",
+    "translation": "gladly, with pleasure, enjoy (+verb), like",
+    "german_sentence": "Ich esse gerne ein Eis.",
+    "english_translation": "I enjoy eating an ice cream.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "gesund",
+    "translation": "healthy",
+    "german_sentence": "Ich bin gesund.",
+    "english_translation": "I am healthy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "geöffnet",
+    "translation": "open",
+    "german_sentence": "Die Tür ist geöffnet.",
+    "english_translation": "The door is open.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Glas",
+    "translation": "das - glass, jar",
+    "german_sentence": "Das Glas ist leer.",
+    "english_translation": "The glass is empty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gleis",
+    "translation": "das - track, rail, platform; das - platform",
+    "german_sentence": "Der Zug fährt auf das Gleis.",
+    "english_translation": "The train drives onto the track.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "gleiten",
+    "translation": "to glide, to slide, to slip",
+    "german_sentence": "Der Schneeball glitt die Treppe hinunter.",
+    "english_translation": "The snowball slid down the stairs.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Glied",
+    "translation": "das - limb, joint, link",
+    "german_sentence": "Der Arzt untersucht das Glied.",
+    "english_translation": "The doctor examines the limb.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "global",
+    "translation": "global",
+    "german_sentence": "Die Welt ist global geworden.",
+    "english_translation": "The world has become global.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "graben",
+    "translation": "to dig",
+    "german_sentence": "Ich grabe ein Loch.",
+    "english_translation": "I am digging a hole.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gramm",
+    "translation": "das - gram",
+    "german_sentence": "Ein Gramm ist eine Einheit der Masse.",
+    "english_translation": "A gram is a unit of mass.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "grau",
+    "translation": "grey, gray",
+    "german_sentence": "Der Himmel ist grau.",
+    "english_translation": "The sky is grey.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Griff",
+    "translation": "der - handle, grip, grasp",
+    "german_sentence": "Ich greife mit dem Griff nach dem Stuhl.",
+    "english_translation": "I grasp the chair with the handle.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Grill",
+    "translation": "der - grill, barbecue",
+    "german_sentence": "Wir grillen am Wochenende.",
+    "english_translation": "We are barbecuing at the weekend.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "grillen",
+    "translation": "to barbecue, to have a barbecue, to grill; to grill",
+    "german_sentence": "Wir werden am Wochenende grillen.",
+    "english_translation": "We will barbecue this weekend.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "grinsen",
+    "translation": "to grin, to smirk",
+    "german_sentence": "Er grinst mich an.",
+    "english_translation": "He grins at me.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Grube",
+    "translation": "die - pit, mine, (large) hole",
+    "german_sentence": "Die Grube ist tief.",
+    "english_translation": "The pit is deep.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Gruppe",
+    "translation": "die - group",
+    "german_sentence": "Die Gruppe ist sehr interessant.",
+    "english_translation": "The group is very interesting.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Größe",
+    "translation": "die - size, height; die - the size",
+    "german_sentence": "Die Größe des Hauses ist 5 Meter.",
+    "english_translation": "The size of the house is 5 meters.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "gähnen",
+    "translation": "to yawn",
+    "german_sentence": "Ich gähne.",
+    "english_translation": "I yawn.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "haarig",
+    "translation": "hairy",
+    "german_sentence": "Der Hund ist sehr haarig.",
+    "english_translation": "The dog is very hairy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Halle",
+    "translation": "die - hall",
+    "german_sentence": "Die Halle ist sehr groß.",
+    "english_translation": "The hall is very big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Hals",
+    "translation": "der - neck, throat",
+    "german_sentence": "Ich habe einen Halsweh.",
+    "english_translation": "I have a sore throat.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Hamburger",
+    "translation": "der - hamburger",
+    "german_sentence": "Ich esse einen Hamburger.",
+    "english_translation": "I'm eating a hamburger.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Hammer",
+    "translation": "der - hammer",
+    "german_sentence": "Ich brauche einen Hammer.",
+    "english_translation": "I need a hammer.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Handy",
+    "translation": "das - mobile (phone), cell phone",
+    "german_sentence": "Ich habe mein Handy im Auto vergessen.",
+    "english_translation": "I forgot my phone in the car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hart",
+    "translation": "hard",
+    "german_sentence": "Die Schale ist hart.",
+    "english_translation": "The shell is hard.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hauen",
+    "translation": "to hit, to beat, to slap, to bang",
+    "german_sentence": "Er hat mich gehauen.",
+    "english_translation": "He hit me.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "heben",
+    "translation": "to lift, to raise",
+    "german_sentence": "Ich hebe das Gewicht.",
+    "english_translation": "I lift the weight.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Heft",
+    "translation": "das - notebook, booklet, issue",
+    "german_sentence": "Ich habe ein Heft mit Notizen.",
+    "english_translation": "I have a notebook with notes.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "heftig",
+    "translation": "heavy, violent, fierce, intense, severe",
+    "german_sentence": "Der Sturm war heftig.",
+    "english_translation": "The storm was violent.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "heilen",
+    "translation": "to heal, to cure",
+    "german_sentence": "Der Arzt kann die Wunde heilen.",
+    "english_translation": "The doctor can heal the wound.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "heiß",
+    "translation": "hot",
+    "german_sentence": "Das Wasser ist heiß.",
+    "english_translation": "The water is hot.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hell",
+    "translation": "light, bright; bright",
+    "german_sentence": "Die Lampe ist hell.",
+    "english_translation": "The lamp is bright.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Hemd, die Hemden",
+    "translation": "das - the shirt, the shirts",
+    "german_sentence": "Ich trage ein Hemd.",
+    "english_translation": "I am wearing a shirt.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "her",
+    "translation": "from sth, ago, in terms of",
+    "german_sentence": "Sie ist hier seit gestern.",
+    "english_translation": "She has been here since yesterday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "herein",
+    "translation": "come in",
+    "german_sentence": "Komm herein!",
+    "english_translation": "Come in!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "herein, rein",
+    "translation": "in",
+    "german_sentence": "Gehen Sie herein.",
+    "english_translation": "Go in.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "herum",
+    "translation": "around",
+    "german_sentence": "Ich gehe herum im Garten.",
+    "english_translation": "I walk around the garden.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "heulen",
+    "translation": "to howl, to wail, to cry",
+    "german_sentence": "Der Hund heult laut.",
+    "english_translation": "The dog howls loudly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hierher",
+    "translation": "here",
+    "german_sentence": "Komm hierher!",
+    "english_translation": "Come here!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hierhin",
+    "translation": "here",
+    "german_sentence": "Ich komme hierhin.",
+    "english_translation": "I am coming here.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hinauf",
+    "translation": "up, upwards",
+    "german_sentence": "Gehen Sie hinauf in den zweiten Stock.",
+    "english_translation": "Go up to the second floor.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hinaus",
+    "translation": "out, beyond",
+    "german_sentence": "Gehen Sie hinaus!",
+    "english_translation": "Go out!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hinein",
+    "translation": "in, into",
+    "german_sentence": "Schließe die Tür hinein.",
+    "english_translation": "Close the door in.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hinten",
+    "translation": "at the back, in the back",
+    "german_sentence": "Der Wagen hat einen Motor hinten.",
+    "english_translation": "The car has an engine at the back.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hinter",
+    "translation": "behind",
+    "german_sentence": "Der Hund ist hinter dem Baum.",
+    "english_translation": "The dog is behind the tree.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hinunter",
+    "translation": "down",
+    "german_sentence": "Die Kinder liefen hinunter in den Garten.",
+    "english_translation": "The children ran down into the garden.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hinweg",
+    "translation": "over, for",
+    "german_sentence": "Gehen Sie hinweg!",
+    "english_translation": "Go away!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hinüber",
+    "translation": "over, across",
+    "german_sentence": "Sie ging hinüber zum anderen Ufer.",
+    "english_translation": "She went over to the other side.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hocken",
+    "translation": "to squat, to sit, to perch, to crouch",
+    "german_sentence": "Der Vogel hockt auf dem Baum.",
+    "english_translation": "The bird is perched on the tree.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hoffen",
+    "translation": "to hope",
+    "german_sentence": "Ich hoffe, dass es regnet.",
+    "english_translation": "I hope it rains.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Hoffnung",
+    "translation": "die - hope",
+    "german_sentence": "Ich habe Hoffnung auf eine bessere Zukunft.",
+    "english_translation": "I have hope for a better future.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "holen",
+    "translation": "to get, to fetch",
+    "german_sentence": "Ich hole das Buch.",
+    "english_translation": "I get the book.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hungrig",
+    "translation": "hungry",
+    "german_sentence": "Ich bin hungrig.",
+    "english_translation": "I am hungry.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hupen",
+    "translation": "to sound the horn, to honk, to hoot",
+    "german_sentence": "Der Autofahrer hupte auf die Straße.",
+    "english_translation": "The driver honked on the street.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "husten",
+    "translation": "to cough",
+    "german_sentence": "Er hustet stark.",
+    "english_translation": "He coughs strongly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Höhe",
+    "translation": "die - height, altitude",
+    "german_sentence": "Die Höhe des Berges ist 1000 Meter.",
+    "english_translation": "The height of the mountain is 1000 meters.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Höhle",
+    "translation": "die - cave",
+    "german_sentence": "Ich gehe in die Höhle.",
+    "english_translation": "I go into the cave.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Hölle",
+    "translation": "die - hell",
+    "german_sentence": "Die Hölle ist sehr heiß.",
+    "english_translation": "Hell is very hot.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "hören",
+    "translation": "to hear, to listen to",
+    "german_sentence": "Ich höre Musik.",
+    "english_translation": "I listen to music.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Hörer",
+    "translation": "der - listener, receiver, handset",
+    "german_sentence": "Der Hörer hält das Handy.",
+    "english_translation": "The listener holds the handset.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ich hatte Besuch.",
+    "translation": "I had a vistor. / I had visitors.",
+    "german_sentence": "Ich hatte Besuch.",
+    "english_translation": "I had a visitor.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Igel",
+    "translation": "der - hedgehog",
+    "german_sentence": "Der Igel ist sehr klein.",
+    "english_translation": "The hedgehog is very small.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "impfen",
+    "translation": "to inoculate, to vaccinate",
+    "german_sentence": "Meine Kinder müssen sich impfen lassen.",
+    "english_translation": "My children need to get vaccinated.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Impfung",
+    "translation": "die - vaccination, inoculation",
+    "german_sentence": "Die Impfung ist wichtig für die Gesundheit.",
+    "english_translation": "The vaccination is important for health.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Import",
+    "translation": "der - import(ation)",
+    "german_sentence": "Der Import von Waren aus dem Ausland ist streng reguliert.",
+    "english_translation": "The import of goods from abroad is strictly regulated.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "innen",
+    "translation": "inside, on the inside",
+    "german_sentence": "Das Haus ist innen sehr groß.",
+    "english_translation": "The house is very big inside.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ins",
+    "translation": "into, in the, to the",
+    "german_sentence": "Gehen Sie ins Haus.",
+    "english_translation": "Go into the house.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Italiener",
+    "translation": "der - Italian",
+    "german_sentence": "Er ist Italiener.",
+    "english_translation": "He is Italian.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Januar",
+    "translation": "der - January",
+    "german_sentence": "Der Januar ist ein kalter Monat.",
+    "english_translation": "January is a cold month.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Japan",
+    "translation": "das - Japan",
+    "german_sentence": "Das Land heißt Japan.",
+    "english_translation": "The country is called Japan.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Jeans",
+    "translation": "die - jeans",
+    "german_sentence": "Ich trage Jeans.",
+    "english_translation": "I wear jeans.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Job",
+    "translation": "der - job",
+    "german_sentence": "Ich habe einen Job.",
+    "english_translation": "I have a job.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "joggen",
+    "translation": "to jog",
+    "german_sentence": "Ich gehe joggen.",
+    "english_translation": "I am going for a jog.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Joghurt",
+    "translation": "der - yoghurt, yogurt; der - the yoghurt",
+    "german_sentence": "Ich esse den Joghurt.",
+    "english_translation": "I eat the yoghurt.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "jucken",
+    "translation": "to itch",
+    "german_sentence": "Mein Bein juckt.",
+    "english_translation": "My leg itches.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Jäger",
+    "translation": "der - hunter",
+    "german_sentence": "Der Jäger jagt den Hasen.",
+    "english_translation": "The hunter chases the hare.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kabel",
+    "translation": "das - wire, cable, cord",
+    "german_sentence": "Ich habe ein Kabel verloren.",
+    "english_translation": "I lost a wire.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kabine",
+    "translation": "die - cabin, booth, changing room",
+    "german_sentence": "Ich gehe in die Kabine.",
+    "english_translation": "I'm going to the cabin.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kaffee",
+    "translation": "der - coffee; der - the coffee",
+    "german_sentence": "Ich trinke einen Kaffee.",
+    "english_translation": "I drink a coffee.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kahl",
+    "translation": "bald, bare, bleak",
+    "german_sentence": "Der Baum ist kahl.",
+    "english_translation": "The tree is bare.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kakao",
+    "translation": "der - cocoa, chocolate milk, hot chocolate",
+    "german_sentence": "Ich trinke gerne Kakao.",
+    "english_translation": "I like to drink hot chocolate.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kanne",
+    "translation": "die - pot, can, jug",
+    "german_sentence": "Die Kanne ist leer.",
+    "english_translation": "The pot is empty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kante",
+    "translation": "die - edge",
+    "german_sentence": "Die Kante des Tisches ist sehr scharf.",
+    "english_translation": "The edge of the table is very sharp.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kantine",
+    "translation": "die - canteen, cafeteria",
+    "german_sentence": "Ich esse in der Kantine.",
+    "english_translation": "I eat in the canteen.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kaputt",
+    "translation": "broken, damaged",
+    "german_sentence": "Das Telefon ist kaputt.",
+    "english_translation": "The phone is broken.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Karte",
+    "translation": "die - card, map, ticket, menu",
+    "german_sentence": "Ich brauche eine Karte.",
+    "english_translation": "I need a map.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kauen",
+    "translation": "to chew",
+    "german_sentence": "Ich kau ein Stück Kaugummi.",
+    "english_translation": "I am chewing a piece of gum.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kaum",
+    "translation": "hardly, barely, scarcely, rarely",
+    "german_sentence": "Ich habe kaum geschlafen.",
+    "english_translation": "I hardly slept.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kellner",
+    "translation": "der - waiter",
+    "german_sentence": "Der Kellner bringt uns das Wasser.",
+    "english_translation": "The waiter brings us the water.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kellnerin",
+    "translation": "die - waitress",
+    "german_sentence": "Die Kellnerin bringt uns Wasser.",
+    "english_translation": "The waitress brings us water.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kennen",
+    "translation": "to know",
+    "german_sentence": "Ich kenne ihn.",
+    "english_translation": "I know him.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kerl",
+    "translation": "der - fellow, bloke, guy, dude",
+    "german_sentence": "Er ist ein Kerl.",
+    "english_translation": "He is a guy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kern",
+    "translation": "der - seed, stone, core, nucleus, essence, pit",
+    "german_sentence": "Der Kern der Frage ist, was wir tun.",
+    "english_translation": "The essence of the question is, what we do.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kerze",
+    "translation": "die - candle",
+    "german_sentence": "Die Kerze ist hell.",
+    "english_translation": "The candle is bright.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kino",
+    "translation": "das - cinema, movie theatre",
+    "german_sentence": "Ich gehe ins Kino.",
+    "english_translation": "I'm going to the cinema.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kiosk",
+    "translation": "der - kiosk",
+    "german_sentence": "Ich kaufe ein Eis im Kiosk.",
+    "english_translation": "I buy an ice cream at the kiosk.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kleben",
+    "translation": "to glue, to stick",
+    "german_sentence": "Ich klebe den Zettel an die Wand.",
+    "english_translation": "I'm going to stick the note to the wall.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Klick",
+    "translation": "der - click",
+    "german_sentence": "Ich klicke auf den Button.",
+    "english_translation": "I click on the button.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Klima",
+    "translation": "das - climate",
+    "german_sentence": "Das Klima in Deutschland ist sehr kalt.",
+    "english_translation": "The climate in Germany is very cold.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Klingel",
+    "translation": "die - bell, doorbell",
+    "german_sentence": "Die Klingel läutet.",
+    "english_translation": "The bell is ringing.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Klinik",
+    "translation": "die - clinic, hospital",
+    "german_sentence": "Ich gehe zur Klinik.",
+    "english_translation": "I am going to the clinic.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kloß",
+    "translation": "der - dumpling, lump",
+    "german_sentence": "Ich esse einen Kloß mit Soße.",
+    "english_translation": "I'm eating a dumpling with sauce.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Knall",
+    "translation": "der - bang, pop, crack",
+    "german_sentence": "Der Knall war sehr laut.",
+    "english_translation": "The bang was very loud.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Knöchel",
+    "translation": "der - ankle, ankle, knuckle",
+    "german_sentence": "Ich habe einen Knöchel verletzt.",
+    "english_translation": "I hurt my ankle.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Knödel",
+    "translation": "der - dumpling",
+    "german_sentence": "Ich esse einen Knödel zum Mittagessen.",
+    "english_translation": "I'm eating a dumpling for lunch.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Komma",
+    "translation": "das - comma, (decimal) point",
+    "german_sentence": "Ich setze ein Komma nach dem Zahlenwert.",
+    "english_translation": "I set a comma after the number value.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "komplex",
+    "translation": "complex",
+    "german_sentence": "Die Lösung ist komplex.",
+    "english_translation": "The solution is complex.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kompliziert",
+    "translation": "complicated",
+    "german_sentence": "Das Problem ist kompliziert.",
+    "english_translation": "The problem is complicated.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Konzert",
+    "translation": "das - concert",
+    "german_sentence": "Ich gehe zum Konzert.",
+    "english_translation": "I'm going to the concert.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kopfschmerzen",
+    "translation": "die - the headache",
+    "german_sentence": "Ich habe Kopfschmerzen.",
+    "english_translation": "I have a headache.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "korrekt",
+    "translation": "correct(ly)",
+    "german_sentence": "Die Antwort ist korrekt.",
+    "english_translation": "The answer is correct.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Krankenhaus",
+    "translation": "das - hospital, clinic",
+    "german_sentence": "Ich bin im Krankenhaus.",
+    "english_translation": "I am in the hospital.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Krankenkasse",
+    "translation": "die - health insurance company",
+    "german_sentence": "Ich bin bei der Krankenkasse angemeldet.",
+    "english_translation": "I am registered with the health insurance company.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Krankenwagen",
+    "translation": "der - ambulance",
+    "german_sentence": "Der Krankenwagen ist auf dem Weg zum Krankenhaus.",
+    "english_translation": "The ambulance is on its way to the hospital.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Krankheit",
+    "translation": "die - illness, disease",
+    "german_sentence": "Die Krankheit hat mich sehr geschwächt.",
+    "english_translation": "The illness has weakened me a lot.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kredit",
+    "translation": "der - credit, loan",
+    "german_sentence": "Ich brauche einen Kredit für mein Auto.",
+    "english_translation": "I need a loan for my car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kuchen",
+    "translation": "der - cake, pie",
+    "german_sentence": "Ich esse einen Kuchen.",
+    "english_translation": "I am eating a cake.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kunst",
+    "translation": "die - art",
+    "german_sentence": "Die Kunst ist wunderbar.",
+    "english_translation": "Art is wonderful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kurs",
+    "translation": "der - course, class, rate, exchange rate",
+    "german_sentence": "Der Kurs ist sehr interessant.",
+    "english_translation": "The course is very interesting.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kurve",
+    "translation": "die - curve, bend, turn, graph",
+    "german_sentence": "Die Kurve steigt steil nach oben.",
+    "english_translation": "The curve rises steeply upwards.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kurze Haare",
+    "translation": "short hair",
+    "german_sentence": "Ich habe kurze Haare.",
+    "english_translation": "I have short hair.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "kämmen",
+    "translation": "to comb",
+    "german_sentence": "Ich kämme mein Haar.",
+    "english_translation": "I am combing my hair.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Kühlschrank",
+    "translation": "der - refrigerator, fridge; der - the fridge",
+    "german_sentence": "Der Kühlschrank ist leer.",
+    "english_translation": "The fridge is empty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "l / der Liter",
+    "translation": "l / the litre",
+    "german_sentence": "Ich trinke ein Liter Wasser.",
+    "english_translation": "I drink a litre of water.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "labern",
+    "translation": "to prattle, to babble",
+    "german_sentence": "Sie labert nur immer wieder.",
+    "english_translation": "She just prattles on and on.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Labor",
+    "translation": "das - laboratory, lab",
+    "german_sentence": "Das Labor ist in diesem Gebäude.",
+    "english_translation": "The laboratory is in this building.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "lachen",
+    "translation": "to laugh; laugh",
+    "german_sentence": "Ich lache über den Witz.",
+    "english_translation": "I laugh at the joke.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Lack",
+    "translation": "der - paint, varnish, lacquer",
+    "german_sentence": "Ich brauche Lack für mein Auto.",
+    "english_translation": "I need paint for my car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "landen",
+    "translation": "to land; land",
+    "german_sentence": "Der Flugzeug landet auf dem Flughafen.",
+    "english_translation": "The plane lands at the airport.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "lange Haare",
+    "translation": "long hair",
+    "german_sentence": "Sie hat lange Haare.",
+    "english_translation": "She has long hair.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "laut",
+    "translation": "according to; loud, noisy",
+    "german_sentence": "Ich höre laut Musik.",
+    "english_translation": "I listen to loud music.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Lavendel",
+    "translation": "der - lavender",
+    "german_sentence": "Der Garten ist voller Lavendel.",
+    "english_translation": "The garden is full of lavender.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "lecker",
+    "translation": "delicious, tasty; tasty",
+    "german_sentence": "Das Essen ist lecker.",
+    "english_translation": "The food is delicious.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "leeren",
+    "translation": "to empty",
+    "german_sentence": "Das Glas leere ich.",
+    "english_translation": "I will empty the glass.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "legen",
+    "translation": "to lay, to put (horizontally), to place, to set",
+    "german_sentence": "Leg den Tisch ab.",
+    "english_translation": "Put the table down.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Leib",
+    "translation": "der - body",
+    "german_sentence": "Mein Leib fühlt sich kalt an.",
+    "english_translation": "My body feels cold.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "leiblich",
+    "translation": "real, biological, physical",
+    "german_sentence": "Er ist leiblich mein Bruder.",
+    "english_translation": "He is my biological brother.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "leicht",
+    "translation": "light, easy",
+    "german_sentence": "Der Koffer ist leicht.",
+    "english_translation": "The suitcase is light.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "leise",
+    "translation": "quiet, soft",
+    "german_sentence": "Bitte sprechen Sie leise.",
+    "english_translation": "Please speak quietly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "lieben",
+    "translation": "to love",
+    "german_sentence": "Ich liebe dich.",
+    "english_translation": "I love you.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "lieber",
+    "translation": "rather",
+    "german_sentence": "Ich bin lieber spät als nie",
+    "english_translation": "I'd rather be late than never",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "liegen",
+    "translation": "to lie, to be located, to be situated",
+    "german_sentence": "Mein Buch liegt auf dem Tisch.",
+    "english_translation": "My book is on the table.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "links",
+    "translation": "left, on the left, to the left",
+    "german_sentence": "Der Weg führt links ab.",
+    "english_translation": "The path turns off to the left.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Locke",
+    "translation": "die - curl",
+    "german_sentence": "Sie hat eine Locke in ihrem Haar.",
+    "english_translation": "She has a curl in her hair.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Lotto",
+    "translation": "das - lottery, lotto",
+    "german_sentence": "Ich kaufe jeden Freitag Lotto.",
+    "english_translation": "I buy lottery every Friday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Lust haben",
+    "translation": "to fancy",
+    "german_sentence": "Ich habe Lust auf ein Eis.",
+    "english_translation": "I fancy an ice cream.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "lustig",
+    "translation": "funny, amusing, merry; funny",
+    "german_sentence": "Der Film ist lustig.",
+    "english_translation": "The movie is funny.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Löffel",
+    "translation": "der - spoon, spoonful; der - the spoon",
+    "german_sentence": "Ich esse mit dem Löffel.",
+    "english_translation": "I eat with a spoon.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Löwe",
+    "translation": "der - lion, Leo",
+    "german_sentence": "Der Löwe ist ein großes Tier.",
+    "english_translation": "The lion is a big animal.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "lügen",
+    "translation": "to lie, to tell a lie",
+    "german_sentence": "Er lügt über seine Alter.",
+    "english_translation": "He lies about his age.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "machen",
+    "translation": "to do, to make; to do",
+    "german_sentence": "Ich mache das heute.",
+    "english_translation": "I will do that today.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Mann",
+    "translation": "der - man, husband",
+    "german_sentence": "Der Mann ist sehr freundlich.",
+    "english_translation": "The man is very friendly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Mantel",
+    "translation": "der - coat, cloak",
+    "german_sentence": "Er trägt einen Mantel.",
+    "english_translation": "He is wearing a coat.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "massiv",
+    "translation": "solid, massive, severe",
+    "german_sentence": "Die Wand ist massiv.",
+    "english_translation": "The wall is solid.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Material",
+    "translation": "das - material, substance",
+    "german_sentence": "Das Material ist sehr hart.",
+    "english_translation": "The material is very hard.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "matt",
+    "translation": "matt(e), dull, soft, frosted, faint",
+    "german_sentence": "Die Matratze ist matt.",
+    "english_translation": "The mattress is flat.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Mauer",
+    "translation": "die - wall",
+    "german_sentence": "Die Mauer ist sehr hoch.",
+    "english_translation": "The wall is very high.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Maul",
+    "translation": "das - mouth, muzzle, jaws",
+    "german_sentence": "Der Hund biss in die Maul.",
+    "english_translation": "The dog bit into the mouth.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Menü",
+    "translation": "das - menu, set menu, set meal",
+    "german_sentence": "Das Menü ist sehr lecker.",
+    "english_translation": "The menu is very tasty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Miete",
+    "translation": "die - rent",
+    "german_sentence": "Die Miete ist sehr hoch.",
+    "english_translation": "The rent is very high.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "mieten",
+    "translation": "to rent, to hire, to lease",
+    "german_sentence": "Ich miete ein Zimmer.",
+    "english_translation": "I rent a room.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "mild",
+    "translation": "mild, gentle, lenient",
+    "german_sentence": "Die Wetterlage ist mild.",
+    "english_translation": "The weather is mild.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "minus",
+    "translation": "minus",
+    "german_sentence": "Das ist minus.",
+    "english_translation": "That is minus.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Minute",
+    "translation": "die - minute",
+    "german_sentence": "Die Minute ist vorbei.",
+    "english_translation": "The minute is over.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "mit Sprudel / ohne Sprudel",
+    "translation": "sparkling / still",
+    "german_sentence": "Das Wasser ist mit Sprudel.",
+    "english_translation": "The water is sparkling.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "mitbekommen",
+    "translation": "to notice, to realize, to catch, to get",
+    "german_sentence": "Ich habe es mitbekommen.",
+    "english_translation": "I noticed it.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Mittag",
+    "translation": "der - noon, midday, lunch",
+    "german_sentence": "Ich esse Mittagessen um 12 Uhr.",
+    "english_translation": "I have lunch at 12 o'clock.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "mittags",
+    "translation": "at noon, at midday, at lunchtime",
+    "german_sentence": "Ich esse mittags ein Sandwich.",
+    "english_translation": "I eat a sandwich at lunchtime.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Mitte",
+    "translation": "die - middle, centre, center, midst",
+    "german_sentence": "Die Stadt hat ihre Mitte im Zentrum.",
+    "english_translation": "The city has its center in the middle.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Mittwoch",
+    "translation": "der - Wednesday",
+    "german_sentence": "Ich habe morgen Mittwoch.",
+    "english_translation": "I have Wednesday tomorrow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "mittwochs",
+    "translation": "(on) Wednesdays",
+    "german_sentence": "Ich gehe jeden Mittwoch ins Kino.",
+    "english_translation": "I go to the cinema every Wednesday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "mobil",
+    "translation": "mobile",
+    "german_sentence": "Mein Handy ist mobil.",
+    "english_translation": "My phone is mobile.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Motor",
+    "translation": "der - motor, engine",
+    "german_sentence": "Der Motor ist sehr leise.",
+    "english_translation": "The engine is very quiet.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Motorrad",
+    "translation": "das - motorcycle, motorbike",
+    "german_sentence": "Ich fahre ein Motorrad.",
+    "english_translation": "I ride a motorcycle.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Motorroller",
+    "translation": "der - (motor) scooter",
+    "german_sentence": "Ich fahre auf meinem Motorroller zum Supermarkt.",
+    "english_translation": "I ride my motor scooter to the supermarket.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Motto",
+    "translation": "das - motto, slogan, theme",
+    "german_sentence": "Das Motto der Firma lautet 'Qualität ist unser Ziel'.",
+    "english_translation": "The company's motto is 'Quality is our goal'.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "müde",
+    "translation": "tired, weary",
+    "german_sentence": "Ich bin müde.",
+    "english_translation": "I am tired.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nachher",
+    "translation": "after, afterwards, subsequently",
+    "german_sentence": "Ich werde nachher zum Kino gehen.",
+    "english_translation": "I will go to the cinema afterwards.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nachts",
+    "translation": "at night",
+    "german_sentence": "Ich gehe nachts spazieren.",
+    "english_translation": "I go for a walk at night.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Nacken",
+    "translation": "der - neck",
+    "german_sentence": "Ich habe einen Schmerz im Nacken.",
+    "english_translation": "I have a pain in the neck.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nah",
+    "translation": "near/close",
+    "german_sentence": "Ich bin nah bei dir.",
+    "english_translation": "I am near you.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "neben",
+    "translation": "next to, beside, apart from",
+    "german_sentence": "Das Haus steht neben dem Park.",
+    "english_translation": "The house stands next to the park.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nebenan",
+    "translation": "next door",
+    "german_sentence": "Mein Nachbar wohnt nebenan.",
+    "english_translation": "My neighbor lives next door.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Nichte",
+    "translation": "die - niece",
+    "german_sentence": "Meine Nichte ist sehr freundlich.",
+    "english_translation": "My niece is very friendly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nicken",
+    "translation": "to nod",
+    "german_sentence": "Er nickte mir zu.",
+    "english_translation": "He nodded to me.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "niesen",
+    "translation": "to sneeze",
+    "german_sentence": "Ich niese.",
+    "english_translation": "I sneeze.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nirgends",
+    "translation": "nowhere, not anywhere",
+    "german_sentence": "Ich habe ihn nirgends gefunden.",
+    "english_translation": "I couldn't find him anywhere.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nirgendwo",
+    "translation": "nowhere, not anywhere",
+    "german_sentence": "Ich habe ihn nirgendwo gesehen.",
+    "english_translation": "I haven't seen him anywhere.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "noch",
+    "translation": "still, even, even more, yet",
+    "german_sentence": "Ich esse noch ein Stück Kuchen.",
+    "english_translation": "I'm still having a piece of cake.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "November",
+    "translation": "der - November",
+    "german_sentence": "Der November ist ein kalter Monat.",
+    "english_translation": "November is a cold month.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Nudel",
+    "translation": "die - noodle, pasta",
+    "german_sentence": "Ich esse eine Nudel zum Abendessen.",
+    "english_translation": "I eat a noodle for dinner.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Nummer",
+    "translation": "die - number",
+    "german_sentence": "Ich habe meine Nummer vergessen.",
+    "english_translation": "I forgot my number.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nun",
+    "translation": "now, then",
+    "german_sentence": "Es ist nun Zeit für den Urlaub.",
+    "english_translation": "It's now time for the holiday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nur",
+    "translation": "only, just, simply",
+    "german_sentence": "Ich esse nur ein Sandwich.",
+    "english_translation": "I eat only a sandwich.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nächste",
+    "translation": "next",
+    "german_sentence": "Ich warte auf die nächste U-Bahn.",
+    "english_translation": "I'm waiting for the next subway.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "nötig",
+    "translation": "necessary",
+    "german_sentence": "Das ist nötig.",
+    "english_translation": "That is necessary.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ob",
+    "translation": "whether, if",
+    "german_sentence": "Ich weiß nicht, ob es regnet.",
+    "english_translation": "I don't know whether it's raining.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "oft",
+    "translation": "often, frequently; often",
+    "german_sentence": "Ich gehe oft ins Kino.",
+    "english_translation": "I go to the cinema often.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Oper",
+    "translation": "die - opera",
+    "german_sentence": "Ich gehe zum Opernhaus.",
+    "english_translation": "I'm going to the opera house.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Organ",
+    "translation": "das - organ",
+    "german_sentence": "Das Herz ist ein Organ.",
+    "english_translation": "The heart is an organ.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "original",
+    "translation": "original",
+    "german_sentence": "Das ist das Original.",
+    "english_translation": "That is the original.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "packen",
+    "translation": "to pack, to grab, to seize",
+    "german_sentence": "Ich packe meine Tasche.",
+    "english_translation": "I'm packing my bag.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Panik",
+    "translation": "die - panic",
+    "german_sentence": "Die Menschen gerieten in Panik.",
+    "english_translation": "The people fell into panic.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Panne",
+    "translation": "die - breakdown, mishap, glitch, malfunction",
+    "german_sentence": "Der Computer ist in Panne.",
+    "english_translation": "The computer is broken down.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Papiere",
+    "translation": "die - (identity) papers, identification",
+    "german_sentence": "Ich brauche meine Papiere.",
+    "english_translation": "I need my identification.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "parken",
+    "translation": "to park",
+    "german_sentence": "Ich parke mein Auto auf der Straße.",
+    "english_translation": "I'm parking my car on the street.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Party",
+    "translation": "die - party",
+    "german_sentence": "Die Party ist heute Abend.",
+    "english_translation": "The party is tonight.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "passen",
+    "translation": "to fit, to match; to fit",
+    "german_sentence": "Das Kleid passt gut zu dir.",
+    "english_translation": "The dress fits you well.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Pause",
+    "translation": "die - pause, break",
+    "german_sentence": "Ich brauche eine Pause.",
+    "english_translation": "I need a break.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Pech",
+    "translation": "das - bad luck, pitch, misfortune",
+    "german_sentence": "Ich habe heute viel Pech gehabt.",
+    "english_translation": "I had a lot of bad luck today.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Pedal",
+    "translation": "das - pedal",
+    "german_sentence": "Das Pedal ist sehr wichtig für das Fahrrad.",
+    "english_translation": "The pedal is very important for the bicycle.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "per",
+    "translation": "by, per, via",
+    "german_sentence": "Ich komme per Zug.",
+    "english_translation": "I'm coming by train.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "pfui",
+    "translation": "fie, ugh, yuck",
+    "german_sentence": "Das ist pfui!",
+    "english_translation": "That's disgusting!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Pfund",
+    "translation": "das - pound, lb, lbs",
+    "german_sentence": "Ein Pfund Fleisch kostet 5 Euro.",
+    "english_translation": "A pound of meat costs 5 euros.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Pfütze",
+    "translation": "die - puddle",
+    "german_sentence": "Die Pfütze ist sehr groß.",
+    "english_translation": "The puddle is very big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "piepen",
+    "translation": "to beep, to peep, to bleep, to cheep",
+    "german_sentence": "Der Alarm piept.",
+    "english_translation": "The alarm is beeping.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "planen",
+    "translation": "to plan",
+    "german_sentence": "Wir planen den Urlaub.",
+    "english_translation": "We are planning the holiday.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Portal",
+    "translation": "das - portal",
+    "german_sentence": "Das Portal ist sehr beeindruckend.",
+    "english_translation": "The portal is very impressive.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Portemonnaie",
+    "translation": "das - wallet, purse",
+    "german_sentence": "Ich habe mein Portemonnaie verloren.",
+    "english_translation": "I lost my wallet.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Portion",
+    "translation": "die - portion, serving, helping",
+    "german_sentence": "Die Portion ist groß.",
+    "english_translation": "The serving is large.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Porträt",
+    "translation": "das - portrait; portrait",
+    "german_sentence": "Das Porträt hängt an der Wand.",
+    "english_translation": "The portrait hangs on the wall.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Portugal",
+    "translation": "das - Portugal",
+    "german_sentence": "Ich liebe Portugal.",
+    "english_translation": "I love Portugal.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "prima",
+    "translation": "great, neat, super, fantastic, awesome",
+    "german_sentence": "Das Konzert war prima!",
+    "english_translation": "The concert was great!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "privat",
+    "translation": "private",
+    "german_sentence": "Ich habe ein privat Zimmer.",
+    "english_translation": "I have a private room.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "pro",
+    "translation": "per",
+    "german_sentence": "Die Kosten pro Kilometer betragen 0,20 Euro.",
+    "english_translation": "The costs per kilometer are 0.20 euros.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Probe",
+    "translation": "die - sample, test, rehearsal, specimen",
+    "german_sentence": "Die Probe war erfolgreich.",
+    "english_translation": "The test was successful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Problem",
+    "translation": "das - problem",
+    "german_sentence": "Das ist ein großes Problem.",
+    "english_translation": "That is a big problem.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Punkt",
+    "translation": "der - dot, point, period, spot, item",
+    "german_sentence": "Setze einen Punkt am Ende des Satzes.",
+    "english_translation": "Put a point at the end of the sentence.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Puppe",
+    "translation": "die - doll, puppet",
+    "german_sentence": "Die Puppe ist sehr hübsch.",
+    "english_translation": "The doll is very pretty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "pünktlich",
+    "translation": "punctual, on time",
+    "german_sentence": "Der Zug kommt pünktlich.",
+    "english_translation": "The train is on time.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Quadrat",
+    "translation": "das - square",
+    "german_sentence": "Das Quadrat hat vier Seiten.",
+    "english_translation": "The square has four sides.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "quer",
+    "translation": "diagonally, sideways, across, crosswise",
+    "german_sentence": "Der Baum steht quer zur Straße.",
+    "english_translation": "The tree stands across the street.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Radio",
+    "translation": "das - radio",
+    "german_sentence": "Ich höre das Radio.",
+    "english_translation": "I am listening to the radio.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rand",
+    "translation": "der - edge, border, margin, side, rim",
+    "german_sentence": "Der Rand des Tisches ist sehr schmal.",
+    "english_translation": "The edge of the table is very narrow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rasen",
+    "translation": "der - lawn, grass",
+    "german_sentence": "Ich mähe den Rasen.",
+    "english_translation": "I mow the lawn.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "raten",
+    "translation": "to advise, to guess",
+    "german_sentence": "Ich rate dir, den Bus zu nehmen.",
+    "english_translation": "I advise you to take the bus.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Raub",
+    "translation": "der - robbery, heist",
+    "german_sentence": "Der Raub war sehr gefährlich.",
+    "english_translation": "The robbery was very dangerous.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "rauchen",
+    "translation": "to smoke, to fume",
+    "german_sentence": "Er raucht gerne Zigaretten.",
+    "english_translation": "He likes to smoke cigarettes.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Raucher",
+    "translation": "der - smoker",
+    "german_sentence": "Er ist ein Raucher.",
+    "english_translation": "He is a smoker.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Raupe",
+    "translation": "die - caterpillar",
+    "german_sentence": "Die Raupe frisst Blätter.",
+    "english_translation": "The caterpillar eats leaves.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "regnen",
+    "translation": "to rain",
+    "german_sentence": "Es regnet heute.",
+    "english_translation": "It's raining today.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "reiben",
+    "translation": "to rub, to grate",
+    "german_sentence": "Reibe die Kartoffeln.",
+    "english_translation": "Rub the potatoes.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "reif",
+    "translation": "ripe, mature",
+    "german_sentence": "Die Frucht ist reif.",
+    "english_translation": "The fruit is ripe.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Reifen",
+    "translation": "der - tyre, tire, hoop",
+    "german_sentence": "Der Reifen ist platt.",
+    "english_translation": "The tire is flat.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Reihe",
+    "translation": "die - row, line, series",
+    "german_sentence": "Die Reihe der Bücher ist sehr lang.",
+    "english_translation": "The row of books is very long.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Reim",
+    "translation": "der - rhyme",
+    "german_sentence": "Der Reim ist ein wichtiger Teil der Dichtkunst.",
+    "english_translation": "The rhyme is an important part of poetry.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "reinigen",
+    "translation": "to clean",
+    "german_sentence": "Ich werde das Fenster reinigen.",
+    "english_translation": "I will clean the window.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Reise",
+    "translation": "die - journey, trip, voyage",
+    "german_sentence": "Ich plane eine Reise nach Paris.",
+    "english_translation": "I'm planning a trip to Paris.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rennen",
+    "translation": "das - race",
+    "german_sentence": "Sie geht ins Rennen.",
+    "english_translation": "She is going to the race.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "rennen",
+    "translation": "to run, to race, to sprint",
+    "german_sentence": "Die Kinder rennen im Park.",
+    "english_translation": "The children are running in the park.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rentner",
+    "translation": "der - pensioner, senior (citizen), retired person",
+    "german_sentence": "Der Rentner erhält eine monatliche Rente.",
+    "english_translation": "The pensioner receives a monthly pension.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rentnerin",
+    "translation": "die - pensioner (female), senior (female)",
+    "german_sentence": "Meine Oma ist eine Rentnerin.",
+    "english_translation": "My grandma is a pensioner.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Restaurant",
+    "translation": "das - restaurant",
+    "german_sentence": "Ich esse im Restaurant.",
+    "english_translation": "I eat in the restaurant.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Riff",
+    "translation": "das - reef",
+    "german_sentence": "Das Riff ist sehr gefährlich für die Schiffe.",
+    "english_translation": "The reef is very dangerous for the ships.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rind",
+    "translation": "das - cow, cattle, beef",
+    "german_sentence": "Die Rind ist sehr groß.",
+    "english_translation": "The cow is very big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rock",
+    "translation": "der - skirt, rock (music)",
+    "german_sentence": "Sie trägt ein Rock",
+    "english_translation": "She is wearing a skirt",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rohkost",
+    "translation": "die - raw food",
+    "german_sentence": "Ich esse viel Rohkost.",
+    "english_translation": "I eat a lot of raw food.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rosenkohl",
+    "translation": "der - (Brussels) sprouts",
+    "german_sentence": "Ich esse Rosenkohl zum Abendessen.",
+    "english_translation": "I eat Brussels sprouts for dinner.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Runde",
+    "translation": "die - round",
+    "german_sentence": "Die Runde ist sehr schön.",
+    "english_translation": "The round shape is very beautiful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Russe",
+    "translation": "der - Russian",
+    "german_sentence": "Er ist Russe.",
+    "english_translation": "He is Russian.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "russisch",
+    "translation": "Russian",
+    "german_sentence": "Sie spricht russisch.",
+    "english_translation": "She speaks Russian.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Russisch",
+    "translation": "das - Russian",
+    "german_sentence": "Ich spreche Russisch.",
+    "english_translation": "I speak Russian.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Russland",
+    "translation": "das - Russia",
+    "german_sentence": "Ich liebe Russland.",
+    "english_translation": "I love Russia.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Rücken",
+    "translation": "der - back; der - the back",
+    "german_sentence": "Ich habe Rückenschmerzen.",
+    "english_translation": "I have back pain.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "rückwärts",
+    "translation": "backward(s)",
+    "german_sentence": "Gehen Sie rückwärts!",
+    "english_translation": "Go backward!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sack",
+    "translation": "der - bag, sack",
+    "german_sentence": "Ich lege den Sack in den Schrank.",
+    "english_translation": "I put the bag in the closet.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Saft",
+    "translation": "der - juice",
+    "german_sentence": "Der Saft ist sehr gesund.",
+    "english_translation": "The juice is very healthy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sage",
+    "translation": "die - legend, saga, myth",
+    "german_sentence": "Die Sage von Atlantis ist legendär.",
+    "english_translation": "The legend of Atlantis is legendary.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sammeln",
+    "translation": "to collect, to gather",
+    "german_sentence": "Ich sammle Münzen für den Spendenmarathon.",
+    "english_translation": "I collect coins for the charity marathon.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "samstags",
+    "translation": "(on) Saturdays",
+    "german_sentence": "Ich gehe samstags zum Strand.",
+    "english_translation": "I go to the beach on Saturdays.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sandale",
+    "translation": "die - sandal",
+    "german_sentence": "Ich trage Sandalen zum Strand.",
+    "english_translation": "I wear sandals to the beach.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sanft",
+    "translation": "soft, gentle",
+    "german_sentence": "Die Musik ist sanft.",
+    "english_translation": "The music is soft.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "satt",
+    "translation": "full, rich, lush, replete, saturated",
+    "german_sentence": "Der Teller ist satt gegessen.",
+    "english_translation": "The plate is full.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "saß",
+    "translation": "sat",
+    "german_sentence": "Sie saß auf dem Sofa.",
+    "english_translation": "She sat on the couch.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schade",
+    "translation": "a pity, a shame, a bummer, too bad",
+    "german_sentence": "Es ist schade, dass es nicht funktioniert.",
+    "english_translation": "It's a pity that it doesn't work.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schale",
+    "translation": "die - shell, bowl, dish, skin",
+    "german_sentence": "Die Schale ist leer.",
+    "english_translation": "The bowl is empty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schaukeln",
+    "translation": "to swing, to rock, to sway",
+    "german_sentence": "Das Kind schaukelt im Baumwipfel.",
+    "english_translation": "The child is swinging in the treetop.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "scheu",
+    "translation": "shy, bashful, skittish",
+    "german_sentence": "Sie ist sehr scheu.",
+    "english_translation": "She is very shy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schicken",
+    "translation": "to send, to mail",
+    "german_sentence": "Ich werde das Paket schicken.",
+    "english_translation": "I will send the package.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schieben",
+    "translation": "to push",
+    "german_sentence": "Ich schiebe den Wagen die Straße hinunter.",
+    "english_translation": "I push the car down the street.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schielen",
+    "translation": "to (have a) squint, to be cross-eyed",
+    "german_sentence": "Meine Augen schielen.",
+    "english_translation": "My eyes are squinting.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schiene",
+    "translation": "die - rail, track, splint",
+    "german_sentence": "Die Schiene ist sehr wichtig für den Zug.",
+    "english_translation": "The rail is very important for the train.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schießen",
+    "translation": "to shoot, to fire",
+    "german_sentence": "Er schießt auf das Ziel.",
+    "english_translation": "He shoots at the target.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schiff",
+    "translation": "das - ship",
+    "german_sentence": "Das Schiff ist sehr groß.",
+    "english_translation": "The ship is very big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schild",
+    "translation": "das - sign",
+    "german_sentence": "Das Schild war leer.",
+    "english_translation": "The sign was empty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schleife",
+    "translation": "die - loop, bow",
+    "german_sentence": "Die Schleife ist ein wichtiger Teil des Programmcodes.",
+    "english_translation": "The loop is an important part of the program code.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schluckauf",
+    "translation": "der - hiccup, hiccough",
+    "german_sentence": "Ich habe einen Schluckauf.",
+    "english_translation": "I have a hiccup.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schlucken",
+    "translation": "to swallow",
+    "german_sentence": "Ich schlucke den Apfel.",
+    "english_translation": "I swallow the apple.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schnecke",
+    "translation": "die - snail",
+    "german_sentence": "Die Schnecke ist langsam.",
+    "english_translation": "The snail is slow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schneiden",
+    "translation": "to cut",
+    "german_sentence": "Ich schneide das Brot.",
+    "english_translation": "I cut the bread.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schnell",
+    "translation": "fast, quick; quickly, swiftly, rapidly, fast; fast",
+    "german_sentence": "Ich fahre schnell nach Hause.",
+    "english_translation": "I'm driving home quickly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schote",
+    "translation": "die - pod",
+    "german_sentence": "Die Schote ist grün.",
+    "english_translation": "The pod is green.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schreien",
+    "translation": "to scream, to shout, to yell, to cry, to screech",
+    "german_sentence": "Sie schreit laut in der Nacht.",
+    "english_translation": "She screams loudly at night.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schritt",
+    "translation": "der - step",
+    "german_sentence": "Er ging einen Schritt vorwärts.",
+    "english_translation": "He took a step forward.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schuhgröße",
+    "translation": "die - the shoe size",
+    "german_sentence": "Ich suche nach Schuhgröße 42.",
+    "english_translation": "I am looking for size 42 shoes.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schuss",
+    "translation": "der - shot",
+    "german_sentence": "Der Schuss traf den Baum.",
+    "english_translation": "The shot hit the tree.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schwach",
+    "translation": "weak",
+    "german_sentence": "Mein Körper ist schwach.",
+    "english_translation": "My body is weak.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schwanger",
+    "translation": "pregnant",
+    "german_sentence": "Meine Schwester ist schwanger.",
+    "english_translation": "My sister is pregnant.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schweden",
+    "translation": "das - Sweden",
+    "german_sentence": "Ich liebe Schweden.",
+    "english_translation": "I love Sweden.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schwein",
+    "translation": "das - pig, pork",
+    "german_sentence": "Das Schwein ist groß.",
+    "english_translation": "The pig is big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Schweizer",
+    "translation": "Swiss",
+    "german_sentence": "Er ist Schweizer.",
+    "english_translation": "He is Swiss.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "schwer",
+    "translation": "difficult, heavy, hard, severe, serious",
+    "german_sentence": "Das Problem ist schwer zu lösen.",
+    "english_translation": "The problem is difficult to solve.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "See",
+    "translation": "der - lake; die - sea",
+    "german_sentence": "Der See ist sehr schön.",
+    "english_translation": "The lake is very beautiful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sehen",
+    "translation": "to see, to view, to watch",
+    "german_sentence": "Ich sehe den Film.",
+    "english_translation": "I watch the movie.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sein",
+    "translation": "his, its, their, one's, his or her; to be",
+    "german_sentence": "Das ist sein Auto.",
+    "english_translation": "That is his car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sekt",
+    "translation": "der - sparkling wine",
+    "german_sentence": "Ich trinke gerne Sekt.",
+    "english_translation": "I enjoy drinking sparkling wine.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sekunde",
+    "translation": "die - second",
+    "german_sentence": "Die Sekunde ist vorbei.",
+    "english_translation": "The second is over.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Senf",
+    "translation": "der - mustard",
+    "german_sentence": "Ich esse Senf auf mein Brötchen.",
+    "english_translation": "I eat mustard on my bread.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Show",
+    "translation": "die - show",
+    "german_sentence": "Die Show ist heute abend",
+    "english_translation": "The show is tonight",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sich",
+    "translation": "herself, himself, itself, yourself, themselves, oneself",
+    "german_sentence": "Sie sieht sich im Spiegel.",
+    "english_translation": "She sees herself in the mirror.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sich schämen",
+    "translation": "to be ashamed, to be embarrassed",
+    "german_sentence": "Ich schäme mich für mein Verhalten.",
+    "english_translation": "I am ashamed of my behavior.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sich sorgen",
+    "translation": "to worry, to be worried, to be concerned",
+    "german_sentence": "Ich sorge mich um meine Familie.",
+    "english_translation": "I worry about my family.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sich umziehen",
+    "translation": "to change (clothes), to get changed",
+    "german_sentence": "Ich muss mich umziehen.",
+    "english_translation": "I have to get changed.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sicht",
+    "translation": "die - view, point of view, perspective, visibility, sight",
+    "german_sentence": "Die Sicht auf den Berg ist atemberaubend.",
+    "english_translation": "The view of the mountain is breathtaking.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sichtbar",
+    "translation": "visible",
+    "german_sentence": "Das ist sichtbar.",
+    "english_translation": "That is visible.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Silvester",
+    "translation": "das - New Year's Eve; New Year's Eve",
+    "german_sentence": "Wir feiern Silvester mit Freunden.",
+    "english_translation": "We celebrate New Year's Eve with friends.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "singen",
+    "translation": "to sing",
+    "german_sentence": "Ich singe gern.",
+    "english_translation": "I like to sing.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Single",
+    "translation": "der - single",
+    "german_sentence": "Ich bin Single.",
+    "english_translation": "I am single.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "single",
+    "translation": "single",
+    "german_sentence": "Ich bin Single.",
+    "english_translation": "I am single.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sitzen",
+    "translation": "to sit, to perch; to sit",
+    "german_sentence": "Die Katze sitzt auf dem Tisch.",
+    "english_translation": "The cat is sitting on the table.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ski fahren",
+    "translation": "ski",
+    "german_sentence": "Ich gehe Ski fahren.",
+    "english_translation": "I'm going skiing.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Soldat",
+    "translation": "der - soldier",
+    "german_sentence": "Der Soldat ist ein tapferer Krieger.",
+    "english_translation": "The soldier is a brave warrior.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sommer",
+    "translation": "der - summer",
+    "german_sentence": "Der Sommer ist schön.",
+    "english_translation": "Summer is beautiful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Song",
+    "translation": "der - song",
+    "german_sentence": "Ich singe einen Song.",
+    "english_translation": "I sing a song.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sonnabend",
+    "translation": "der - Saturday",
+    "german_sentence": "Der Sonnabend ist ein wichtiger Tag der Woche.",
+    "english_translation": "Saturday is an important day of the week.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sonnig",
+    "translation": "sunny",
+    "german_sentence": "Heute ist ein sonniger Tag.",
+    "english_translation": "Today is a sunny day.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sonntags",
+    "translation": "on Sundays",
+    "german_sentence": "Ich gehe sonntags ins Kino.",
+    "english_translation": "I go to the movies on Sundays.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sonst",
+    "translation": "otherwise",
+    "german_sentence": "Ich gehe sonst nach Hause.",
+    "english_translation": "I go home otherwise.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sorte",
+    "translation": "die - variety, sort, type, kind, flavour, flavor",
+    "german_sentence": "Ich liebe verschiedene Sorten von Kuchen.",
+    "english_translation": "I love different types of cake.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Soße, Sauce",
+    "translation": "die - sauce, gravy, dressing, dip",
+    "german_sentence": "Die Soße ist sehr lecker.",
+    "english_translation": "The sauce is very tasty.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sparschwein",
+    "translation": "das - piggy bank",
+    "german_sentence": "Ich füge Geld in das Sparschwein ein.",
+    "english_translation": "I add money to the piggy bank.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Spaß",
+    "translation": "der - fun, joke",
+    "german_sentence": "Der Spaß war groß.",
+    "english_translation": "The fun was great.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Speise",
+    "translation": "die - meal, food, dish",
+    "german_sentence": "Das ist mein Lieblingsgericht, eine leckere Speise.",
+    "english_translation": "That's my favorite dish, a delicious meal.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Spiegel",
+    "translation": "der - mirror",
+    "german_sentence": "Ich sehe mich im Spiegel.",
+    "english_translation": "I see myself in the mirror.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Spiegelei",
+    "translation": "das - fried egg",
+    "german_sentence": "Das Frühstück besteht aus einem Spiegelei und Toast.",
+    "english_translation": "The breakfast consists of a fried egg and toast.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Spiel",
+    "translation": "das - game, match, play; das - match",
+    "german_sentence": "Ich spiele gerne Fußball.",
+    "english_translation": "I play football gladly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Spinne",
+    "translation": "die - spider",
+    "german_sentence": "Die Spinne ist groß.",
+    "english_translation": "The spider is big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sport treiben",
+    "translation": "to do sports",
+    "german_sentence": "Ich treibe gerne Sport.",
+    "english_translation": "I enjoy doing sports.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sprechen",
+    "translation": "to speak, to talk",
+    "german_sentence": "Ich spreche Deutsch.",
+    "english_translation": "I speak German.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "spät",
+    "translation": "late",
+    "german_sentence": "Ich bin spät zum Treffen gekommen.",
+    "english_translation": "I was late for the meeting.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stahl",
+    "translation": "der - steel",
+    "german_sentence": "Der Stahl ist sehr hart.",
+    "english_translation": "The steel is very hard.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stall",
+    "translation": "der - stable, barn, shed, hutch",
+    "german_sentence": "Der Pferd steht im Stall.",
+    "english_translation": "The horse is in the stable.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stapel",
+    "translation": "der - stack, pile",
+    "german_sentence": "Der Stapel ist sehr hoch.",
+    "english_translation": "The stack is very high.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "stapeln",
+    "translation": "to stack, to pile up",
+    "german_sentence": "Die Bücher stapeln sich auf dem Tisch.",
+    "english_translation": "The books are stacking up on the table.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "stark",
+    "translation": "strong, thick, powerful, heavy, severe",
+    "german_sentence": "Er ist sehr stark.",
+    "english_translation": "He is very strong.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "starr",
+    "translation": "stiff, rigid, paralysed",
+    "german_sentence": "Der Mann ist starr vor Schmerz.",
+    "english_translation": "The man is stiff with pain.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "starren",
+    "translation": "to stare",
+    "german_sentence": "Sie starrt auf den Fernseher.",
+    "english_translation": "She is staring at the TV.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "starten",
+    "translation": "to start, to launch, to begin, to take off; take off",
+    "german_sentence": "Der Flugzeug startet jetzt.",
+    "english_translation": "The plane is taking off now.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stau",
+    "translation": "der - traffic jam, congestion; der - the traffic jam",
+    "german_sentence": "Der Stau auf der Autobahn ist sehr langsam.",
+    "english_translation": "The traffic jam on the highway is very slow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stein",
+    "translation": "der - rock, stone",
+    "german_sentence": "Der Stein ist sehr hart.",
+    "english_translation": "The rock is very hard.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stempel",
+    "translation": "der - stamp",
+    "german_sentence": "Ich brauche einen Stempel für die Post.",
+    "english_translation": "I need a stamp for the mail.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "sterben",
+    "translation": "to die",
+    "german_sentence": "Der Mensch stirbt.",
+    "english_translation": "The person dies.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stier",
+    "translation": "der - bull, Taurus",
+    "german_sentence": "Der Stier ist ein Symbol für Stärke.",
+    "english_translation": "The bull is a symbol for strength.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stil",
+    "translation": "der - style; der - the style; style",
+    "german_sentence": "Er hat einen guten Stil.",
+    "english_translation": "He has a good style.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stille",
+    "translation": "die - silence, stillness, quietness, calm, tranquillity",
+    "german_sentence": "Die Stille der Nacht ist sehr beruhigend.",
+    "english_translation": "The silence of the night is very calming.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stirn",
+    "translation": "die - forehead",
+    "german_sentence": "Sie hat eine Stirn, die sehr breit ist.",
+    "english_translation": "She has a forehead that is very broad.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stock",
+    "translation": "der - floor, story, storey, stick, cane",
+    "german_sentence": "Ich gehe auf den Stock.",
+    "english_translation": "I go to the floor.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "stoppen",
+    "translation": "to stop",
+    "german_sentence": "Bitte stoppen Sie das Auto.",
+    "english_translation": "Please stop the car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "stoßen",
+    "translation": "to bump, to push, to encounter",
+    "german_sentence": "Ich stoße auf einen Freund.",
+    "english_translation": "I bump into a friend.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Strand",
+    "translation": "der - beach; der - the beach",
+    "german_sentence": "Ich gehe zum Strand.",
+    "english_translation": "I am going to the beach.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Strauch",
+    "translation": "der - shrub, bush",
+    "german_sentence": "Der Strauch ist sehr klein.",
+    "english_translation": "The shrub is very small.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Strauß",
+    "translation": "der - bouquet, bunch, ostrich",
+    "german_sentence": "Der Strauß ist sehr schön.",
+    "english_translation": "The bouquet is very beautiful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Straße",
+    "translation": "die - road, street",
+    "german_sentence": "Ich gehe die Straße entlang.",
+    "english_translation": "I walk along the road.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "stur",
+    "translation": "stubborn, obstinate",
+    "german_sentence": "Er ist sehr stur.",
+    "english_translation": "He is very stubborn.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Stück",
+    "translation": "das - piece, part, bit",
+    "german_sentence": "Ich brauche ein Stück Papier.",
+    "english_translation": "I need a piece of paper.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Suche",
+    "translation": "die - search",
+    "german_sentence": "Ich suche nach meinem Schlüssel.",
+    "english_translation": "I am searching for my key.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Summe",
+    "translation": "die - sum",
+    "german_sentence": "Die Summe der Kosten beträgt 100 Euro.",
+    "english_translation": "The sum of the costs is 100 euros.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Sumpf",
+    "translation": "der - swamp, marsh, bog, quagmire",
+    "german_sentence": "Der Sumpf ist sehr gefährlich.",
+    "english_translation": "The swamp is very dangerous.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Suppe",
+    "translation": "die - soup, potage",
+    "german_sentence": "Ich esse eine Suppe.",
+    "english_translation": "I am eating a soup.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "süß",
+    "translation": "sweet, cute; sweet",
+    "german_sentence": "Das ist süß.",
+    "english_translation": "That's cute.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Tafel",
+    "translation": "die - board, blackboard, table",
+    "german_sentence": "Die Lehrerin schreibt auf die Tafel.",
+    "english_translation": "The teacher writes on the blackboard.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "tagsüber",
+    "translation": "during the day, by day",
+    "german_sentence": "Ich bin tagsüber im Büro.",
+    "english_translation": "I am at the office during the day.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Talent",
+    "translation": "das - talent",
+    "german_sentence": "Sie hat großes Talent.",
+    "english_translation": "She has great talent.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "tanken",
+    "translation": "to refuel, to fuel, to fill up, to gas up, to tank",
+    "german_sentence": "Ich muss mein Auto tanken.",
+    "english_translation": "I need to refuel my car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "tanzen",
+    "translation": "to dance",
+    "german_sentence": "Ich tanze gerne.",
+    "english_translation": "I dance gladly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Tasse",
+    "translation": "die - cup, mug; die - the mug",
+    "german_sentence": "Ich trinke aus dieser Tasse.",
+    "english_translation": "I drink from this cup.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Taste",
+    "translation": "die - key, button",
+    "german_sentence": "Drücke die Taste.",
+    "english_translation": "Press the key.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Tat",
+    "translation": "die - act, deed, action, crime",
+    "german_sentence": "Die Tat war schrecklich.",
+    "english_translation": "The act was terrible.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Telefon",
+    "translation": "das - telephone, phone",
+    "german_sentence": "Ich habe mein Telefon im Auto vergessen.",
+    "english_translation": "I forgot my phone in the car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Telefonat",
+    "translation": "das - telephone call",
+    "german_sentence": "Ich habe ein Telefonat mit meiner Mutter geführt.",
+    "english_translation": "I had a telephone call with my mother.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Tempo",
+    "translation": "das - pace, speed, Kleenex, tissue",
+    "german_sentence": "Das Tempo ist sehr schnell.",
+    "english_translation": "The pace is very fast.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Test",
+    "translation": "der - test, trial",
+    "german_sentence": "Der Test war erfolgreich.",
+    "english_translation": "The test was successful.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "testen",
+    "translation": "to test",
+    "german_sentence": "Wir werden das neue Produkt testen.",
+    "english_translation": "We will test the new product.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ticket",
+    "translation": "das - ticket",
+    "german_sentence": "Ich kaufe ein Ticket.",
+    "english_translation": "I buy a ticket.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "tja",
+    "translation": "well",
+    "german_sentence": "Tja, das ist nicht schlecht.",
+    "english_translation": "Well, that's not bad.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Tofu",
+    "translation": "der - tofu",
+    "german_sentence": "Ich esse Tofu.",
+    "english_translation": "I eat tofu.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "toll",
+    "translation": "great, terrific, awesome, fantastic",
+    "german_sentence": "Das Konzert war toll!",
+    "english_translation": "The concert was great!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Tomate",
+    "translation": "die - tomato",
+    "german_sentence": "Ich esse eine Tomate.",
+    "english_translation": "I eat a tomato.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Topf",
+    "translation": "der - pot; der - the saucepan",
+    "german_sentence": "Ich koche in diesem Topf.",
+    "english_translation": "I am cooking in this pot.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "tschüss",
+    "translation": "goodbye, bye",
+    "german_sentence": "Bis zum nächsten Mal, tschüss!",
+    "english_translation": "See you next time, goodbye!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "tun",
+    "translation": "to do",
+    "german_sentence": "Ich werde das tun.",
+    "english_translation": "I will do that.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "umso",
+    "translation": "the more",
+    "german_sentence": "Je mehr ich esse, umso fettleibiger werde ich.",
+    "english_translation": "The more I eat, the fatter I become.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "umsonst",
+    "translation": "for nothing, in vain, for free, free (of charge)",
+    "german_sentence": "Ich gehe ins Kino, umsonst.",
+    "english_translation": "I'm going to the cinema for free.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Umweg",
+    "translation": "der - detour, diversion, long way round",
+    "german_sentence": "Der Umweg ist lang.",
+    "english_translation": "The detour is long.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Unfall",
+    "translation": "der - accident",
+    "german_sentence": "Der Unfall war sehr schlimm.",
+    "english_translation": "The accident was very bad.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ungeduld",
+    "translation": "die - impatience",
+    "german_sentence": "Ich habe keine Geduld.",
+    "english_translation": "I have no patience.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ungeduldig",
+    "translation": "impatient",
+    "german_sentence": "Er ist sehr ungeduldig.",
+    "english_translation": "He is very impatient.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "ungefähr",
+    "translation": "approximately",
+    "german_sentence": "Der Film dauert ungefähr zwei Stunden.",
+    "english_translation": "The movie lasts approximately two hours.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "uns",
+    "translation": "us, ourselves, each other",
+    "german_sentence": "Wir helfen uns.",
+    "english_translation": "We help each other.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "unser",
+    "translation": "our",
+    "german_sentence": "Dies ist unser Haus.",
+    "english_translation": "This is our house.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "unten",
+    "translation": "down, below, at the bottom, downstairs",
+    "german_sentence": "Gehen Sie unten in den Keller.",
+    "english_translation": "Go downstairs to the basement.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "unter",
+    "translation": "under, among, below, beneath; under",
+    "german_sentence": "Das Buch liegt unter dem Tisch.",
+    "english_translation": "The book lies under the table.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Unterhose",
+    "translation": "die - (under)pants",
+    "german_sentence": "Ich trage eine Unterhose.",
+    "english_translation": "I wear underpants.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "unzertrennlich",
+    "translation": "inseparable",
+    "german_sentence": "Sie sind unzertrennlich.",
+    "english_translation": "They are inseparable.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "unzufrieden",
+    "translation": "dissatisfied, unhappy; unhappy",
+    "german_sentence": "Ich bin unzufrieden mit dem Essen.",
+    "english_translation": "I am dissatisfied with the food.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "unzureichend",
+    "translation": "insufficient, inadequate",
+    "german_sentence": "Die Unterstützung war unzureichend.",
+    "english_translation": "The support was insufficient.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "unzuverlässig",
+    "translation": "unreliable",
+    "german_sentence": "Er ist unzuverlässig.",
+    "english_translation": "He is unreliable.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "unzählig",
+    "translation": "countless, innumerable",
+    "german_sentence": "Die Sterne am Himmel sind unzählig.",
+    "english_translation": "The stars in the sky are countless.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "USA",
+    "translation": "die - the USA, the US, the United States",
+    "german_sentence": "Die USA ist ein Bundesstaat.",
+    "english_translation": "The USA is a federal state.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "vage",
+    "translation": "vague(ly)",
+    "german_sentence": "Er hat eine vage Idee.",
+    "english_translation": "He has a vague idea.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Vampir",
+    "translation": "der - vampire",
+    "german_sentence": "Er ist ein Vampir.",
+    "english_translation": "He is a vampire.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "verheiratet",
+    "translation": "married",
+    "german_sentence": "Die Frau ist verheiratet.",
+    "english_translation": "The woman is married.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Verkauf",
+    "translation": "der - sale",
+    "german_sentence": "Der Verkauf ist morgen.",
+    "english_translation": "The sale is tomorrow.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "verkaufen",
+    "translation": "to sell",
+    "german_sentence": "Ich werde mein Auto verkaufen.",
+    "english_translation": "I will sell my car.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Verkehr",
+    "translation": "der - traffic, transport",
+    "german_sentence": "Der Verkehr ist sehr stark.",
+    "english_translation": "The traffic is very heavy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "verkehren",
+    "translation": "to run, to operate, to associate",
+    "german_sentence": "Der Zug verkehrt zwischen Berlin und München.",
+    "english_translation": "The train runs between Berlin and Munich.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "verkehrt",
+    "translation": "wrong",
+    "german_sentence": "Die Antwort ist verkehrt.",
+    "english_translation": "The answer is wrong.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Version",
+    "translation": "die - version",
+    "german_sentence": "Ich brauche die aktuelle Version des Programms.",
+    "english_translation": "I need the current version of the program.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "vierzehn -14",
+    "translation": "fourteen",
+    "german_sentence": "Ich bin vierzehn Jahre alt.",
+    "english_translation": "I am fourteen years old.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Volleyball",
+    "translation": "der - volleyball",
+    "german_sentence": "Ich spiele Volleyball.",
+    "english_translation": "I play volleyball.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "vom Sport",
+    "translation": "from doing the same sport",
+    "german_sentence": "Ich bin vom Sport",
+    "english_translation": "I am from doing the same sport",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "von der Arbeit",
+    "translation": "from work",
+    "german_sentence": "Ich komme von der Arbeit.",
+    "english_translation": "I come from work.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Vorhang",
+    "translation": "der - curtain",
+    "german_sentence": "Der Vorhang ist dunkel.",
+    "english_translation": "The curtain is dark.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wachsen",
+    "translation": "to grow, to increase, to wax",
+    "german_sentence": "Der Baum wächst schnell.",
+    "english_translation": "The tree is growing quickly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Wade",
+    "translation": "die - calf",
+    "german_sentence": "Die Wade ist sehr empfindlich.",
+    "english_translation": "The calf is very sensitive.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wahr",
+    "translation": "true, real",
+    "german_sentence": "Das ist wahr.",
+    "english_translation": "That is true.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Wange",
+    "translation": "die - cheek",
+    "german_sentence": "Die Wange ist rot.",
+    "english_translation": "Her cheek is red.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Ware",
+    "translation": "die - goods",
+    "german_sentence": "Die Ware ist sehr teuer.",
+    "english_translation": "The goods are very expensive.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "was",
+    "translation": "what",
+    "german_sentence": "Was ist dein Name?",
+    "english_translation": "What is your name?",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "waschen",
+    "translation": "to wash",
+    "german_sentence": "Ich wasche die Wäsche.",
+    "english_translation": "I wash the laundry.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "weben",
+    "translation": "to weave sth",
+    "german_sentence": "Ich web ein Tuch.",
+    "english_translation": "I am weaving a cloth.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "weg",
+    "translation": "away, off",
+    "german_sentence": "Gehen Sie weg!",
+    "english_translation": "Go away!",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "weich",
+    "translation": "soft",
+    "german_sentence": "Die Matratze ist weich.",
+    "english_translation": "The mattress is soft.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "weil",
+    "translation": "because, as; because",
+    "german_sentence": "Ich gehe ins Kino, weil ich ein neues Film sehen möchte.",
+    "english_translation": "I'm going to the cinema because I want to see a new film.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Weile",
+    "translation": "die - while",
+    "german_sentence": "Ich warte eine Weile.",
+    "english_translation": "I'm waiting a while.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "weinen",
+    "translation": "to cry, to weep; to cry",
+    "german_sentence": "Der Junge weint, weil er sich verletzt hat.",
+    "english_translation": "The boy is crying because he got hurt.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Welle",
+    "translation": "die - wave",
+    "german_sentence": "Die Welle ist sehr hoch.",
+    "english_translation": "The wave is very high.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Welt",
+    "translation": "die - world",
+    "german_sentence": "Die Welt ist sehr groß.",
+    "english_translation": "The world is very big.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wenige",
+    "translation": "few",
+    "german_sentence": "Es sind wenige Menschen im Raum.",
+    "english_translation": "There are few people in the room.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wer",
+    "translation": "who",
+    "german_sentence": "Wer ist dein Vater?",
+    "english_translation": "Who is your father?",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wert",
+    "translation": "worth",
+    "german_sentence": "Das ist wert.",
+    "english_translation": "That's worth it.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "weshalb",
+    "translation": "why",
+    "german_sentence": "Ich frage mich, weshalb du nicht kommst.",
+    "english_translation": "I wonder why you're not coming.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wie",
+    "translation": "how, like, as, such as, what",
+    "german_sentence": "Wie geht es dir?",
+    "english_translation": "How are you?",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Wie heißt du?",
+    "translation": "What's your name?",
+    "german_sentence": "Wie heißt du?",
+    "english_translation": "What's your name?",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wiegen",
+    "translation": "to weigh",
+    "german_sentence": "Das Kind wiegt 10 Kilo.",
+    "english_translation": "The child weighs 10 kilos.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wischen",
+    "translation": "to wipe, to swipe, to mop; to mop",
+    "german_sentence": "Wischen den Tisch ab.",
+    "english_translation": "Wipe the table.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wo",
+    "translation": "where",
+    "german_sentence": "Wo ist das Hotel?",
+    "english_translation": "Where is the hotel?",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wollen",
+    "translation": "to want",
+    "german_sentence": "Ich will ein Eis essen.",
+    "english_translation": "I want to eat ice cream.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Wunde",
+    "translation": "die - wound",
+    "german_sentence": "Die Wunde schmerzt sehr.",
+    "english_translation": "The wound hurts very much.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Wunder",
+    "translation": "das - miracle, wonder",
+    "german_sentence": "Das Wunder war unglaublich.",
+    "english_translation": "The miracle was unbelievable.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Wurf",
+    "translation": "der - throw, litter, toss",
+    "german_sentence": "Er warf den Ball in die Luft.",
+    "english_translation": "He threw the ball in the air.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Wut",
+    "translation": "die - anger, rage, fury",
+    "german_sentence": "Die Wut ist übermäßig.",
+    "english_translation": "The anger is excessive.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "wärmen",
+    "translation": "to warm (up), to heat",
+    "german_sentence": "Die Heizung wärmt das Zimmer.",
+    "english_translation": "The heating system warms the room.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zahm",
+    "translation": "tame",
+    "german_sentence": "Der Löwe ist zahm.",
+    "english_translation": "The lion is tame.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zange",
+    "translation": "die - pliers, pincer, forceps",
+    "german_sentence": "Ich brauche eine Zange, um den Nagel zu entfernen.",
+    "english_translation": "I need a pair of pliers to remove the nail.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zanken",
+    "translation": "to quarrel, to squabble, to bicker",
+    "german_sentence": "Die Kinder zanken sich über ein Spielzeug.",
+    "english_translation": "The children are quarreling over a toy.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zeile",
+    "translation": "die - line, row",
+    "german_sentence": "Die Zeile ist voll.",
+    "english_translation": "The line is full.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zelle",
+    "translation": "die - cell",
+    "german_sentence": "Die Zelle ist ein kleiner Raum.",
+    "english_translation": "The cell is a small room.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zettel",
+    "translation": "der - piece of paper, note, receipt",
+    "german_sentence": "Ich habe ein Zettel aufgeschrieben.",
+    "english_translation": "I wrote a note.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zeug",
+    "translation": "das - stuff, things, nonsense",
+    "german_sentence": "Das ist nur Zeug.",
+    "english_translation": "That's just nonsense.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zeuge",
+    "translation": "der - witness",
+    "german_sentence": "Der Zeuge sah das Unfall.",
+    "english_translation": "The witness saw the accident.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zitat",
+    "translation": "das - quotation, quote",
+    "german_sentence": "Das Zitat ist sehr interessant.",
+    "english_translation": "The quote is very interesting.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zittern",
+    "translation": "to tremble, to shake, to shiver",
+    "german_sentence": "Meine Hände zittern vor Kälte.",
+    "english_translation": "My hands are trembling with cold.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zucker",
+    "translation": "der - sugar",
+    "german_sentence": "Ich esse Zucker.",
+    "english_translation": "I eat sugar.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zuerst",
+    "translation": "first, at first, initially",
+    "german_sentence": "Ich esse zuerst das Frühstück.",
+    "english_translation": "I eat breakfast first.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zufall",
+    "translation": "der - chance, coincidence",
+    "german_sentence": "Es war ein Zufall, dass wir uns trafen.",
+    "english_translation": "It was a coincidence that we met.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zug",
+    "translation": "der - train",
+    "german_sentence": "Der Zug fährt um 10 Uhr ab.",
+    "english_translation": "The train departs at 10 o'clock.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zuhause",
+    "translation": "das - home",
+    "german_sentence": "Ich bin zu Hause.",
+    "english_translation": "I am at home.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zuhause, zu Hause",
+    "translation": "at home, home",
+    "german_sentence": "Ich bin zu Hause.",
+    "english_translation": "I am at home.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zuhören",
+    "translation": "to listen",
+    "german_sentence": "Ich höre zu.",
+    "english_translation": "I'm listening.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zuhörer",
+    "translation": "der - listener, audience (pl)",
+    "german_sentence": "Der Zuhörer ist sehr interessiert.",
+    "english_translation": "The listener is very interested.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zukommen",
+    "translation": "to come towards, to come to",
+    "german_sentence": "Der Bus kommt uns zukommen.",
+    "english_translation": "The bus is coming towards us.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zum",
+    "translation": "to the, for, for the",
+    "german_sentence": "Ich gehe zum Bahnhof.",
+    "english_translation": "I'm going to the station.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zuvor",
+    "translation": "before, previously, beforehand",
+    "german_sentence": "Ich habe mich vorher nicht gefragt.",
+    "english_translation": "I didn't ask before.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "Zuwachs",
+    "translation": "der - increase, growth, gain, increment",
+    "german_sentence": "Der Zuwachs an Verkäufen war erfreulich.",
+    "english_translation": "The increase in sales was pleasing.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zwanzig -20",
+    "translation": "twenty",
+    "german_sentence": "Ich habe zwanzig Bücher.",
+    "english_translation": "I have twenty books.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zwicken",
+    "translation": "to pinch",
+    "german_sentence": "Sie zwickte mich, weil ich zu langsam ging.",
+    "english_translation": "She pinched me because I walked too slowly.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "zählen",
+    "translation": "to count",
+    "german_sentence": "Ich zähle bis zehn.",
+    "english_translation": "I count up to ten.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "öffnen",
+    "translation": "to open",
+    "german_sentence": "Die Tür öffnet sich.",
+    "english_translation": "The door opens.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "üblich",
+    "translation": "usual, common, customary",
+    "german_sentence": "Das ist das übliche Verfahren.",
+    "english_translation": "That is the usual procedure.",
+    "cefr_level": "A2"
+  },
+  {
+    "word": "übrig",
+    "translation": "remaining, left",
+    "german_sentence": "Es ist noch etwas übrig.",
+    "english_translation": "There is still something left.",
+    "cefr_level": "A2"
+  }
+]
