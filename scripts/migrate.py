@@ -12,13 +12,16 @@ load_dotenv()
 
 MONGODB_URI = os.environ["MONGODB_URI"]
 DB_NAME = os.environ["DB_NAME"]
-JSON_PATH = Path(__file__).parent.parent / "combined_words.json"
+JSON_PATH = Path(__file__).parent.parent / "combined_words_a1.json"
 
 
-def make_document(word: str, translation: str) -> dict:
+def make_document(item: dict) -> dict:
     return {
-        "word": word,
-        "translation": translation,
+        "word": item["word"],
+        "translation": item["translation"],
+        "german_sentence": item.get("german_sentence", ""),
+        "english_translation": item.get("english_translation", ""),
+        "cefr_level": item.get("cefr_level", "Unknown"),
         "fsrs_state": "New",
         "due_date": datetime.now(timezone.utc),
         "state": 1,
@@ -36,16 +39,15 @@ async def migrate():
 
     count = await collection.count_documents({})
     if count > 0:
-        print(f"Collection already has {count} documents. Skipping upload.")
-        print("To re-run, drop the collection first in Atlas.")
-        client.close()
-        return
+        print(f"Collection currently has {count} documents. Dropping the collection...")
+        await collection.drop()
+        print("Collection dropped.")
 
     print(f"Loading {JSON_PATH} ...")
     with open(JSON_PATH, encoding="utf-8") as f:
         words = json.load(f)
 
-    documents = [make_document(w["word"], w["translation"]) for w in words]
+    documents = [make_document(w) for w in words]
     print(f"Inserting {len(documents)} documents ...")
     result = await collection.insert_many(documents)
     print(f"Inserted {len(result.inserted_ids)} documents.")

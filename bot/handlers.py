@@ -68,9 +68,15 @@ async def _send_card_front(
     keyboard = InlineKeyboardMarkup(
         [[InlineKeyboardButton("Show Answer", callback_data=f"show_answer:{card_id}")]]
     )
+    
+    cefr = card.get("cefr_level", "Unknown")
+    front_text = f"[{cefr}] 🇩🇪 {card['word']}"
+    if card.get("german_sentence"):
+        front_text += f"\n📝 {card['german_sentence']}"
+
     await context.bot.send_message(
         chat_id=chat_id,
-        text=f"🇩🇪 {card['word']}",
+        text=front_text,
         reply_markup=keyboard,
     )
 
@@ -116,8 +122,15 @@ async def callback_show_answer(
             ],
         ]
     )
+    cefr = card.get("cefr_level", "Unknown")
+    back_text = f"[{cefr}] 🇩🇪 {card['word']}\n🇬🇧 {card['translation']}"
+    if card.get("german_sentence"):
+        back_text += f"\n\n📝 {card['german_sentence']}"
+    if card.get("english_translation"):
+        back_text += f"\n🇬🇧 {card['english_translation']}"
+
     await query.edit_message_text(
-        text=f"🇩🇪 {card['word']}\n🇬🇧 {card['translation']}",
+        text=back_text,
         reply_markup=keyboard,
     )
 
