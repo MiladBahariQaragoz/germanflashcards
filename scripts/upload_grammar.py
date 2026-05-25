@@ -66,7 +66,8 @@ async def upload_grammar() -> None:
     await db.close()
     print(f"\nDone. New cards uploaded: {total_new}, Already existed: {total_existing}")
     print(
-        "\nCreate this composite index in Firestore console:\n"
+        "\nNote: This script only populates the grammar_cards collection.\n"
+        "When grammar_progress is in use, create this composite index:\n"
         "  Collection : grammar_progress\n"
         "  Fields     : user_id ASC, due_date ASC\n"
         "  Console    : https://console.firebase.google.com/project/_/firestore/indexes"
