@@ -1,4 +1,5 @@
 import logging
+import asyncio
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -16,27 +17,40 @@ logger = logging.getLogger(__name__)
 
 
 async def morning_trigger(bot) -> None:
-    """Reset all queues and send each registered user their daily card count."""
+    """Reset all queues and send each user their daily grammar + vocab card counts."""
     qm.reset_all_sessions()
+    qm.reset_all_grammar_sessions()
 
     all_users = await db.get_all_users()
-    # Always include admin — they may not have a users doc yet
     user_ids = {u["user_id"] for u in all_users}
     user_ids.add(config.AUTHORIZED_CHAT_ID)
 
-    keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("Start Session", callback_data="start_session")]]
-    )
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("📚 Start Grammar", callback_data="start_grammar_session"),
+            InlineKeyboardButton("🗂️ Start Vocab", callback_data="start_session"),
+        ]
+    ])
 
     for user_id in user_ids:
         try:
             settings = await db.get_user_settings(user_id)
             cefr = settings["cefr_levels"]
-            due_count = await db.count_due_cards(user_id, cefr_levels=cefr)
-            display_count = due_count + (20 if due_count <= 150 else 0)
+
+            grammar_due, vocab_due = await asyncio.gather(
+                db.count_due_grammar_cards(user_id, cefr_levels=cefr),
+                db.count_due_cards(user_id, cefr_levels=cefr),
+            )
+            grammar_display = grammar_due + (20 if grammar_due <= 150 else 0)
+            vocab_display = vocab_due + (20 if vocab_due <= 150 else 0)
+
             await bot.send_message(
                 chat_id=user_id,
-                text=f"Guten Morgen! You have {display_count} cards due today.",
+                text=(
+                    f"Guten Morgen! 🌅\n\n"
+                    f"📚 Grammar: {grammar_display} card{'s' if grammar_display != 1 else ''}\n"
+                    f"🗂️ Vocab: {vocab_display} card{'s' if vocab_display != 1 else ''}"
+                ),
                 reply_markup=keyboard,
             )
         except Exception as e:
@@ -44,40 +58,71 @@ async def morning_trigger(bot) -> None:
 
 
 async def nag_check(bot) -> None:
-    """Remind every user who hasn't finished their session today."""
+    """Remind users who haven't finished one or both sessions today."""
     all_users = await db.get_all_users()
     user_ids = {u["user_id"] for u in all_users}
     user_ids.add(config.AUTHORIZED_CHAT_ID)
 
-    keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton("Start Session", callback_data="start_session")]]
-    )
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("📚 Start Grammar", callback_data="start_grammar_session"),
+            InlineKeyboardButton("🗂️ Start Vocab", callback_data="start_session"),
+        ]
+    ])
 
     for user_id in user_ids:
         try:
-            session = qm.get_session(user_id)
-            if session.kill_switch:
+            grammar_session = qm.get_grammar_session(user_id)
+            vocab_session = qm.get_session(user_id)
+
+            # Both done — skip entirely
+            if grammar_session.kill_switch and vocab_session.kill_switch:
                 continue
 
             settings = await db.get_user_settings(user_id)
             cefr = settings["cefr_levels"]
 
-            if session.active:
-                remaining = session.remaining_count()
-            else:
-                due_count = await db.count_due_cards(user_id, cefr_levels=cefr)
-                remaining = due_count + (20 if due_count <= 150 else 0)
+            # Grammar remaining
+            grammar_remaining = 0
+            if not grammar_session.kill_switch:
+                if grammar_session.active:
+                    grammar_remaining = grammar_session.remaining_count()
+                else:
+                    grammar_due = await db.count_due_grammar_cards(user_id, cefr_levels=cefr)
+                    grammar_remaining = grammar_due + (20 if grammar_due <= 150 else 0)
 
-            if remaining == 0:
+            # Vocab remaining
+            vocab_remaining = 0
+            if not vocab_session.kill_switch:
+                if vocab_session.active:
+                    vocab_remaining = vocab_session.remaining_count()
+                else:
+                    vocab_due = await db.count_due_cards(user_id, cefr_levels=cefr)
+                    vocab_remaining = vocab_due + (20 if vocab_due <= 150 else 0)
+
+            if grammar_remaining == 0 and vocab_remaining == 0:
                 continue
 
-            tomorrow_pile = remaining * 2
+            parts = []
+            if grammar_remaining > 0:
+                parts.append(
+                    f"📚 {grammar_remaining} grammar card{'s' if grammar_remaining != 1 else ''}"
+                )
+            if vocab_remaining > 0:
+                parts.append(
+                    f"🗂️ {vocab_remaining} vocab card{'s' if vocab_remaining != 1 else ''}"
+                )
+
+            remaining_text = " and ".join(parts)
+            total = grammar_remaining + vocab_remaining
+            tomorrow_pile = total * 2
+
             await bot.send_message(
                 chat_id=user_id,
                 text=(
-                    f"⏰ You still have {remaining} card{'s' if remaining != 1 else ''} left for today.\n\n"
-                    f"Skip today and these cards pile onto tomorrow — "
-                    f"you could be facing ~{tomorrow_pile} instead of ~{remaining}. "
+                    f"⏰ You still have {remaining_text} left for today.\n\n"
+                    f"Skip today and these pile onto tomorrow — "
+                    f"you could be facing ~{tomorrow_pile} instead of ~{total}. "
                     f"A few minutes now saves double the work tomorrow! 💪"
                 ),
                 reply_markup=keyboard,
