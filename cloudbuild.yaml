@@ -1,0 +1,9 @@
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud compute ssh --zone=us-central1-a german-bot --project=learn-german-bot --command="cd /home/student/germanflashcards && git pull && sudo systemctl restart german-bot"
+options:
+  logging: CLOUD_LOGGING_ONLY

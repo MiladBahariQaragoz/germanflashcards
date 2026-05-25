@@ -30,12 +30,14 @@ def _doc_id(card: dict) -> str:
     return hashlib.md5(key.encode()).hexdigest()
 
 
+BATCH_SIZE = 400  # Firestore max is 500; stay under for safety
+
+
 async def upload_grammar() -> None:
-    db = firestore.AsyncClient()
+    db = firestore.AsyncClient(project="learn-german-bot")
     col = db.collection("grammar_cards")
 
-    total_new = 0
-    total_existing = 0
+    total = 0
 
     for json_file in GRAMMAR_FILES:
         if not json_file.exists():
@@ -47,24 +49,26 @@ async def upload_grammar() -> None:
 
         print(f"  Processing {json_file.name} ({len(cards)} cards) ...")
 
-        for card in cards:
-            doc_id = _doc_id(card)
-            ref = col.document(doc_id)
-            snapshot = await ref.get()
-            if snapshot.exists:
-                total_existing += 1
-                continue
-            await ref.set({
-                "word": card["word"],
-                "translation": card["translation"],
-                "german_sentence": card.get("german_sentence", ""),
-                "english_translation": card.get("english_translation", ""),
-                "cefr_level": card.get("cefr_level", "Unknown"),
-            })
-            total_new += 1
+        # Split into batches of BATCH_SIZE
+        for i in range(0, len(cards), BATCH_SIZE):
+            batch = db.batch()
+            chunk = cards[i : i + BATCH_SIZE]
+            for card in chunk:
+                doc_id = _doc_id(card)
+                ref = col.document(doc_id)
+                batch.set(ref, {
+                    "word": card["word"],
+                    "translation": card["translation"],
+                    "german_sentence": card.get("german_sentence", ""),
+                    "english_translation": card.get("english_translation", ""),
+                    "cefr_level": card.get("cefr_level", "Unknown"),
+                })
+            await batch.commit()
+            total += len(chunk)
+            print(f"    Committed {total} cards so far...")
 
-    await db.close()
-    print(f"\nDone. New cards uploaded: {total_new}, Already existed: {total_existing}")
+    db.close()
+    print(f"\nDone. Total cards upserted: {total}")
     print(
         "\nNote: This script only populates the grammar_cards collection.\n"
         "When grammar_progress is in use, create this composite index:\n"
