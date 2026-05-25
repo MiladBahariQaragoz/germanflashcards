@@ -1,6 +1,9 @@
 python-telegram-bot==21.5
-motor==3.7.1
+google-cloud-firestore==2.19.0
 fsrs==6.3.1
 apscheduler==3.10.4
 python-dotenv==1.0.1
 pytz==2024.1
+# motor is only needed to run scripts/migrate_v2.py once (reads old MongoDB data).
+# Remove it after migration is complete.
+motor==3.7.1
