@@ -1,3 +1,5 @@
+import logging
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
@@ -10,38 +12,67 @@ from bot import db
 from bot import queue_manager as qm
 
 BERLIN = pytz_timezone("Europe/Berlin")
+logger = logging.getLogger(__name__)
 
 
 async def morning_trigger(bot) -> None:
-    qm.session.reset()
-    due_count = await db.count_due_cards()
-    display_count = due_count + (20 if due_count <= 150 else 0)
+    """Reset all queues and send each registered user their daily card count."""
+    qm.reset_all_sessions()
+
+    all_users = await db.get_all_users()
+    # Always include admin — they may not have a users doc yet
+    user_ids = {u["user_id"] for u in all_users}
+    user_ids.add(config.AUTHORIZED_CHAT_ID)
+
     keyboard = InlineKeyboardMarkup(
         [[InlineKeyboardButton("Start Session", callback_data="start_session")]]
     )
-    await bot.send_message(
-        chat_id=config.AUTHORIZED_CHAT_ID,
-        text=f"Guten Morgen! You have {display_count} cards due today.",
-        reply_markup=keyboard,
-    )
+
+    for user_id in user_ids:
+        try:
+            due_count = await db.count_due_cards(user_id)
+            display_count = due_count + (20 if due_count <= 150 else 0)
+            await bot.send_message(
+                chat_id=user_id,
+                text=f"Guten Morgen! You have {display_count} cards due today.",
+                reply_markup=keyboard,
+            )
+        except Exception as e:
+            logger.warning("morning_trigger failed for user %s: %s", user_id, e)
 
 
 async def nag_check(bot) -> None:
-    if qm.session.kill_switch:
-        return
-    if qm.session.active:
-        remaining = qm.session.remaining_count()
-    else:
-        due_count = await db.count_due_cards()
-        remaining = due_count + (20 if due_count <= 150 else 0)
+    """Remind every user who hasn't finished their session today."""
+    all_users = await db.get_all_users()
+    user_ids = {u["user_id"] for u in all_users}
+    user_ids.add(config.AUTHORIZED_CHAT_ID)
+
     keyboard = InlineKeyboardMarkup(
         [[InlineKeyboardButton("Start Session", callback_data="start_session")]]
     )
-    await bot.send_message(
-        chat_id=config.AUTHORIZED_CHAT_ID,
-        text=f"Friendly reminder: {remaining} cards remaining today.",
-        reply_markup=keyboard,
-    )
+
+    for user_id in user_ids:
+        try:
+            session = qm.get_session(user_id)
+            if session.kill_switch:
+                continue
+
+            if session.active:
+                remaining = session.remaining_count()
+            else:
+                due_count = await db.count_due_cards(user_id)
+                remaining = due_count + (20 if due_count <= 150 else 0)
+
+            if remaining == 0:
+                continue
+
+            await bot.send_message(
+                chat_id=user_id,
+                text=f"Friendly reminder: {remaining} cards remaining today.",
+                reply_markup=keyboard,
+            )
+        except Exception as e:
+            logger.warning("nag_check failed for user %s: %s", user_id, e)
 
 
 def setup_scheduler(bot) -> AsyncIOScheduler:
