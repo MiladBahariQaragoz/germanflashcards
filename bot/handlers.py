@@ -36,16 +36,17 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     await db.register_user(user.id, user.username)
     await update.message.reply_text(
-        "👋 Willkommen! This bot helps you learn German vocabulary using spaced repetition "
-        "(FSRS) — cards you struggle with come back sooner, cards you know well come back later.\n\n"
-        "📋 *Menu*\n"
-        "▶️ /session — Start studying. You'll see due cards first, then up to 20 new ones.\n"
-        "📊 /stats — See how many cards are New / Learning / Review / Relearning.\n"
-        "⚙️ /settings — Switch between 🇩🇪→🇬🇧 and 🇬🇧→🇩🇪, and choose which CEFR levels (A1–B2) to draw new cards from.\n\n"
+        "👋 Willkommen! This bot helps you learn German using spaced repetition (FSRS).\n\n"
+        "📋 *Commands*\n"
+        "📚 /grammar — Start your grammar session (sentence exercises)\n"
+        "▶️ /vocab — Start your vocabulary session\n"
+        "📊 /stats — Grammar + vocabulary progress\n"
+        "⚙️ /settings — Study direction & CEFR levels\n\n"
         "⏰ *Daily routine*\n"
-        "Every morning at 8:00 (Berlin time) you'll get a message with today's card count and a Start button. "
-        "If you haven't finished by then, a reminder is sent every 2 hours.\n\n"
-        "Ready? Hit /session to start! 🚀",
+        "Every morning at 8:00 (Berlin time) you'll get a message with today's grammar and vocab counts. "
+        "Complete both sessions for the best results! "
+        "Reminders are sent every 2 hours if sessions are unfinished.\n\n"
+        "Ready? Start with 📚 /grammar or ▶️ /vocab! 🚀",
         parse_mode="Markdown",
     )
 
@@ -56,16 +57,27 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    counts = await db.get_card_counts_by_state(user_id, cefr_levels=cefr)
     cefr_label = ", ".join(sorted(cefr))
+
+    vocab_counts, grammar_counts = await asyncio.gather(
+        db.get_card_counts_by_state(user_id, cefr_levels=cefr),
+        db.get_grammar_card_counts_by_state(user_id, cefr_levels=cefr),
+    )
+
     text = (
         f"📊 Stats (levels: {cefr_label})\n\n"
-        f"New: {counts['New']}\n"
-        f"Learning: {counts['Learning']}\n"
-        f"Review: {counts['Review']}\n"
-        f"Relearning: {counts['Relearning']}"
+        f"🗂️ *Vocabulary*\n"
+        f"New: {vocab_counts['New']}\n"
+        f"Learning: {vocab_counts['Learning']}\n"
+        f"Review: {vocab_counts['Review']}\n"
+        f"Relearning: {vocab_counts['Relearning']}\n\n"
+        f"📚 *Grammar*\n"
+        f"New: {grammar_counts['New']}\n"
+        f"Learning: {grammar_counts['Learning']}\n"
+        f"Review: {grammar_counts['Review']}\n"
+        f"Relearning: {grammar_counts['Relearning']}"
     )
-    await update.message.reply_text(text)
+    await update.message.reply_text(text, parse_mode="Markdown")
 
 
 async def cmd_session(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -77,6 +89,26 @@ async def cmd_session(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         user_id=update.effective_user.id,
     )
 
+
+async def cmd_grammar(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not await _is_authorized(update):
+        return
+    await _start_grammar_session(
+        context,
+        chat_id=update.effective_chat.id,
+        user_id=update.effective_user.id,
+    )
+
+
+async def cmd_vocab(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Alias for /session — starts the vocabulary study session."""
+    if not await _is_authorized(update):
+        return
+    await _start_session(
+        context,
+        chat_id=update.effective_chat.id,
+        user_id=update.effective_user.id,
+    )
 
 
 async def cmd_create_invite(
@@ -216,6 +248,51 @@ async def _send_card_front(
 
 
 # ---------------------------------------------------------------------------
+# Grammar session helpers
+# ---------------------------------------------------------------------------
+
+async def _start_grammar_session(
+    context: ContextTypes.DEFAULT_TYPE, chat_id: int, user_id: int
+) -> None:
+    settings = await db.get_user_settings(user_id)
+    cefr = settings["cefr_levels"]
+    due = await db.get_due_grammar_cards(user_id, cefr_levels=cefr)
+    new = (
+        await db.get_new_grammar_cards(user_id, 20, cefr_levels=cefr)
+        if len(due) <= 150
+        else []
+    )
+    qm.get_grammar_session(user_id).build(due_cards=due, new_cards=new)
+    card = qm.get_grammar_session(user_id).pop_next()
+    if card is None:
+        await context.bot.send_message(chat_id=chat_id, text="No grammar cards due today! 🎉")
+        return
+    await _send_grammar_card_front(
+        context, chat_id, card, study_direction=settings["study_direction"]
+    )
+
+
+async def _send_grammar_card_front(
+    context: ContextTypes.DEFAULT_TYPE,
+    chat_id: int,
+    card: dict,
+    study_direction: str = "DE->EN",
+) -> None:
+    card_id = card["_id"]
+    keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("Show Answer", callback_data=f"show_grammar:{card_id}")]]
+    )
+    cefr = card.get("cefr_level", "?")
+    if study_direction == "DE->EN":
+        front_text = f"📚 [{cefr}] 🇩🇪 {card.get('german_sentence', card['word'])}"
+    else:
+        front_text = f"📚 [{cefr}] 🇬🇧 {card.get('english_translation', card.get('translation', ''))}"
+    await context.bot.send_message(
+        chat_id=chat_id, text=front_text, reply_markup=keyboard
+    )
+
+
+# ---------------------------------------------------------------------------
 # Callback handlers
 # ---------------------------------------------------------------------------
 
@@ -325,6 +402,115 @@ async def callback_grade(
 
     settings = await db.get_user_settings(user_id)
     await _send_card_front(
+        context, chat_id, next_card, study_direction=settings["study_direction"]
+    )
+
+
+async def callback_start_grammar_session(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    query = update.callback_query
+    await query.answer()
+    if not await _is_authorized(update):
+        return
+    await _start_grammar_session(
+        context,
+        chat_id=update.effective_chat.id,
+        user_id=update.effective_user.id,
+    )
+
+
+async def callback_show_grammar_answer(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    query = update.callback_query
+    await query.answer()
+    if not await _is_authorized(update):
+        return
+
+    user_id = update.effective_user.id
+    card_id = query.data.split(":", 1)[1]
+
+    card = await db.get_grammar_card_by_id(user_id, card_id)
+    if card is None:
+        await query.edit_message_text("Grammar card not found.")
+        return
+
+    settings = await db.get_user_settings(user_id)
+    intervals = fsrs_service.preview_intervals(card)
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    f"Again ({intervals[1]})", callback_data=f"grade_grammar:{card_id}:1"
+                ),
+                InlineKeyboardButton(
+                    f"Hard ({intervals[2]})", callback_data=f"grade_grammar:{card_id}:2"
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    f"Good ({intervals[3]})", callback_data=f"grade_grammar:{card_id}:3"
+                ),
+                InlineKeyboardButton(
+                    f"Easy ({intervals[4]})", callback_data=f"grade_grammar:{card_id}:4"
+                ),
+            ],
+        ]
+    )
+    cefr = card.get("cefr_level", "?")
+    if settings["study_direction"] == "DE->EN":
+        back_text = (
+            f"📚 [{cefr}] 🇩🇪 {card.get('german_sentence', card['word'])}\n"
+            f"🇬🇧 {card.get('english_translation', card.get('translation', ''))}\n\n"
+            f"💡 {card['word']} — {card['translation']}"
+        )
+    else:
+        back_text = (
+            f"📚 [{cefr}] 🇬🇧 {card.get('english_translation', card.get('translation', ''))}\n"
+            f"🇩🇪 {card.get('german_sentence', card['word'])}\n\n"
+            f"💡 {card['word']} — {card['translation']}"
+        )
+    await query.edit_message_text(text=back_text, reply_markup=keyboard)
+
+
+async def callback_grade_grammar(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    query = update.callback_query
+    await query.answer()
+    if not await _is_authorized(update):
+        return
+
+    user_id = update.effective_user.id
+    _, card_id, rating_str = query.data.split(":")
+    rating_int = int(rating_str)
+
+    card = await db.get_grammar_card_by_id(user_id, card_id)
+    if card is None:
+        return
+
+    update_fields, _ = fsrs_service.rate_card(card, rating_int)
+    await db.update_grammar_card_after_review(user_id, card_id, update_fields, card)
+    await query.edit_message_reply_markup(reply_markup=None)
+
+    if rating_int == 1:
+        updated_card = {**card, **update_fields}
+        qm.get_grammar_session(user_id).add_to_again_pile(updated_card)
+
+    next_card = qm.get_grammar_session(user_id).pop_next()
+    chat_id = update.effective_chat.id
+
+    if next_card is None:
+        qm.get_grammar_session(user_id).check_and_set_kill_switch()
+        await context.bot.send_message(
+            chat_id=chat_id,
+            text="📚 Grammatik fertig! Grammar session complete. 🎉\n\nDon't forget your vocabulary session — /vocab",
+        )
+        return
+
+    settings = await db.get_user_settings(user_id)
+    await _send_grammar_card_front(
         context, chat_id, next_card, study_direction=settings["study_direction"]
     )
 
