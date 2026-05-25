@@ -483,7 +483,7 @@ async def callback_grade_grammar(
         return
 
     user_id = update.effective_user.id
-    _, card_id, rating_str = query.data.split(":")
+    _, card_id, rating_str = query.data.split(":", 2)
     rating_int = int(rating_str)
 
     card = await db.get_grammar_card_by_id(user_id, card_id)
