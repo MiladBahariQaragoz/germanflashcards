@@ -72,7 +72,6 @@ def main() -> None:
         user_commands = [
             BotCommand("grammar", "📚 Start grammar session"),
             BotCommand("vocab", "▶️ Start vocabulary session"),
-            BotCommand("session", "▶️ Start vocabulary session"),
             BotCommand("stats", "📊 Grammar + vocabulary progress"),
             BotCommand("settings", "⚙️ Study direction & CEFR levels"),
             BotCommand("login", "🔑 Register with an invite code"),
