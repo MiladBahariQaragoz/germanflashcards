@@ -7,13 +7,18 @@ from bot.config import BOT_TOKEN, AUTHORIZED_CHAT_ID
 from bot.handlers import (
     cmd_start,
     cmd_session,
+    cmd_vocab,
+    cmd_grammar,
     cmd_stats,
     cmd_create_invite,
     cmd_login,
     cmd_settings,
     callback_start_session,
+    callback_start_grammar_session,
     callback_show_answer,
+    callback_show_grammar_answer,
     callback_grade,
+    callback_grade_grammar,
     callback_settings_direction,
     callback_settings_cefr,
 )
@@ -35,15 +40,24 @@ def main() -> None:
     app.add_handler(CommandHandler("create_invite", cmd_create_invite))
     app.add_handler(CommandHandler("login", cmd_login))
     app.add_handler(CommandHandler("settings", cmd_settings))
+    app.add_handler(CommandHandler("grammar", cmd_grammar))
+    app.add_handler(CommandHandler("vocab", cmd_vocab))
 
     # Session callbacks
     app.add_handler(
         CallbackQueryHandler(callback_start_session, pattern="^start_session$")
     )
     app.add_handler(
+        CallbackQueryHandler(callback_start_grammar_session, pattern="^start_grammar_session$")
+    )
+    app.add_handler(
         CallbackQueryHandler(callback_show_answer, pattern="^show_answer:")
     )
+    app.add_handler(
+        CallbackQueryHandler(callback_show_grammar_answer, pattern="^show_grammar:")
+    )
     app.add_handler(CallbackQueryHandler(callback_grade, pattern="^grade:"))
+    app.add_handler(CallbackQueryHandler(callback_grade_grammar, pattern="^grade_grammar:"))
 
     # Settings callbacks
     app.add_handler(
@@ -56,8 +70,10 @@ def main() -> None:
     # Bot command menus — admin sees /create_invite, regular users don't
     async def set_commands():
         user_commands = [
-            BotCommand("session", "▶️ Start a study session"),
-            BotCommand("stats", "📊 Show your progress"),
+            BotCommand("grammar", "📚 Start grammar session"),
+            BotCommand("vocab", "▶️ Start vocabulary session"),
+            BotCommand("session", "▶️ Start vocabulary session"),
+            BotCommand("stats", "📊 Grammar + vocabulary progress"),
             BotCommand("settings", "⚙️ Study direction & CEFR levels"),
             BotCommand("login", "🔑 Register with an invite code"),
             BotCommand("start", "ℹ️ About this bot"),
