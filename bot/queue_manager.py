@@ -2,6 +2,8 @@ import random
 
 
 class SessionQueue:
+    """In-memory study queue for a single user."""
+
     def __init__(self):
         self.queue: list[dict] = []
         self.again_pile: list[dict] = []
@@ -46,5 +48,19 @@ class SessionQueue:
         self.kill_switch = False
 
 
-# Module-level singleton shared across handlers and scheduler
-session = SessionQueue()
+# Per-user session registry.
+# Keys are user_id (int), values are SessionQueue instances.
+_sessions: dict[int, SessionQueue] = {}
+
+
+def get_session(user_id: int) -> SessionQueue:
+    """Return the SessionQueue for this user, creating one if it doesn't exist."""
+    if user_id not in _sessions:
+        _sessions[user_id] = SessionQueue()
+    return _sessions[user_id]
+
+
+def reset_all_sessions() -> None:
+    """Reset every active session (called by the morning scheduler)."""
+    for s in _sessions.values():
+        s.reset()

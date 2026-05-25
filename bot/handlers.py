@@ -40,8 +40,12 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await _is_authorized(update):
         return
     user_id = update.effective_user.id
-    counts = await db.get_card_counts_by_state(user_id)
+    settings = await db.get_user_settings(user_id)
+    cefr = settings["cefr_levels"]
+    counts = await db.get_card_counts_by_state(user_id, cefr_levels=cefr)
+    cefr_label = ", ".join(sorted(cefr))
     text = (
+        f"📊 Stats (levels: {cefr_label})\n\n"
         f"New: {counts['New']}\n"
         f"Learning: {counts['Learning']}\n"
         f"Review: {counts['Review']}\n"

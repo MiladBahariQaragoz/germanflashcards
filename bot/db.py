@@ -106,18 +106,22 @@ async def update_card_after_review(
     await doc_ref.update(update_fields)
 
 
-async def get_card_counts_by_state(user_id: int) -> dict[str, int]:
-    """Return card counts per FSRS state for the given user."""
+async def get_card_counts_by_state(
+    user_id: int,
+    cefr_levels: list[str] | None = None,
+) -> dict[str, int]:
+    """Return card counts per FSRS state for the given user, optionally filtered by CEFR level."""
     states = ["New", "Learning", "Review", "Relearning"]
     counts = {}
     for state in states:
-        result = await (
+        query = (
             _progress_col
             .where(filter=FieldFilter("user_id", "==", user_id))
             .where(filter=FieldFilter("fsrs_state", "==", state))
-            .count()
-            .get()
         )
+        if cefr_levels:
+            query = query.where(filter=FieldFilter("cefr_level", "in", cefr_levels))
+        result = await query.count().get()
         counts[state] = result[0][0].value
     return counts
 

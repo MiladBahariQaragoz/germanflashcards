@@ -1,4 +1,5 @@
 import logging
+from telegram import BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
 
 from bot.config import BOT_TOKEN
@@ -52,6 +53,19 @@ def main() -> None:
     app.add_handler(
         CallbackQueryHandler(callback_settings_cefr, pattern="^settings_cefr:")
     )
+
+    # Register bot command menu (shown in Telegram's "/" menu)
+    import asyncio
+    async def set_commands():
+        await app.bot.set_my_commands([
+            BotCommand("session", "Start a study session"),
+            BotCommand("stats", "Show your card counts"),
+            BotCommand("settings", "Change study direction & CEFR levels"),
+            BotCommand("create_invite", "Generate an invite code (admin only)"),
+            BotCommand("login", "Register with an invite code"),
+            BotCommand("start", "Welcome message"),
+        ])
+    asyncio.get_event_loop().run_until_complete(set_commands())
 
     scheduler = setup_scheduler(app.bot)
     scheduler.start()
