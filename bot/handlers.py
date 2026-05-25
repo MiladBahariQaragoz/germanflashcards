@@ -1,5 +1,10 @@
+import asyncio
+import logging
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
+
+logger = logging.getLogger(__name__)
 
 from bot import config
 from bot import db
@@ -64,6 +69,23 @@ async def cmd_session(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     )
 
 
+async def cmd_sync_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Admin-only: provision cards for an existing user who has none (e.g. registered before this fix)."""
+    if update.effective_user is None or update.effective_user.id != config.AUTHORIZED_CHAT_ID:
+        return
+    if not context.args or len(context.args) != 1:
+        await update.message.reply_text("Usage: /sync_user <user_id>")
+        return
+    try:
+        target_id = int(context.args[0])
+    except ValueError:
+        await update.message.reply_text("user_id must be a number.")
+        return
+    await update.message.reply_text(f"Provisioning cards for user {target_id}…")
+    count = await db.provision_user_progress(target_id)
+    await update.message.reply_text(f"✅ Done — {count} cards provisioned for user {target_id}.")
+
+
 async def cmd_create_invite(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
@@ -72,9 +94,8 @@ async def cmd_create_invite(
         return
     code = await db.create_otp(ttl_hours=48)
     await update.message.reply_text(
-        f"New invite code (valid 48 h):\n\n`{code}`\n\n"
-        "Share this with the person you want to invite. "
-        "They should send: `/login <code>`",
+        f"Invite code (valid 48 h) — send this to the new user:\n\n"
+        f"`/login {code}`",
         parse_mode="Markdown",
     )
 
@@ -113,8 +134,23 @@ async def cmd_login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await db.register_user(user.id, user.username)
     await update.message.reply_text(
         "Welcome! You're now registered. 🎉\n\n"
-        "Use /session to start studying or /settings to configure your preferences."
+        "Setting up your cards in the background — this takes ~10 seconds. "
+        "Then use /session to start studying or /settings to configure your preferences."
     )
+
+    # Provision all cards in the background so the user doesn't wait
+    async def _provision():
+        try:
+            count = await db.provision_user_progress(user.id)
+            logger.info("Provisioned %d cards for new user %s", count, user.id)
+            await context.bot.send_message(
+                chat_id=user.id,
+                text=f"✅ Ready! {count} cards have been added to your deck.",
+            )
+        except Exception as e:
+            logger.error("Failed to provision cards for user %s: %s", user.id, e)
+
+    asyncio.create_task(_provision())
 
 
 async def cmd_settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

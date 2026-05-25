@@ -223,3 +223,54 @@ async def get_user_settings(user_id: int) -> dict:
 async def update_user_settings(user_id: int, fields: dict) -> None:
     """Partial update of user settings (study_direction, cefr_levels)."""
     await _users_col.document(str(user_id)).update(fields)
+
+
+async def provision_user_progress(user_id: int) -> int:
+    """
+    Create 'New' state user_progress docs for every card in the cards collection.
+    Called once when a new user registers. Uses batched writes (max 500 per batch).
+    Returns the number of docs created.
+    """
+    cards_col = _db.collection("cards")
+    all_cards = await cards_col.get()
+
+    now = datetime.now(timezone.utc)
+    created = 0
+    batch = _db.batch()
+    batch_count = 0
+
+    for card_doc in all_cards:
+        card_id = card_doc.id
+        doc_id = _progress_doc_id(user_id, card_id)
+        doc_ref = _progress_col.document(doc_id)
+        card_data = card_doc.to_dict()
+
+        batch.set(doc_ref, {
+            "user_id": user_id,
+            "card_id": card_id,
+            "word": card_data.get("word", ""),
+            "translation": card_data.get("translation", ""),
+            "german_sentence": card_data.get("german_sentence", ""),
+            "english_translation": card_data.get("english_translation", ""),
+            "cefr_level": card_data.get("cefr_level", "Unknown"),
+            "fsrs_state": "New",
+            "due_date": now,
+            "state": 1,
+            "step": 0,
+            "stability": None,
+            "difficulty": None,
+            "last_review": None,
+        })
+        batch_count += 1
+        created += 1
+
+        # Firestore batch limit is 500 operations
+        if batch_count == 500:
+            await batch.commit()
+            batch = _db.batch()
+            batch_count = 0
+
+    if batch_count > 0:
+        await batch.commit()
+
+    return created

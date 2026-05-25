@@ -8,6 +8,7 @@ from bot.handlers import (
     cmd_session,
     cmd_stats,
     cmd_create_invite,
+    cmd_sync_user,
     cmd_login,
     cmd_settings,
     callback_start_session,
@@ -32,6 +33,7 @@ def main() -> None:
     app.add_handler(CommandHandler("session", cmd_session))
     app.add_handler(CommandHandler("stats", cmd_stats))
     app.add_handler(CommandHandler("create_invite", cmd_create_invite))
+    app.add_handler(CommandHandler("sync_user", cmd_sync_user))
     app.add_handler(CommandHandler("login", cmd_login))
     app.add_handler(CommandHandler("settings", cmd_settings))
 
