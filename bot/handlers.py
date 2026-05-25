@@ -174,9 +174,10 @@ async def _start_session(
     context: ContextTypes.DEFAULT_TYPE, chat_id: int, user_id: int
 ) -> None:
     settings = await db.get_user_settings(user_id)
-    due = await db.get_due_cards(user_id)
+    cefr = settings["cefr_levels"]
+    due = await db.get_due_cards(user_id, cefr_levels=cefr)
     new = (
-        await db.get_new_cards(user_id, 20, cefr_levels=settings["cefr_levels"])
+        await db.get_new_cards(user_id, 20, cefr_levels=cefr)
         if len(due) <= 150
         else []
     )

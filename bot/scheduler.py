@@ -30,7 +30,9 @@ async def morning_trigger(bot) -> None:
 
     for user_id in user_ids:
         try:
-            due_count = await db.count_due_cards(user_id)
+            settings = await db.get_user_settings(user_id)
+            cefr = settings["cefr_levels"]
+            due_count = await db.count_due_cards(user_id, cefr_levels=cefr)
             display_count = due_count + (20 if due_count <= 150 else 0)
             await bot.send_message(
                 chat_id=user_id,
@@ -57,10 +59,13 @@ async def nag_check(bot) -> None:
             if session.kill_switch:
                 continue
 
+            settings = await db.get_user_settings(user_id)
+            cefr = settings["cefr_levels"]
+
             if session.active:
                 remaining = session.remaining_count()
             else:
-                due_count = await db.count_due_cards(user_id)
+                due_count = await db.count_due_cards(user_id, cefr_levels=cefr)
                 remaining = due_count + (20 if due_count <= 150 else 0)
 
             if remaining == 0:

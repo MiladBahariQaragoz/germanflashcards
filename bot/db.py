@@ -70,8 +70,16 @@ def _card_col_doc_to_card(doc, user_id: int) -> dict:
 # Session queries
 # ---------------------------------------------------------------------------
 
-async def get_due_cards(user_id: int) -> list[dict]:
-    """Non-New cards whose due_date falls on or before end of today."""
+async def get_due_cards(
+    user_id: int,
+    cefr_levels: list[str] | None = None,
+) -> list[dict]:
+    """Non-New cards whose due_date falls on or before end of today.
+
+    cefr_levels — when provided, only cards whose cefr_level is in the list
+    are returned.  Filtering is done in Python to avoid a composite index on
+    (user_id, due_date <=, cefr_level in).
+    """
     cutoff = _end_of_today_utc()
     query = (
         _progress_col
@@ -79,15 +87,20 @@ async def get_due_cards(user_id: int) -> list[dict]:
         .where(filter=FieldFilter("due_date", "<=", cutoff))
     )
     docs = await query.get()
+    cefr_set = set(cefr_levels) if cefr_levels else None
     return [
         _doc_to_card(doc)
         for doc in docs
         if doc.to_dict().get("fsrs_state") != "New"
+        and (cefr_set is None or doc.to_dict().get("cefr_level") in cefr_set)
     ]
 
 
-async def count_due_cards(user_id: int) -> int:
-    return len(await get_due_cards(user_id))
+async def count_due_cards(
+    user_id: int,
+    cefr_levels: list[str] | None = None,
+) -> int:
+    return len(await get_due_cards(user_id, cefr_levels=cefr_levels))
 
 
 async def get_new_cards(
