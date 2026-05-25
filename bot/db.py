@@ -314,4 +314,6 @@ async def get_user_settings(user_id: int) -> dict:
 
 
 async def update_user_settings(user_id: int, fields: dict) -> None:
-    await _users_col.document(str(user_id)).update(fields)
+    # set(merge=True) creates the doc if missing, or merges fields if it exists.
+    # This prevents update() failing silently on users who never called /start.
+    await _users_col.document(str(user_id)).set(fields, merge=True)

@@ -66,9 +66,15 @@ async def nag_check(bot) -> None:
             if remaining == 0:
                 continue
 
+            tomorrow_pile = remaining * 2
             await bot.send_message(
                 chat_id=user_id,
-                text=f"Friendly reminder: {remaining} cards remaining today.",
+                text=(
+                    f"⏰ You still have {remaining} card{'s' if remaining != 1 else ''} left for today.\n\n"
+                    f"Skip today and these cards pile onto tomorrow — "
+                    f"you could be facing ~{tomorrow_pile} instead of ~{remaining}. "
+                    f"A few minutes now saves double the work tomorrow! 💪"
+                ),
                 reply_markup=keyboard,
             )
         except Exception as e:

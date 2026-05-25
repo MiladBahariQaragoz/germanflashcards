@@ -1,8 +1,9 @@
+import asyncio
 import logging
-from telegram import BotCommand
+from telegram import BotCommand, BotCommandScopeChat, BotCommandScopeDefault
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
 
-from bot.config import BOT_TOKEN
+from bot.config import BOT_TOKEN, AUTHORIZED_CHAT_ID
 from bot.handlers import (
     cmd_start,
     cmd_session,
@@ -46,25 +47,31 @@ def main() -> None:
 
     # Settings callbacks
     app.add_handler(
-        CallbackQueryHandler(
-            callback_settings_direction, pattern="^settings_direction$"
-        )
+        CallbackQueryHandler(callback_settings_direction, pattern="^settings_direction$")
     )
     app.add_handler(
         CallbackQueryHandler(callback_settings_cefr, pattern="^settings_cefr:")
     )
 
-    # Register bot command menu (shown in Telegram's "/" menu)
-    import asyncio
+    # Bot command menus — admin sees /create_invite, regular users don't
     async def set_commands():
-        await app.bot.set_my_commands([
-            BotCommand("session", "Start a study session"),
-            BotCommand("stats", "Show your card counts"),
-            BotCommand("settings", "Change study direction & CEFR levels"),
-            BotCommand("create_invite", "Generate an invite code (admin only)"),
-            BotCommand("login", "Register with an invite code"),
-            BotCommand("start", "Welcome message"),
-        ])
+        user_commands = [
+            BotCommand("session", "▶️ Start a study session"),
+            BotCommand("stats", "📊 Show your progress"),
+            BotCommand("settings", "⚙️ Study direction & CEFR levels"),
+            BotCommand("login", "🔑 Register with an invite code"),
+            BotCommand("start", "ℹ️ About this bot"),
+        ]
+        admin_commands = user_commands + [
+            BotCommand("create_invite", "➕ Generate an invite code"),
+        ]
+        # Default menu for all users
+        await app.bot.set_my_commands(user_commands, scope=BotCommandScopeDefault())
+        # Override for admin chat — adds /create_invite
+        await app.bot.set_my_commands(
+            admin_commands, scope=BotCommandScopeChat(chat_id=AUTHORIZED_CHAT_ID)
+        )
+
     asyncio.get_event_loop().run_until_complete(set_commands())
 
     scheduler = setup_scheduler(app.bot)

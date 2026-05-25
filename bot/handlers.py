@@ -34,10 +34,19 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await _is_authorized(update):
         return
     user = update.effective_user
-    # Auto-register (idempotent — no-op if already exists)
     await db.register_user(user.id, user.username)
     await update.message.reply_text(
-        "Willkommen! Use /session to start studying or /stats to see your progress."
+        "👋 Willkommen! This bot helps you learn German vocabulary using spaced repetition "
+        "(FSRS) — cards you struggle with come back sooner, cards you know well come back later.\n\n"
+        "📋 *Menu*\n"
+        "▶️ /session — Start studying. You'll see due cards first, then up to 20 new ones.\n"
+        "📊 /stats — See how many cards are New / Learning / Review / Relearning.\n"
+        "⚙️ /settings — Switch between 🇩🇪→🇬🇧 and 🇬🇧→🇩🇪, and choose which CEFR levels (A1–B2) to draw new cards from.\n\n"
+        "⏰ *Daily routine*\n"
+        "Every morning at 8:00 (Berlin time) you'll get a message with today's card count and a Start button. "
+        "If you haven't finished by then, a reminder is sent every 2 hours.\n\n"
+        "Ready? Hit /session to start! 🚀",
+        parse_mode="Markdown",
     )
 
 
