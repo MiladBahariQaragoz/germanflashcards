@@ -27,6 +27,8 @@ _progress_col = _db.collection("user_progress")
 _users_col = _db.collection("users")
 _otps_col = _db.collection("otps")
 _cards_col = _db.collection("cards")
+_grammar_cards_col = _db.collection("grammar_cards")
+_grammar_progress_col = _db.collection("grammar_progress")
 
 
 # ---------------------------------------------------------------------------
@@ -63,6 +65,43 @@ def _card_col_doc_to_card(doc, user_id: int) -> dict:
     d["difficulty"] = None
     d["last_review"] = None
     d["_progress_exists"] = False
+    return d
+
+
+def _grammar_progress_doc_id(user_id: int, card_id: str) -> str:
+    return f"{user_id}_{card_id}"
+
+
+def _grammar_cefr_levels(cefr_levels: list[str] | None) -> list[str] | None:
+    """Map user CEFR settings ['A1','A2'...] → grammar levels ['A1_Grammar','A2_Grammar'...]."""
+    if cefr_levels is None:
+        return None
+    return [f"{level}_Grammar" for level in cefr_levels]
+
+
+def _grammar_progress_doc_to_card(doc) -> dict:
+    """Convert a grammar_progress document to a card dict."""
+    d = doc.to_dict()
+    d["_id"] = d["card_id"]
+    d["_progress_exists"] = True
+    d["_card_type"] = "grammar"
+    return d
+
+
+def _grammar_col_doc_to_card(doc, user_id: int) -> dict:
+    """Convert a grammar_cards document to a card dict (no progress doc yet)."""
+    d = doc.to_dict()
+    d["_id"] = doc.id
+    d["card_id"] = doc.id
+    d["user_id"] = user_id
+    d["fsrs_state"] = "New"
+    d["state"] = 1
+    d["step"] = 0
+    d["stability"] = None
+    d["difficulty"] = None
+    d["last_review"] = None
+    d["_progress_exists"] = False
+    d["_card_type"] = "grammar"
     return d
 
 
@@ -330,3 +369,153 @@ async def update_user_settings(user_id: int, fields: dict) -> None:
     # set(merge=True) creates the doc if missing, or merges fields if it exists.
     # This prevents update() failing silently on users who never called /start.
     await _users_col.document(str(user_id)).set(fields, merge=True)
+
+
+# ---------------------------------------------------------------------------
+# Grammar session queries (parallel to vocab session queries above)
+# ---------------------------------------------------------------------------
+
+async def get_due_grammar_cards(
+    user_id: int,
+    cefr_levels: list[str] | None = None,
+) -> list[dict]:
+    """Non-New grammar cards whose due_date falls on or before end of today."""
+    cutoff = _end_of_today_utc()
+    grammar_cefr = _grammar_cefr_levels(cefr_levels)
+    query = (
+        _grammar_progress_col
+        .where(filter=FieldFilter("user_id", "==", user_id))
+        .where(filter=FieldFilter("due_date", "<=", cutoff))
+    )
+    docs = await query.get()
+    cefr_set = set(grammar_cefr) if grammar_cefr else None
+    return [
+        _grammar_progress_doc_to_card(doc)
+        for doc in docs
+        if doc.to_dict().get("fsrs_state") != "New"
+        and (cefr_set is None or doc.to_dict().get("cefr_level") in cefr_set)
+    ]
+
+
+async def count_due_grammar_cards(
+    user_id: int,
+    cefr_levels: list[str] | None = None,
+) -> int:
+    return len(await get_due_grammar_cards(user_id, cefr_levels=cefr_levels))
+
+
+async def get_new_grammar_cards(
+    user_id: int,
+    limit: int = 20,
+    cefr_levels: list[str] | None = None,
+) -> list[dict]:
+    """Return up to `limit` grammar cards the user has never reviewed."""
+    grammar_cefr = _grammar_cefr_levels(cefr_levels)
+    query = _grammar_cards_col
+    if grammar_cefr:
+        query = query.where(filter=FieldFilter("cefr_level", "in", grammar_cefr))
+
+    result: list[dict] = []
+    last_doc = None
+    batch_size = limit * 3
+
+    while len(result) < limit:
+        q = query.limit(batch_size)
+        if last_doc is not None:
+            q = q.start_after(last_doc)
+
+        candidates = await q.get()
+        if not candidates:
+            break
+
+        progress_refs = [
+            _grammar_progress_col.document(_grammar_progress_doc_id(user_id, c.id))
+            for c in candidates
+        ]
+        progress_map: dict[str, bool] = {}
+        async for pdoc in _db.get_all(progress_refs):
+            if pdoc.exists and pdoc.to_dict().get("fsrs_state") != "New":
+                progress_map[pdoc.id] = True
+
+        for card_doc in candidates:
+            doc_id = _grammar_progress_doc_id(user_id, card_doc.id)
+            if not progress_map.get(doc_id, False):
+                result.append(_grammar_col_doc_to_card(card_doc, user_id))
+                if len(result) >= limit:
+                    break
+
+        last_doc = candidates[-1]
+        if len(candidates) < batch_size:
+            break
+
+    return result[:limit]
+
+
+async def get_grammar_card_by_id(user_id: int, card_id: str) -> dict | None:
+    """Fetch a grammar card. Tries grammar_progress first, then grammar_cards."""
+    doc_ref = _grammar_progress_col.document(_grammar_progress_doc_id(user_id, card_id))
+    doc = await doc_ref.get()
+    if doc.exists:
+        return _grammar_progress_doc_to_card(doc)
+
+    card_doc = await _grammar_cards_col.document(card_id).get()
+    if not card_doc.exists:
+        return None
+    return _grammar_col_doc_to_card(card_doc, user_id)
+
+
+async def update_grammar_card_after_review(
+    user_id: int, card_id: str, update_fields: dict, card: dict
+) -> None:
+    """Apply FSRS update after a grammar card is rated. Creates progress doc on first review."""
+    doc_ref = _grammar_progress_col.document(_grammar_progress_doc_id(user_id, card_id))
+    if card.get("_progress_exists", True):
+        await doc_ref.update(update_fields)
+    else:
+        await doc_ref.set({
+            "user_id": user_id,
+            "card_id": card_id,
+            "word": card.get("word", ""),
+            "translation": card.get("translation", ""),
+            "german_sentence": card.get("german_sentence", ""),
+            "english_translation": card.get("english_translation", ""),
+            "cefr_level": card.get("cefr_level", "Unknown"),
+            **update_fields,
+        })
+
+
+async def get_grammar_card_counts_by_state(
+    user_id: int,
+    cefr_levels: list[str] | None = None,
+) -> dict[str, int]:
+    """Return grammar card counts per FSRS state."""
+    grammar_cefr = _grammar_cefr_levels(cefr_levels)
+    reviewed_states = ["Learning", "Review", "Relearning"]
+
+    async def count_grammar_progress(state: str) -> int:
+        q = (
+            _grammar_progress_col
+            .where(filter=FieldFilter("user_id", "==", user_id))
+            .where(filter=FieldFilter("fsrs_state", "==", state))
+        )
+        if grammar_cefr:
+            q = q.where(filter=FieldFilter("cefr_level", "in", grammar_cefr))
+        result = await q.count().get()
+        return result[0][0].value
+
+    async def count_total_grammar_cards() -> int:
+        q = _grammar_cards_col
+        if grammar_cefr:
+            q = q.where(filter=FieldFilter("cefr_level", "in", grammar_cefr))
+        result = await q.count().get()
+        return result[0][0].value
+
+    counts_list = await asyncio.gather(
+        *[count_grammar_progress(s) for s in reviewed_states],
+        count_total_grammar_cards(),
+    )
+
+    counts = dict(zip(reviewed_states, counts_list[:3]))
+    total_cards = counts_list[3]
+    counts["New"] = max(0, total_cards - sum(counts.values()))
+    return counts
