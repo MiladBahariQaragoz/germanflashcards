@@ -64,3 +64,20 @@ def reset_all_sessions() -> None:
     """Reset every active session (called by the morning scheduler)."""
     for s in _sessions.values():
         s.reset()
+
+
+# Grammar session registry — completely independent from vocab sessions.
+_grammar_sessions: dict[int, SessionQueue] = {}
+
+
+def get_grammar_session(user_id: int) -> SessionQueue:
+    """Return the grammar SessionQueue for this user, creating one if it doesn't exist."""
+    if user_id not in _grammar_sessions:
+        _grammar_sessions[user_id] = SessionQueue()
+    return _grammar_sessions[user_id]
+
+
+def reset_all_grammar_sessions() -> None:
+    """Reset every active grammar session (called by the morning scheduler)."""
+    for s in _grammar_sessions.values():
+        s.reset()
