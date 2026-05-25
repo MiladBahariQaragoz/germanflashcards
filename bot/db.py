@@ -2,17 +2,20 @@
 Firestore database layer.
 
 Collections:
-  cards/          — global vocabulary (word, translation, sentences, cefr_level)
-  user_progress/  — per-user FSRS state for REVIEWED cards only (no "New" docs)
-  users/          — registered user profiles and preferences
-  otps/           — one-time invite codes
+  cards/            — global vocabulary (word, translation, sentences, cefr_level: A1/A2/B1/B2)
+  user_progress/    — per-user FSRS state for REVIEWED vocab cards only (no "New" docs)
+  grammar_cards/    — global grammar exercises (word, german_sentence, english_translation,
+                      cefr_level with "_Grammar" suffix e.g. A1_Grammar/B2_Grammar)
+  grammar_progress/ — per-user FSRS state for REVIEWED grammar cards (same pattern as user_progress)
+  users/            — registered user profiles and preferences
+  otps/             — one-time invite codes
 
-user_progress document ID format: "{user_id}_{card_id}"
+Progress document ID format: "{user_id}_{card_id}" (same for both user_progress and grammar_progress)
 
-Design principle: user_progress only stores cards that have been reviewed at
-least once. "New" cards are discovered on-demand by querying the cards
-collection. This means zero writes on user registration — new users cost nothing
-to onboard regardless of vocabulary size.
+Design principle: progress collections only store cards that have been reviewed at
+least once. "New" cards are discovered on-demand by querying the cards/grammar_cards
+collections. This means zero writes on user registration — new users cost nothing
+to onboard regardless of vocabulary/grammar size.
 """
 
 import asyncio
