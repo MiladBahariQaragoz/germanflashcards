@@ -81,3 +81,7 @@ $RECYCLE.BIN/
 # Compiled translation files
 *.mo
 *.pot
+
+# Google Cloud Service Account Keys (for ADC)
+*-key.json
+*credentials*.json
