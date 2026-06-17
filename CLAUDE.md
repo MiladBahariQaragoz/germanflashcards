@@ -141,9 +141,15 @@ python -m scripts.migrate_v2         # → cards + user_progress (also needs MON
 ## Deployment
 
 - Hosted on GCE VM `german-bot` (project `learn-german-bot`, zone
-  `us-central1-a`), running as systemd service `german-bot`.
+  `us-central1-a`), running as systemd service **`germanbot`** (no hyphen).
+  Working dir + venv: `/home/Student/germanflashcards` (capital S), `User=Student`,
+  `Restart=always`. Env from `/home/Student/germanflashcards/.env`.
 - `cloudbuild.yaml` deploys by SSHing to the VM, `git pull`, then
-  `systemctl restart german-bot`. Pushing to the deployed branch is the release.
+  `systemctl restart germanbot`. Pushing to `master` is the release.
+- Manual deploy from a terminal (what to run if Cloud Build isn't wired up):
+  `gcloud compute ssh --zone=us-central1-a german-bot --project=learn-german-bot --command="cd /home/Student/germanflashcards && git pull && sudo systemctl restart germanbot"`
+- There is a second, **unused** clone at `/home/Student/bot` — ignore it; the
+  service runs from `/home/Student/germanflashcards`.
 - Auth to Firestore is via **Application Default Credentials** — no key files,
   no `MONGODB_URI` for the running bot.
 - **Firestore composite indexes are manual.** Session queries need
