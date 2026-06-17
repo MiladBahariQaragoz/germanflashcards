@@ -66,3 +66,12 @@ Access is invite-only and approved by the admin. A new user opens the bot, taps
 ## Documentation
 
 For a deeper understanding of the internal architecture, database schema, and component interactions, please refer to the `system.md` file located in this repository.
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for development
+setup, testing, and conventions.
+
+## License
+
+Released under the [MIT License](LICENSE) © 2026 Milad Bahari Qaragoz.
