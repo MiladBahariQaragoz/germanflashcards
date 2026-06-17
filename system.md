@@ -29,7 +29,7 @@ Collections:
 * `cards`: Read-only vocabulary repository containing words, translations, sentences, and CEFR levels.
 * `user_progress`: Tracks the FSRS state for each user-card pair, determining when the user needs to review the card next.
 * `users`: Stores user profiles, chat IDs, and preferences (such as study direction and chosen CEFR levels).
-* `otps`: Manages invite codes for secure onboarding.
+* `access_requests`: Pending/approved/denied onboarding requests, keyed by user ID.
 
 ### 4. Queue Management
 To facilitate study sessions, the system manages memory-based queues of cards for each active user. 
@@ -45,7 +45,7 @@ Key files:
 
 ## Workflows
 
-1. **Onboarding**: The administrator creates a one-time password (OTP) and shares it with a user. The user registers by submitting the OTP, linking their Telegram chat ID to a new user profile in the database.
+1. **Onboarding**: A new user opens the bot and taps **Request access**. The bot records a pending `access_requests` document and sends the administrator a message with the user's name and ID plus **Approve**/**Deny** inline buttons. On approval, the bot creates the user's profile (registering them) and notifies them; on denial, the request is marked denied and the user is informed.
 2. **Session Execution**: When a user starts a session, the system queries the database for cards due today and new cards matching their preferred CEFR levels. These cards are loaded into a personalized queue. The user is presented with the front of each card and rates their memory after revealing the back. The FSRS algorithm calculates the next review date, and the database is updated.
 3. **Reminders**: A background job runs daily at 08:00 (Europe/Berlin) to reset session states and notify users of their due cards. Throughout the day, another job periodically checks for users who have not finished their sessions and sends them reminders.
 

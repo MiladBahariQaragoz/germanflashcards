@@ -31,24 +31,44 @@ async def _is_authorized(update: Update) -> bool:
 # ---------------------------------------------------------------------------
 
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if not await _is_authorized(update):
-        return
     user = update.effective_user
-    await db.register_user(user.id, user.username)
+    if user is None:
+        return
+    # Registered users (and the admin) get the command help; everyone else sees
+    # the intro + a "Request access" button (invite-only, admin-approved).
+    if await _is_authorized(update):
+        await db.register_user(user.id, user.username)
+        await update.message.reply_text(
+            "👋 Willkommen! This bot helps you learn German using spaced repetition (FSRS).\n\n"
+            "📋 *Commands*\n"
+            "📚 /grammar — Start your grammar session (sentence exercises)\n"
+            "▶️ /vocab — Start your vocabulary session\n"
+            "📊 /stats — Grammar + vocabulary progress\n"
+            "🏆 /leaderboard — Top streak holders\n"
+            "⚙️ /settings — Study direction & CEFR levels\n"
+            "👨‍💻 /developer — About the developer\n\n"
+            "⏰ *Daily routine*\n"
+            "Every morning at 8:00 (Berlin time) you'll get a message with today's grammar and vocab counts. "
+            "Complete both sessions for the best results! "
+            "Reminders are sent every 2 hours if sessions are unfinished.\n\n"
+            "Ready? Start with 📚 /grammar or ▶️ /vocab! 🚀",
+            parse_mode="Markdown",
+        )
+        return
+
+    keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("🔑 Request access", callback_data="request_access")]]
+    )
     await update.message.reply_text(
-        "👋 Willkommen! This bot helps you learn German using spaced repetition (FSRS).\n\n"
-        "📋 *Commands*\n"
-        "📚 /grammar — Start your grammar session (sentence exercises)\n"
-        "▶️ /vocab — Start your vocabulary session\n"
-        "📊 /stats — Grammar + vocabulary progress\n"
-        "🏆 /leaderboard — Top streak holders\n"
-        "⚙️ /settings — Study direction & CEFR levels\n\n"
-        "⏰ *Daily routine*\n"
-        "Every morning at 8:00 (Berlin time) you'll get a message with today's grammar and vocab counts. "
-        "Complete both sessions for the best results! "
-        "Reminders are sent every 2 hours if sessions are unfinished.\n\n"
-        "Ready? Start with 📚 /grammar or ▶️ /vocab! 🚀",
+        "👋 *Welcome!*\n\n"
+        "This bot helps you learn German with spaced repetition (FSRS) — daily "
+        "grammar and vocabulary flashcards that adapt to your memory, with streaks "
+        "and a leaderboard to keep you motivated.\n\n"
+        "👨‍💻 Built by [Milad Bahari Qaragoz](https://qaragoz.vercel.app/)\n\n"
+        "🔒 Access is invite-only. Tap below to request access — the admin will "
+        "review it and you'll be notified.",
         parse_mode="Markdown",
+        reply_markup=keyboard,
     )
 
 
@@ -147,56 +167,104 @@ async def cmd_vocab(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def cmd_create_invite(
+# ---------------------------------------------------------------------------
+# Access request flow (new-user onboarding, admin-approved)
+# ---------------------------------------------------------------------------
+
+async def callback_request_access(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
-    """Admin-only: generate a one-time invite code (valid 48 h) and send it."""
-    if update.effective_user is None or update.effective_user.id != config.AUTHORIZED_CHAT_ID:
-        return
-    code = await db.create_otp(ttl_hours=48)
-    await update.message.reply_text(
-        f"Invite code (valid 48 h) — send this to the new user:\n\n"
-        f"`/login {code}`",
-        parse_mode="Markdown",
-    )
-
-
-async def cmd_login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Allow an unregistered user to register using an OTP invite code."""
+    """A new user tapped 'Request access' — record it and notify the admin."""
+    query = update.callback_query
+    await query.answer()
     user = update.effective_user
     if user is None:
         return
 
-    # Admin never needs to log in
-    if user.id == config.AUTHORIZED_CHAT_ID:
-        await update.message.reply_text("You're the admin — no login needed!")
+    status = await db.create_access_request(user.id, user.username, user.full_name)
+    if status == "registered":
+        await query.edit_message_text(
+            "✅ You already have access! Tap /grammar or /vocab to start. 🚀"
+        )
         return
-
-    # Already registered?
-    if await db.is_registered_user(user.id):
-        await update.message.reply_text(
-            "You're already registered. Use /session to start."
+    if status == "pending":
+        await query.edit_message_text(
+            "⏳ Your request is already pending — the admin will review it soon."
         )
         return
 
-    # Require exactly one argument: the OTP code
-    if not context.args or len(context.args) != 1:
-        await update.message.reply_text("Usage: /login <invite_code>")
-        return
-
-    code = context.args[0]
-    valid = await db.consume_otp(code)
-    if not valid:
-        await update.message.reply_text(
-            "Invalid or expired invite code. Ask the admin for a new one."
-        )
-        return
-
-    await db.register_user(user.id, user.username)
-    await update.message.reply_text(
-        "Welcome! You're now registered. 🎉\n\n"
-        "Use /session to start studying or /settings to configure your preferences."
+    # New request — alert the admin with Approve / Deny buttons.
+    name = user.full_name or "(no name)"
+    handle = f"@{user.username}" if user.username else "(no username)"
+    admin_keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("✅ Approve", callback_data=f"approve_user:{user.id}"),
+            InlineKeyboardButton("❌ Deny", callback_data=f"deny_user:{user.id}"),
+        ]
+    ])
+    await context.bot.send_message(
+        chat_id=config.AUTHORIZED_CHAT_ID,
+        text=(
+            f"🔔 New access request\n\n"
+            f"Name: {name}\n"
+            f"Username: {handle}\n"
+            f"ID: {user.id}\n\n"
+            f"Grant access?"
+        ),
+        reply_markup=admin_keyboard,
     )
+    await query.edit_message_text(
+        "✅ Request sent! The admin will review it and you'll be notified. ⏳"
+    )
+
+
+async def callback_approve_user(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Admin-only: approve a pending access request."""
+    query = update.callback_query
+    await query.answer()
+    if update.effective_user is None or update.effective_user.id != config.AUTHORIZED_CHAT_ID:
+        return
+    target_id = int(query.data.split(":")[1])
+    ok = await db.approve_access_request(target_id)
+    if not ok:
+        await query.edit_message_text("⚠️ That request no longer exists.")
+        return
+    await query.edit_message_text(f"{query.message.text}\n\n✅ Approved.")
+    try:
+        await context.bot.send_message(
+            chat_id=target_id,
+            text=(
+                "🎉 You've been granted access!\n\n"
+                "Tap /start to see the commands, then 📚 /grammar or ▶️ /vocab to begin."
+            ),
+        )
+    except Exception as e:
+        logger.warning("could not notify approved user %s: %s", target_id, e)
+
+
+async def callback_deny_user(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Admin-only: deny a pending access request."""
+    query = update.callback_query
+    await query.answer()
+    if update.effective_user is None or update.effective_user.id != config.AUTHORIZED_CHAT_ID:
+        return
+    target_id = int(query.data.split(":")[1])
+    ok = await db.deny_access_request(target_id)
+    if not ok:
+        await query.edit_message_text("⚠️ That request no longer exists.")
+        return
+    await query.edit_message_text(f"{query.message.text}\n\n❌ Denied.")
+    try:
+        await context.bot.send_message(
+            chat_id=target_id,
+            text="Sorry — your access request was not approved.",
+        )
+    except Exception as e:
+        logger.warning("could not notify denied user %s: %s", target_id, e)
 
 
 async def cmd_settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

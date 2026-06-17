@@ -62,8 +62,8 @@ the same change. Keep them symmetrical.
 ## Module map (`bot/`)
 
 - `main.py` — entry point. Builds the app, registers every command/callback
-  handler, sets the Telegram command menus (admin gets `/create_invite`), starts
-  the scheduler, then `run_polling`. **New handlers must be registered here.**
+  handler, sets the single Telegram command menu, starts the scheduler, then
+  `run_polling`. **New handlers must be registered here.**
 - `handlers.py` — all command + callback logic, auth gate (`_is_authorized`),
   message rendering. Vocab and grammar handlers live side by side.
 - `db.py` — the **only** module that touches Firestore. All functions are async.
@@ -109,6 +109,12 @@ the same change. Keep them symmetrical.
   `main.py` → menu entry in `main.py`'s `set_commands()`.
 - User-facing strings mix German flavor + English and use emoji + Markdown.
   Match the existing tone.
+- **Onboarding is invite-only, admin-approved** (no OTP/passwords). New user taps
+  `request_access` on `/start` → `db.create_access_request` → admin gets a message
+  with Approve/Deny buttons (`approve_user:<id>` / `deny_user:<id>`) →
+  `db.approve_access_request` registers them. State lives in the `access_requests`
+  collection (`pending`/`approved`/`denied`); the `users` doc is created only on
+  approval, so `is_registered_user` / `_is_authorized` stay accurate.
 
 ## Commands
 

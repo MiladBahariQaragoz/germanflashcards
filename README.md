@@ -35,12 +35,18 @@ Run `python -m scripts.migrate_v2` to load the vocabulary into the Firestore dat
 
 ## Usage
 
-* `/start`: Initializes interaction with the bot.
-* `/session`: Begins a study session, loading due cards and new vocabulary into your queue.
-* `/stats`: Displays your current study progress and card counts.
+* `/start`: Intro to the bot. New users get a **Request access** button (invite-only).
+* `/grammar`, `/vocab`: Begin a grammar or vocabulary study session.
+* `/stats`: Displays your current study progress, card counts, and streak.
+* `/leaderboard`: Top streak holders across all users.
 * `/settings`: Opens a menu to configure your study direction and preferred CEFR levels.
-* `/login <code>`: Registers a new user using an OTP.
-* `/create_invite`: (Admin only) Generates a 48-hour OTP for inviting new users.
+* `/developer`: About the developer.
+
+### Onboarding
+
+Access is invite-only and approved by the admin. A new user opens the bot, taps
+**Request access**, and the admin receives a message with their name and ID plus
+**Approve** / **Deny** buttons. On approval the user is registered and notified.
 
 ## Documentation
 

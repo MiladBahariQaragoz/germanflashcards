@@ -1,9 +1,9 @@
 import asyncio
 import logging
-from telegram import BotCommand, BotCommandScopeChat, BotCommandScopeDefault
+from telegram import BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
 
-from bot.config import BOT_TOKEN, AUTHORIZED_CHAT_ID
+from bot.config import BOT_TOKEN
 from bot.handlers import (
     cmd_start,
     cmd_session,
@@ -12,9 +12,10 @@ from bot.handlers import (
     cmd_stats,
     cmd_leaderboard,
     cmd_developer,
-    cmd_create_invite,
-    cmd_login,
     cmd_settings,
+    callback_request_access,
+    callback_approve_user,
+    callback_deny_user,
     callback_start_session,
     callback_start_grammar_session,
     callback_show_answer,
@@ -46,11 +47,20 @@ def main() -> None:
     app.add_handler(CommandHandler("stats", cmd_stats))
     app.add_handler(CommandHandler("leaderboard", cmd_leaderboard))
     app.add_handler(CommandHandler("developer", cmd_developer))
-    app.add_handler(CommandHandler("create_invite", cmd_create_invite))
-    app.add_handler(CommandHandler("login", cmd_login))
     app.add_handler(CommandHandler("settings", cmd_settings))
     app.add_handler(CommandHandler("grammar", cmd_grammar))
     app.add_handler(CommandHandler("vocab", cmd_vocab))
+
+    # Access request flow (new-user onboarding, admin-approved)
+    app.add_handler(
+        CallbackQueryHandler(callback_request_access, pattern="^request_access$")
+    )
+    app.add_handler(
+        CallbackQueryHandler(callback_approve_user, pattern="^approve_user:")
+    )
+    app.add_handler(
+        CallbackQueryHandler(callback_deny_user, pattern="^deny_user:")
+    )
 
     # Session callbacks
     app.add_handler(
@@ -79,27 +89,19 @@ def main() -> None:
         CallbackQueryHandler(callback_settings_cefr, pattern="^settings_cefr:")
     )
 
-    # Bot command menus — admin sees /create_invite, regular users don't
+    # Bot command menu (same for everyone; admin approves new users via inline
+    # buttons in the access-request message, so there's no admin-only command).
     async def set_commands():
-        user_commands = [
+        commands = [
             BotCommand("grammar", "📚 Start grammar session"),
             BotCommand("vocab", "▶️ Start vocabulary session"),
             BotCommand("stats", "📊 Grammar + vocabulary progress"),
             BotCommand("leaderboard", "🏆 Top streak holders"),
             BotCommand("settings", "⚙️ Study direction & CEFR levels"),
             BotCommand("developer", "👨‍💻 About the developer"),
-            BotCommand("login", "🔑 Register with an invite code"),
-            BotCommand("start", "ℹ️ About this bot"),
+            BotCommand("start", "ℹ️ About / request access"),
         ]
-        admin_commands = user_commands + [
-            BotCommand("create_invite", "➕ Generate an invite code"),
-        ]
-        # Default menu for all users
-        await app.bot.set_my_commands(user_commands, scope=BotCommandScopeDefault())
-        # Override for admin chat — adds /create_invite
-        await app.bot.set_my_commands(
-            admin_commands, scope=BotCommandScopeChat(chat_id=AUTHORIZED_CHAT_ID)
-        )
+        await app.bot.set_my_commands(commands)
 
     asyncio.get_event_loop().run_until_complete(set_commands())
 

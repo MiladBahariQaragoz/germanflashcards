@@ -19,7 +19,6 @@ to onboard regardless of vocabulary/grammar size.
 """
 
 import asyncio
-import secrets
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -46,7 +45,7 @@ def _berlin_date(offset_days: int = 0) -> str:
 _db = firestore.AsyncClient()
 _progress_col = _db.collection("user_progress")
 _users_col = _db.collection("users")
-_otps_col = _db.collection("otps")
+_requests_col = _db.collection("access_requests")
 _cards_col = _db.collection("cards")
 _grammar_cards_col = _db.collection("grammar_cards")
 _grammar_progress_col = _db.collection("grammar_progress")
@@ -301,41 +300,57 @@ async def get_card_counts_by_state(
 
 
 # ---------------------------------------------------------------------------
-# OTP functions
+# Access requests (admin-approved onboarding)
 # ---------------------------------------------------------------------------
+# Onboarding flow: a new user taps "Request access" → a doc is created here →
+# the admin approves/denies via inline buttons. Approval creates the users/ doc
+# (which is what is_registered_user / _is_authorized check). Doc ID = str(user_id).
+#   status: 'pending' | 'approved' | 'denied'
 
-async def create_otp(ttl_hours: int = 48) -> str:
-    """Generate a random OTP, store it in Firestore, return the code string."""
-    code = secrets.token_urlsafe(8)
-    now = datetime.now(timezone.utc)
-    await _otps_col.add({
-        "code": code,
-        "created_at": now,
-        "expires_at": now + timedelta(hours=ttl_hours),
-        "used": False,
+async def create_access_request(
+    user_id: int, username: str | None, name: str | None
+) -> str:
+    """
+    Record a pending access request. Returns one of:
+      'registered' — already has access (no request made),
+      'pending'    — a request is already awaiting review,
+      'created'    — a new pending request was stored.
+    """
+    if await is_registered_user(user_id):
+        return "registered"
+    ref = _requests_col.document(str(user_id))
+    doc = await ref.get()
+    if doc.exists and doc.to_dict().get("status") == "pending":
+        return "pending"
+    await ref.set({
+        "user_id": user_id,
+        "username": username or "",
+        "name": name or "",
+        "status": "pending",
+        "requested_at": datetime.now(timezone.utc),
     })
-    return code
+    return "created"
 
 
-async def consume_otp(code: str) -> bool:
-    """
-    Validate and consume an OTP.
-    Returns True if code was valid (unused, not expired) and is now marked used.
-    """
-    now = datetime.now(timezone.utc)
-    results = await (
-        _otps_col
-        .where(filter=FieldFilter("code", "==", code))
-        .where(filter=FieldFilter("used", "==", False))
-        .limit(1)
-        .get()
-    )
-    if not results:
+async def approve_access_request(user_id: int) -> bool:
+    """Register the user and mark their request approved. False if no request exists."""
+    ref = _requests_col.document(str(user_id))
+    doc = await ref.get()
+    if not doc.exists:
         return False
-    doc = results[0]
-    if doc.to_dict()["expires_at"] < now:
+    data = doc.to_dict()
+    await register_user(user_id, data.get("username"))
+    await ref.update({"status": "approved", "decided_at": datetime.now(timezone.utc)})
+    return True
+
+
+async def deny_access_request(user_id: int) -> bool:
+    """Mark a request denied. False if no request exists."""
+    ref = _requests_col.document(str(user_id))
+    doc = await ref.get()
+    if not doc.exists:
         return False
-    await doc.reference.update({"used": True})
+    await ref.update({"status": "denied", "decided_at": datetime.now(timezone.utc)})
     return True
 
 
