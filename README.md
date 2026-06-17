@@ -31,17 +31,22 @@ The German Flashcards system is a multi-user Telegram bot designed for spaced re
 
 ### Seed Data
 
-The vocabulary/grammar JSON used to populate Firestore is kept on the separate
-[`data`](../../tree/data) branch (not on `master`), so the main repo stays
-code-only. The running bot doesn't need it — it serves cards from Firestore.
+The vocabulary/grammar JSON used to populate Firestore is **not** included in
+this repository — it lives in a separate **private** data repo (maintainers
+only), so the published code stays data-free. The running bot doesn't need it
+anyway; it serves cards from Firestore.
 
-To seed a fresh database, fetch the JSON and run the upload scripts:
+Maintainers with access seed a fresh database like this:
 
 ```bash
-git checkout data -- '*.json'        # pull the seed JSON into your working tree
+git clone https://github.com/MiladBahariQaragoz/germanflashcards-data.git
+cp germanflashcards-data/*.json .
 python scripts/upload_grammar.py     # grammar cards
 python -m scripts.migrate_v2         # vocabulary cards (also needs MONGODB_URI)
 ```
+
+Running your own instance? Supply your own card JSON in the same shape
+(`word`, `translation`, `german_sentence`, `english_translation`, `cefr_level`).
 
 ## Usage
 
