@@ -358,8 +358,8 @@ async def deny_access_request(user_id: int) -> bool:
 # User functions
 # ---------------------------------------------------------------------------
 
-DEFAULT_CEFR_LEVELS = ["A1", "A2", "B1", "B2"]
-DEFAULT_STUDY_DIRECTION = "DE->EN"
+DEFAULT_CEFR_LEVELS = ["A1"]
+DEFAULT_STUDY_DIRECTION = "EN->DE"
 
 
 async def register_user(user_id: int, username: str | None) -> None:
