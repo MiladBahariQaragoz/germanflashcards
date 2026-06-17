@@ -73,6 +73,12 @@ $RECYCLE.BIN/
 *~
 \#*\#
 
+# ── Claude Code ──────────────────────────────────────────────────────────────
+# Personal, machine-local overrides — the shared .claude/settings.json IS committed
+.claude/settings.local.json
+# Harness-generated skills lockfile
+skills-lock.json
+
 # ── Project-specific ─────────────────────────────────────────────────────────
 # Jupyter (if ever used for data exploration)
 *.ipynb_checkpoints/

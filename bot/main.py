@@ -10,6 +10,7 @@ from bot.handlers import (
     cmd_vocab,
     cmd_grammar,
     cmd_stats,
+    cmd_leaderboard,
     cmd_create_invite,
     cmd_login,
     cmd_settings,
@@ -21,6 +22,7 @@ from bot.handlers import (
     callback_grade_grammar,
     callback_settings_direction,
     callback_settings_cefr,
+    callback_spread_backlog,
 )
 from bot.scheduler import setup_scheduler
 
@@ -37,6 +39,7 @@ def main() -> None:
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("session", cmd_session))
     app.add_handler(CommandHandler("stats", cmd_stats))
+    app.add_handler(CommandHandler("leaderboard", cmd_leaderboard))
     app.add_handler(CommandHandler("create_invite", cmd_create_invite))
     app.add_handler(CommandHandler("login", cmd_login))
     app.add_handler(CommandHandler("settings", cmd_settings))
@@ -58,6 +61,9 @@ def main() -> None:
     )
     app.add_handler(CallbackQueryHandler(callback_grade, pattern="^grade:"))
     app.add_handler(CallbackQueryHandler(callback_grade_grammar, pattern="^grade_grammar:"))
+    app.add_handler(
+        CallbackQueryHandler(callback_spread_backlog, pattern="^spread_backlog$")
+    )
 
     # Settings callbacks
     app.add_handler(
@@ -73,6 +79,7 @@ def main() -> None:
             BotCommand("grammar", "📚 Start grammar session"),
             BotCommand("vocab", "▶️ Start vocabulary session"),
             BotCommand("stats", "📊 Grammar + vocabulary progress"),
+            BotCommand("leaderboard", "🏆 Top streak holders"),
             BotCommand("settings", "⚙️ Study direction & CEFR levels"),
             BotCommand("login", "🔑 Register with an invite code"),
             BotCommand("start", "ℹ️ About this bot"),

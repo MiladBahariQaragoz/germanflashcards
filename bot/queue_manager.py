@@ -9,6 +9,9 @@ class SessionQueue:
         self.again_pile: list[dict] = []
         self.active: bool = False
         self.kill_switch: bool = False
+        # Progress tracking for the in-session completion bar.
+        self.total: int = 0       # cards in the session at build time
+        self.reviewed: int = 0    # cards given a passing grade (won't be replayed)
 
     def build(self, due_cards: list[dict], new_cards: list[dict]) -> None:
         shuffled = list(due_cards)
@@ -19,6 +22,16 @@ class SessionQueue:
         self.again_pile = []
         self.active = True
         self.kill_switch = False
+        self.total = len(self.queue)
+        self.reviewed = 0
+
+    def mark_reviewed(self) -> None:
+        """Count a card as completed (graded anything but Again)."""
+        self.reviewed += 1
+
+    def progress(self) -> tuple[int, int]:
+        """(completed, total) for the completion bar. Completed is capped at total."""
+        return min(self.reviewed, self.total), self.total
 
     def pop_next(self) -> dict | None:
         if self.queue:
@@ -46,6 +59,8 @@ class SessionQueue:
         self.again_pile = []
         self.active = False
         self.kill_switch = False
+        self.total = 0
+        self.reviewed = 0
 
 
 # Per-user session registry.

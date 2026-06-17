@@ -21,9 +21,27 @@ to onboard regardless of vocabulary/grammar size.
 import asyncio
 import secrets
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from google.cloud import firestore
 from google.cloud.firestore_v1 import FieldFilter
+
+from bot import streak as streak_logic
+from bot import catchup as catchup_logic
+
+# Backlog catch-up: offer to spread when combined due exceeds this, targeting
+# roughly this many review cards per day. See spread_backlog.
+BACKLOG_OFFER_THRESHOLD = 100
+CATCHUP_PER_DAY = 60
+_BATCH_LIMIT = 400  # Firestore allows 500 writes/batch; stay under for safety
+
+# The "study day" for streaks is a Berlin calendar date (not UTC), so an early
+# 1 a.m. / 6 a.m. session counts toward that day. See get_streak / record_session_cleared.
+_BERLIN = ZoneInfo("Europe/Berlin")
+
+
+def _berlin_date(offset_days: int = 0) -> str:
+    return (datetime.now(_BERLIN).date() - timedelta(days=offset_days)).isoformat()
 
 _db = firestore.AsyncClient()
 _progress_col = _db.collection("user_progress")
@@ -375,6 +393,52 @@ async def update_user_settings(user_id: int, fields: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Streak tracking
+# ---------------------------------------------------------------------------
+# A streak day requires BOTH the grammar and vocab sessions to be "satisfied" on
+# the same Berlin calendar date. A domain is satisfied when its session is cleared
+# OR it had nothing due that day (no required reviews). State on the user doc:
+#   streak_count          — current run length
+#   last_streak_date      — Berlin date the streak last advanced (YYYY-MM-DD)
+#   vocab_cleared_date    — Berlin date the vocab session was last cleared
+#   grammar_cleared_date  — Berlin date the grammar session was last cleared
+
+async def record_session_cleared(
+    user_id: int, domain: str, *, other_domain_due: int
+) -> dict:
+    """
+    Mark `domain` ('vocab'|'grammar') cleared for today and, if BOTH domains are
+    satisfied today, advance the streak.
+
+    other_domain_due — count of cards still due in the *other* domain. The other
+    domain counts as satisfied if it was already cleared today or has 0 due.
+
+    Returns {'both_done': bool, 'streak': int, 'advanced': bool}.
+    """
+    ref = _users_col.document(str(user_id))
+    doc = await ref.get()
+    data = doc.to_dict() or {}
+    updates, result = streak_logic.streak_transition(
+        data, domain, _berlin_date(), _berlin_date(1), other_domain_due
+    )
+    await ref.set(updates, merge=True)
+    return result
+
+
+async def get_streak(user_id: int) -> int:
+    """Current streak, or 0 if it has lapsed (last advance older than yesterday)."""
+    doc = await _users_col.document(str(user_id)).get()
+    data = doc.to_dict() or {}
+    return streak_logic.current_streak(data, _berlin_date(), _berlin_date(1))
+
+
+async def get_leaderboard(limit: int = 10) -> list[dict]:
+    """Top active streaks across all users: [{'user_id','username','streak'}, ...]."""
+    users = await get_all_users()
+    return streak_logic.rank_streaks(users, _berlin_date(), _berlin_date(1), limit)
+
+
+# ---------------------------------------------------------------------------
 # Grammar session queries (parallel to vocab session queries above)
 # ---------------------------------------------------------------------------
 
@@ -522,3 +586,58 @@ async def get_grammar_card_counts_by_state(
     total_cards = counts_list[3]
     counts["New"] = max(0, total_cards - sum(counts.values()))
     return counts
+
+
+# ---------------------------------------------------------------------------
+# Backlog catch-up (installments)
+# ---------------------------------------------------------------------------
+
+async def _spread_due_cards(due_cards: list[dict], per_day: int) -> int:
+    """
+    Reschedule the overflow of an already-fetched due-card list across upcoming
+    days (~per_day/day). Cards keep their progress docs; only `due_date` moves.
+    Works for either domain — progress doc IDs are `{user_id}_{card_id}` in both.
+    Returns the number of cards moved.
+    """
+    offsets = catchup_logic.plan_installments(len(due_cards), per_day)
+    if not offsets:
+        return 0
+
+    # Earliest-due cards stay today; the latest-due ones get pushed furthest out.
+    due_cards.sort(key=lambda c: c.get("due_date") or datetime.now(timezone.utc))
+    overflow = due_cards[per_day:]
+    now = datetime.now(timezone.utc)
+
+    batch = _db.batch()
+    pending = 0
+    for card, day_offset in zip(overflow, offsets):
+        doc_id = f"{card['user_id']}_{card['card_id']}"
+        # Both domains' progress collections use the same doc-id scheme; pick by type.
+        col = _grammar_progress_col if card.get("_card_type") == "grammar" else _progress_col
+        batch.update(col.document(doc_id), {"due_date": now + timedelta(days=day_offset)})
+        pending += 1
+        if pending == _BATCH_LIMIT:
+            await batch.commit()
+            batch = _db.batch()
+            pending = 0
+    if pending:
+        await batch.commit()
+    return len(overflow)
+
+
+async def spread_backlog(
+    user_id: int,
+    cefr_levels: list[str] | None = None,
+    per_day: int = CATCHUP_PER_DAY,
+) -> dict[str, int]:
+    """
+    Spread BOTH domains' due backlogs into daily installments of ~per_day.
+    Returns {'vocab': moved, 'grammar': moved}.
+    """
+    due_vocab, due_grammar = await asyncio.gather(
+        get_due_cards(user_id, cefr_levels=cefr_levels),
+        get_due_grammar_cards(user_id, cefr_levels=cefr_levels),
+    )
+    moved_vocab = await _spread_due_cards(due_vocab, per_day)
+    moved_grammar = await _spread_due_cards(due_grammar, per_day)
+    return {"vocab": moved_vocab, "grammar": moved_grammar}

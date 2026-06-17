@@ -1,0 +1,167 @@
+# CLAUDE.md
+
+Guidance for Claude Code (and humans) working in this repository.
+
+## Work log — 2026-06-17 (5 enhancements, all shipped ✅)
+
+All five items below are implemented and covered by `pytest` (44 tests green).
+Decisions baked in: streak needs **both** grammar+vocab satisfied on the same
+Berlin day; catch-up is a one-time button offered at >100 due, target ~60/day.
+Kept here as a changelog; details are folded into the sections below.
+
+- [x] **#3 Reminder timing** — `scheduler.py` nags fire at fixed Berlin clock
+  times (10–22, every 2h) via `CronTrigger` (was a drifting `IntervalTrigger`);
+  added `coalesce`/`max_instances=1`/`misfire_grace_time` job defaults.
+- [x] **#2 Progress bar** — `SessionQueue.total`/`reviewed` +
+  `mark_reviewed()`/`progress()`; `_progress_bar()` prepends `████░░░░░░ 4/10 (40%)`
+  to each card front. Advances on any non-Again grade.
+- [x] **#5 Streak counter** — pure logic in `bot/streak.py`; persisted by
+  `db.record_session_cleared`/`get_streak`. Shown in `/stats`.
+- [x] **#1 Catch-up installments** — pure math in `bot/catchup.py`;
+  `db.spread_backlog` reschedules overflow `due_date`s. `🧩 spread` button shown
+  by `scheduler._session_keyboard` + `handlers.callback_spread_backlog`.
+- [x] **#4** — answered, no code: no 8:00 gate; early sessions run normally;
+  streak anchors to Berlin calendar date (see latent UTC quirk under "gotchas").
+
+## Pure, unit-tested logic modules
+
+These hold business logic deliberately split out of `db.py`/`handlers.py` (which
+need Firestore / Telegram) so it can be tested offline. Follow this pattern for
+new logic — keep it pure, persist separately.
+
+- `bot/queue_manager.py` — session queues + progress tracking.
+- `bot/streak.py` — `streak_transition()` / `current_streak()` / `rank_streaks()`.
+  A day counts when both domains are satisfied (session cleared OR 0 due) on the
+  same Berlin date; streak advances once/day, resets to 1 after a gap. `db` stores
+  `streak_count`, `last_streak_date`, `{vocab,grammar}_cleared_date` on the user
+  doc; empty sessions auto-satisfy a domain via `handlers._on_domain_empty`.
+  `rank_streaks()` backs the public `/leaderboard` (`db.get_leaderboard` →
+  `handlers.cmd_leaderboard`): top active streaks, lapsed excluded, ties by
+  username. Rendered as **plain text** (no Markdown) since Telegram usernames
+  often contain `_`.
+- `bot/catchup.py` — `plan_installments(due_count, per_day)` → day-offset per
+  overflow card. `db.spread_backlog` applies it (only `due_date` moves; batched
+  writes). Thresholds: `db.BACKLOG_OFFER_THRESHOLD` (100), `db.CATCHUP_PER_DAY` (60).
+
+## What this is
+
+A **multi-user Telegram bot** for learning German via spaced repetition (FSRS).
+Backend is **Google Cloud Firestore**. Runtime is **Python 3.11+ / asyncio**,
+built on `python-telegram-bot`. Deployed on a GCE VM as a systemd service.
+
+There are two **independent** study domains that mirror each other exactly:
+
+| Domain  | Card collection  | Progress collection  | Session registry (in-memory) |
+|---------|------------------|----------------------|------------------------------|
+| Vocab   | `cards`          | `user_progress`      | `queue_manager._sessions`    |
+| Grammar | `grammar_cards`  | `grammar_progress`   | `queue_manager._grammar_sessions` |
+
+When you add a feature to one domain, the parallel domain almost always needs
+the same change. Keep them symmetrical.
+
+## Module map (`bot/`)
+
+- `main.py` — entry point. Builds the app, registers every command/callback
+  handler, sets the Telegram command menus (admin gets `/create_invite`), starts
+  the scheduler, then `run_polling`. **New handlers must be registered here.**
+- `handlers.py` — all command + callback logic, auth gate (`_is_authorized`),
+  message rendering. Vocab and grammar handlers live side by side.
+- `db.py` — the **only** module that touches Firestore. All functions are async.
+- `fsrs_service.py` — pure wrapper around the `fsrs` library. Converts between
+  card dicts and FSRS `Card` objects; no I/O.
+- `queue_manager.py` — in-memory per-user session queues. No I/O, no async.
+  This is the most unit-testable module.
+- `scheduler.py` — APScheduler jobs: `morning_trigger` (08:00 Europe/Berlin,
+  resets queues + sends due counts) and `nag_check` (every 2h, reminds unfinished).
+- `config.py` — reads env vars (`BOT_TOKEN`, `AUTHORIZED_CHAT_ID`) via `.env`.
+- `streak.py`, `catchup.py` — pure logic modules (see "Pure, unit-tested logic").
+
+## Key design decisions (don't break these)
+
+- **Progress docs exist only for *reviewed* cards.** New cards are discovered
+  on-demand by querying the `cards`/`grammar_cards` collections and excluding any
+  that already have a progress doc. This means **registering a user is zero
+  writes** — onboarding stays free regardless of deck size. The `_progress_exists`
+  flag on a card dict tracks whether a write is an `update` (existing) or a full
+  `set` (first review). Don't pre-provision per-user card docs.
+- **Progress docs are denormalized** — they copy `word`, `translation`,
+  sentences, and `cefr_level` from the card so a session never needs a join.
+- **CEFR filtering for grammar** uses the `_Grammar` suffix (`A1` → `A1_Grammar`).
+  Always map user levels through `db._grammar_cefr_levels()` before querying
+  `grammar_cards`/`grammar_progress`.
+- **Some filtering is done in Python, not Firestore** (e.g. `fsrs_state != "New"`
+  and CEFR membership in `get_due_cards`) specifically to avoid extra composite
+  indexes. If you add a query, prefer this pattern over a new composite index
+  unless the result set is large.
+- **Session queues are in-memory only.** They are lost on restart and reset every
+  morning. Never assume queue state survives a deploy.
+- Document ID convention: progress docs are `f"{user_id}_{card_id}"`;
+  grammar card IDs are `md5(word|german_sentence)` (see `scripts/upload_grammar.py`).
+
+## Conventions
+
+- **All Firestore access goes through `db.py`.** Don't import `firestore`
+  elsewhere. Keep handlers free of raw queries.
+- Everything that touches the network is `async`; use `asyncio.gather` for
+  parallel reads (see `cmd_stats`, `morning_trigger`).
+- Use `FieldFilter(...)` in `.where()` calls (positional `.where()` is deprecated).
+- Adding a command is a 3-step change: handler in `handlers.py` → registration in
+  `main.py` → menu entry in `main.py`'s `set_commands()`.
+- User-facing strings mix German flavor + English and use emoji + Markdown.
+  Match the existing tone.
+
+## Commands
+
+```bash
+# Install
+pip install -r requirements.txt -r requirements-dev.txt
+
+# Run the bot locally (needs .env with BOT_TOKEN + AUTHORIZED_CHAT_ID, and ADC for Firestore)
+python -m bot.main
+
+# Tests (queue_manager + fsrs_service are pure and fully testable offline)
+pytest
+pytest tests/test_queue_manager.py -q
+
+# One-time data loads (require ADC / GOOGLE_CLOUD_PROJECT)
+python scripts/upload_grammar.py     # → grammar_cards
+python -m scripts.migrate_v2         # → cards + user_progress (also needs MONGODB_URI)
+```
+
+## Testing
+
+- `pytest` + `pytest-asyncio`. Pure modules (`queue_manager`, `fsrs_service`) are
+  tested without mocks. There is **no Firestore emulator wired up** — `db.py` and
+  handlers are not currently covered. When changing queue/scheduling logic, add a
+  test; when changing `db.py`, test the pure helpers (e.g. `_grammar_cefr_levels`,
+  doc-id builders) at minimum.
+- Keep new business logic out of `db.py`/`handlers.py` where practical so it stays
+  unit-testable (the queue manager is the model to follow).
+
+## Deployment
+
+- Hosted on GCE VM `german-bot` (project `learn-german-bot`, zone
+  `us-central1-a`), running as systemd service `german-bot`.
+- `cloudbuild.yaml` deploys by SSHing to the VM, `git pull`, then
+  `systemctl restart german-bot`. Pushing to the deployed branch is the release.
+- Auth to Firestore is via **Application Default Credentials** — no key files,
+  no `MONGODB_URI` for the running bot.
+- **Firestore composite indexes are manual.** Session queries need
+  `(user_id ASC, due_date ASC)` on both `user_progress` and `grammar_progress`.
+  Adding a new multi-field query may require creating a new index in the console.
+
+## Repo notes / gotchas
+
+- ⚠️ **`SETUP.md` is stale** — it describes the old MongoDB + Render stack. The
+  current stack is Firestore + GCE (see `README.md` and `system.md`). Don't follow
+  `SETUP.md` for new work; update or delete it if you touch setup docs.
+- `motor` in `requirements.txt` exists **only** for the one-time `migrate_v2`
+  MongoDB read and is safe to remove once migration is confirmed done.
+- The large `*_words_*.json` and `*_grammar_*.json` files are seed data for the
+  one-time upload scripts, not runtime inputs.
+- Architecture/design history lives in `docs/superpowers/`.
+- ⚠️ **Latent due-date timezone quirk:** "due today" in `db.get_due_cards` is
+  computed off `_end_of_today_utc()` (UTC calendar date), while the daily reset and
+  streaks use **Berlin** dates. Around midnight Berlin these disagree by a day. Not
+  fixed (out of scope for the 2026-06-17 work); be aware when touching due-date or
+  streak logic. The streak "study day" is intentionally Berlin-based.

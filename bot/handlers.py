@@ -41,6 +41,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "📚 /grammar — Start your grammar session (sentence exercises)\n"
         "▶️ /vocab — Start your vocabulary session\n"
         "📊 /stats — Grammar + vocabulary progress\n"
+        "🏆 /leaderboard — Top streak holders\n"
         "⚙️ /settings — Study direction & CEFR levels\n\n"
         "⏰ *Daily routine*\n"
         "Every morning at 8:00 (Berlin time) you'll get a message with today's grammar and vocab counts. "
@@ -59,13 +60,15 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     cefr = settings["cefr_levels"]
     cefr_label = ", ".join(sorted(cefr))
 
-    vocab_counts, grammar_counts = await asyncio.gather(
+    vocab_counts, grammar_counts, streak = await asyncio.gather(
         db.get_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_grammar_card_counts_by_state(user_id, cefr_levels=cefr),
+        db.get_streak(user_id),
     )
 
     text = (
-        f"📊 Stats (levels: {cefr_label})\n\n"
+        f"📊 Stats (levels: {cefr_label})\n"
+        f"{_streak_line(streak)}\n\n"
         f"🗂️ *Vocabulary*\n"
         f"New: {vocab_counts['New']}\n"
         f"Learning: {vocab_counts['Learning']}\n"
@@ -78,6 +81,29 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         f"Relearning: {grammar_counts['Relearning']}"
     )
     await update.message.reply_text(text, parse_mode="Markdown")
+
+
+async def cmd_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Public streak leaderboard — top active streak holders and their streaks."""
+    if not await _is_authorized(update):
+        return
+    entries = await db.get_leaderboard(limit=10)
+    if not entries:
+        await update.message.reply_text(
+            "🏆 No active streaks yet — be the first!\n"
+            "Clear both your grammar and vocab sessions today to get on the board."
+        )
+        return
+    # Plain text (no parse_mode): Telegram usernames often contain '_' which would
+    # break Markdown formatting.
+    medals = {0: "🥇", 1: "🥈", 2: "🥉"}
+    lines = ["🏆 Streak Leaderboard\n"]
+    for i, e in enumerate(entries):
+        name = f"@{e['username']}" if e["username"] else f"User {e['user_id']}"
+        rank = medals.get(i, f"{i + 1}.")
+        days = "day" if e["streak"] == 1 else "days"
+        lines.append(f"{rank} {name} — 🔥 {e['streak']} {days}")
+    await update.message.reply_text("\n".join(lines))
 
 
 async def cmd_session(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -202,6 +228,16 @@ def _settings_keyboard(settings: dict) -> InlineKeyboardMarkup:
 # Session helpers
 # ---------------------------------------------------------------------------
 
+def _progress_bar(done: int, total: int, width: int = 10) -> str:
+    """Render a text completion bar, e.g. '████░░░░░░ 4/10 (40%)'. Empty if no total."""
+    if total <= 0:
+        return ""
+    filled = max(0, min(width, round(width * done / total)))
+    bar = "█" * filled + "░" * (width - filled)
+    pct = round(100 * done / total)
+    return f"{bar} {done}/{total} ({pct}%)"
+
+
 async def _start_session(
     context: ContextTypes.DEFAULT_TYPE, chat_id: int, user_id: int
 ) -> None:
@@ -213,13 +249,16 @@ async def _start_session(
         if len(due) <= 150
         else []
     )
-    qm.get_session(user_id).build(due_cards=due, new_cards=new)
-    card = qm.get_session(user_id).pop_next()
+    session = qm.get_session(user_id)
+    session.build(due_cards=due, new_cards=new)
+    card = session.pop_next()
     if card is None:
-        await context.bot.send_message(chat_id=chat_id, text="No cards due today!")
+        await _on_domain_empty(context, chat_id, user_id, "vocab")
         return
     await _send_card_front(
-        context, chat_id, card, study_direction=settings["study_direction"]
+        context, chat_id, card,
+        study_direction=settings["study_direction"],
+        progress=session.progress(),
     )
 
 
@@ -228,6 +267,7 @@ async def _send_card_front(
     chat_id: int,
     card: dict,
     study_direction: str = "DE->EN",
+    progress: tuple[int, int] | None = None,
 ) -> None:
     card_id = card["_id"]
     keyboard = InlineKeyboardMarkup(
@@ -242,6 +282,10 @@ async def _send_card_front(
         front_text = f"[{cefr}] 🇬🇧 {card.get('translation', '')}"
         if card.get("english_translation"):
             front_text += f"\n📝 {card['english_translation']}"
+    if progress is not None:
+        bar = _progress_bar(*progress)
+        if bar:
+            front_text = f"{bar}\n\n{front_text}"
     await context.bot.send_message(
         chat_id=chat_id, text=front_text, reply_markup=keyboard
     )
@@ -262,13 +306,16 @@ async def _start_grammar_session(
         if len(due) <= 150
         else []
     )
-    qm.get_grammar_session(user_id).build(due_cards=due, new_cards=new)
-    card = qm.get_grammar_session(user_id).pop_next()
+    session = qm.get_grammar_session(user_id)
+    session.build(due_cards=due, new_cards=new)
+    card = session.pop_next()
     if card is None:
-        await context.bot.send_message(chat_id=chat_id, text="No grammar cards due today! 🎉")
+        await _on_domain_empty(context, chat_id, user_id, "grammar")
         return
     await _send_grammar_card_front(
-        context, chat_id, card, study_direction=settings["study_direction"]
+        context, chat_id, card,
+        study_direction=settings["study_direction"],
+        progress=session.progress(),
     )
 
 
@@ -277,6 +324,7 @@ async def _send_grammar_card_front(
     chat_id: int,
     card: dict,
     study_direction: str = "DE->EN",
+    progress: tuple[int, int] | None = None,
 ) -> None:
     card_id = card["_id"]
     keyboard = InlineKeyboardMarkup(
@@ -287,9 +335,88 @@ async def _send_grammar_card_front(
         front_text = f"📚 [{cefr}] 🇩🇪 {card.get('german_sentence', card['word'])}"
     else:
         front_text = f"📚 [{cefr}] 🇬🇧 {card.get('english_translation', card.get('translation', ''))}"
+    if progress is not None:
+        bar = _progress_bar(*progress)
+        if bar:
+            front_text = f"{bar}\n\n{front_text}"
     await context.bot.send_message(
         chat_id=chat_id, text=front_text, reply_markup=keyboard
     )
+
+
+# ---------------------------------------------------------------------------
+# Session completion hooks (streak logic is layered in here)
+# ---------------------------------------------------------------------------
+
+def _streak_line(streak: int) -> str:
+    return f"🔥 Streak: {streak} day{'s' if streak != 1 else ''}!"
+
+
+async def _on_domain_empty(
+    context: ContextTypes.DEFAULT_TYPE, chat_id: int, user_id: int, domain: str
+) -> None:
+    """A session had nothing due. Still record it satisfied so the streak can complete."""
+    session = qm.get_session(user_id) if domain == "vocab" else qm.get_grammar_session(user_id)
+    session.reset()
+    session.kill_switch = True
+    settings = await db.get_user_settings(user_id)
+    cefr = settings["cefr_levels"]
+    if domain == "vocab":
+        other_due = await db.count_due_grammar_cards(user_id, cefr_levels=cefr)
+        text = "No vocab cards due today! 🎉"
+    else:
+        other_due = await db.count_due_cards(user_id, cefr_levels=cefr)
+        text = "No grammar cards due today! 🎉"
+    result = await db.record_session_cleared(user_id, domain, other_domain_due=other_due)
+    if result["advanced"]:
+        text += "\n\n" + _streak_line(result["streak"])
+    await context.bot.send_message(chat_id=chat_id, text=text)
+
+
+async def _on_vocab_session_cleared(
+    context: ContextTypes.DEFAULT_TYPE, chat_id: int, user_id: int
+) -> None:
+    settings = await db.get_user_settings(user_id)
+    grammar_due = await db.count_due_grammar_cards(
+        user_id, cefr_levels=settings["cefr_levels"]
+    )
+    result = await db.record_session_cleared(
+        user_id, "vocab", other_domain_due=grammar_due
+    )
+    if result["both_done"]:
+        text = (
+            "🗂️ Vocabulary done — both sessions complete for today! 🎉\n\n"
+            + _streak_line(result["streak"])
+        )
+    else:
+        text = (
+            "🗂️ Vocabulary session complete! 🎉\n\n"
+            "One more to go — don't forget your grammar session: /grammar"
+        )
+    await context.bot.send_message(chat_id=chat_id, text=text)
+
+
+async def _on_grammar_session_cleared(
+    context: ContextTypes.DEFAULT_TYPE, chat_id: int, user_id: int
+) -> None:
+    settings = await db.get_user_settings(user_id)
+    vocab_due = await db.count_due_cards(
+        user_id, cefr_levels=settings["cefr_levels"]
+    )
+    result = await db.record_session_cleared(
+        user_id, "grammar", other_domain_due=vocab_due
+    )
+    if result["both_done"]:
+        text = (
+            "📚 Grammatik fertig — both sessions complete for today! 🎉\n\n"
+            + _streak_line(result["streak"])
+        )
+    else:
+        text = (
+            "📚 Grammatik fertig! Grammar session complete. 🎉\n\n"
+            "Don't forget your vocabulary session — /vocab"
+        )
+    await context.bot.send_message(chat_id=chat_id, text=text)
 
 
 # ---------------------------------------------------------------------------
@@ -385,24 +512,26 @@ async def callback_grade(
     await db.update_card_after_review(user_id, card_id, update_fields, card)
     await query.edit_message_reply_markup(reply_markup=None)
 
+    session = qm.get_session(user_id)
     if rating_int == 1:
         updated_card = {**card, **update_fields}
-        qm.get_session(user_id).add_to_again_pile(updated_card)
+        session.add_to_again_pile(updated_card)
+    else:
+        session.mark_reviewed()
 
-    next_card = qm.get_session(user_id).pop_next()
+    next_card = session.pop_next()
     chat_id = update.effective_chat.id
 
     if next_card is None:
-        qm.get_session(user_id).check_and_set_kill_switch()
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text="Glückwunsch! All done for today. See you tomorrow! 🎉",
-        )
+        session.check_and_set_kill_switch()
+        await _on_vocab_session_cleared(context, chat_id, user_id)
         return
 
     settings = await db.get_user_settings(user_id)
     await _send_card_front(
-        context, chat_id, next_card, study_direction=settings["study_direction"]
+        context, chat_id, next_card,
+        study_direction=settings["study_direction"],
+        progress=session.progress(),
     )
 
 
@@ -494,24 +623,53 @@ async def callback_grade_grammar(
     await db.update_grammar_card_after_review(user_id, card_id, update_fields, card)
     await query.edit_message_reply_markup(reply_markup=None)
 
+    session = qm.get_grammar_session(user_id)
     if rating_int == 1:
         updated_card = {**card, **update_fields}
-        qm.get_grammar_session(user_id).add_to_again_pile(updated_card)
+        session.add_to_again_pile(updated_card)
+    else:
+        session.mark_reviewed()
 
-    next_card = qm.get_grammar_session(user_id).pop_next()
+    next_card = session.pop_next()
     chat_id = update.effective_chat.id
 
     if next_card is None:
-        qm.get_grammar_session(user_id).check_and_set_kill_switch()
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text="📚 Grammatik fertig! Grammar session complete. 🎉\n\nDon't forget your vocabulary session — /vocab",
-        )
+        session.check_and_set_kill_switch()
+        await _on_grammar_session_cleared(context, chat_id, user_id)
         return
 
     settings = await db.get_user_settings(user_id)
     await _send_grammar_card_front(
-        context, chat_id, next_card, study_direction=settings["study_direction"]
+        context, chat_id, next_card,
+        study_direction=settings["study_direction"],
+        progress=session.progress(),
+    )
+
+
+async def callback_spread_backlog(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Spread the user's due backlog into daily installments (~CATCHUP_PER_DAY/day)."""
+    query = update.callback_query
+    await query.answer()
+    if not await _is_authorized(update):
+        return
+    user_id = update.effective_user.id
+    settings = await db.get_user_settings(user_id)
+    moved = await db.spread_backlog(
+        user_id, settings["cefr_levels"], per_day=db.CATCHUP_PER_DAY
+    )
+    total = moved["vocab"] + moved["grammar"]
+    if total == 0:
+        await query.edit_message_text(
+            "Your backlog already fits in a single day — nothing to spread. 👍"
+        )
+        return
+    await query.edit_message_text(
+        f"✅ Backlog spread into daily installments (~{db.CATCHUP_PER_DAY}/day).\n\n"
+        f"Moved {total} card{'s' if total != 1 else ''} to upcoming days "
+        f"({moved['vocab']} vocab, {moved['grammar']} grammar).\n\n"
+        f"Today is manageable now — tap /grammar or /vocab to begin! 💪"
     )
 
 
