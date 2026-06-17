@@ -130,8 +130,7 @@ async def cmd_developer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     """Show developer credit with a link to the portfolio. Open to everyone."""
     await update.message.reply_text(
         "👨‍💻 *Developer*\n\n"
-        "This bot was built by [Milad Bahari Qaragoz](https://qaragoz.vercel.app/).\n\n"
-        "🔗 Portfolio: https://qaragoz.vercel.app/",
+        "This bot was built by [Milad Bahari Qaragoz](https://qaragoz.vercel.app/).",
         parse_mode="Markdown",
     )
 
