@@ -11,6 +11,7 @@ from bot.handlers import (
     cmd_grammar,
     cmd_stats,
     cmd_leaderboard,
+    cmd_developer,
     cmd_create_invite,
     cmd_login,
     cmd_settings,
@@ -30,6 +31,10 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
+# httpx logs every request at INFO with the full Telegram API URL — and that URL
+# embeds the bot token. Quiet it (and httpcore) so the token never lands in logs.
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 
 def main() -> None:
@@ -40,6 +45,7 @@ def main() -> None:
     app.add_handler(CommandHandler("session", cmd_session))
     app.add_handler(CommandHandler("stats", cmd_stats))
     app.add_handler(CommandHandler("leaderboard", cmd_leaderboard))
+    app.add_handler(CommandHandler("developer", cmd_developer))
     app.add_handler(CommandHandler("create_invite", cmd_create_invite))
     app.add_handler(CommandHandler("login", cmd_login))
     app.add_handler(CommandHandler("settings", cmd_settings))
@@ -81,6 +87,7 @@ def main() -> None:
             BotCommand("stats", "📊 Grammar + vocabulary progress"),
             BotCommand("leaderboard", "🏆 Top streak holders"),
             BotCommand("settings", "⚙️ Study direction & CEFR levels"),
+            BotCommand("developer", "👨‍💻 About the developer"),
             BotCommand("login", "🔑 Register with an invite code"),
             BotCommand("start", "ℹ️ About this bot"),
         ]
