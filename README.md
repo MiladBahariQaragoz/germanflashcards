@@ -29,9 +29,19 @@ The German Flashcards system is a multi-user Telegram bot designed for spaced re
    `AUTHORIZED_CHAT_ID`: The Telegram chat ID of the administrator.
 5. If running outside of Google Cloud, ensure you have set up Application Default Credentials for Firestore access.
 
-### Database Migration
-The project includes a migration script to populate the initial vocabulary database from the provided JSON files.
-Run `python -m scripts.migrate_v2` to load the vocabulary into the Firestore database.
+### Seed Data
+
+The vocabulary/grammar JSON used to populate Firestore is kept on the separate
+[`data`](../../tree/data) branch (not on `master`), so the main repo stays
+code-only. The running bot doesn't need it — it serves cards from Firestore.
+
+To seed a fresh database, fetch the JSON and run the upload scripts:
+
+```bash
+git checkout data -- '*.json'        # pull the seed JSON into your working tree
+python scripts/upload_grammar.py     # grammar cards
+python -m scripts.migrate_v2         # vocabulary cards (also needs MONGODB_URI)
+```
 
 ## Usage
 

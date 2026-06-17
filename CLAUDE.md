@@ -169,8 +169,10 @@ python -m scripts.migrate_v2         # → cards + user_progress (also needs MON
   `SETUP.md` for new work; update or delete it if you touch setup docs.
 - `motor` in `requirements.txt` exists **only** for the one-time `migrate_v2`
   MongoDB read and is safe to remove once migration is confirmed done.
-- The large `*_words_*.json` and `*_grammar_*.json` files are seed data for the
-  one-time upload scripts, not runtime inputs.
+- The `combined_words_*.json` / `*_grammar_flashcards_*.json` seed files live on
+  the orphan **`data` branch**, not `master` (kept off the public code repo), and
+  are git-ignored here. They feed the one-time upload scripts, never the runtime.
+  Fetch with `git checkout data -- '*.json'`.
 - Architecture/design history lives in `docs/superpowers/`.
 - ⚠️ **Latent due-date timezone quirk:** "due today" in `db.get_due_cards` is
   computed off `_end_of_today_utc()` (UTC calendar date), while the daily reset and

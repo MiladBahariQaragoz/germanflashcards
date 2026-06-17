@@ -79,6 +79,12 @@ $RECYCLE.BIN/
 # Harness-generated skills lockfile
 skills-lock.json
 
+# ── Seed data ────────────────────────────────────────────────────────────────
+# Vocabulary/grammar JSON lives on the orphan `data` branch, not on master.
+# Fetch with: git checkout data -- '*.json'   (see the data branch README)
+combined_words_*.json
+*_grammar_flashcards_*.json
+
 # ── Project-specific ─────────────────────────────────────────────────────────
 # Jupyter (if ever used for data exploration)
 *.ipynb_checkpoints/
