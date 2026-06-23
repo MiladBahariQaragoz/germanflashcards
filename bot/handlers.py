@@ -45,6 +45,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             "📚 /grammar — Start your grammar session (sentence exercises)\n"
             "▶️ /vocab — Start your vocabulary session\n"
             "📊 /stats — Grammar + vocabulary progress\n"
+            "🧩 /catchup — Spread a big backlog into daily installments\n"
             "🏆 /leaderboard — Top streak holders\n"
             "⚙️ /settings — Study direction & CEFR levels\n"
             "👨‍💻 /developer — About the developer\n\n"
@@ -820,6 +821,41 @@ async def callback_grade_grammar(
         context, chat_id, next_card,
         study_direction=settings["study_direction"],
         progress=session.progress(),
+    )
+
+
+async def cmd_catchup(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Let the user spread their backlog into installments on demand — not only from
+    the morning/nag message. Offers the spread button when combined due exceeds
+    BACKLOG_OFFER_THRESHOLD; otherwise tells them there's nothing to spread.
+    """
+    if not await _is_authorized(update):
+        return
+    user_id = update.effective_user.id
+    settings = await db.get_user_settings(user_id)
+    cefr = settings["cefr_levels"]
+    grammar_due, vocab_due = await asyncio.gather(
+        db.count_due_grammar_cards(user_id, cefr_levels=cefr),
+        db.count_due_cards(user_id, cefr_levels=cefr),
+    )
+    total = grammar_due + vocab_due
+    if total <= db.BACKLOG_OFFER_THRESHOLD:
+        await update.message.reply_text(
+            f"🧩 You have {total} cards due — under {db.BACKLOG_OFFER_THRESHOLD}, so "
+            "there's no need to spread. Just tap /grammar or /vocab. 💪"
+        )
+        return
+    keyboard = InlineKeyboardMarkup([[
+        InlineKeyboardButton(
+            "🧩 Spread into daily installments", callback_data="spread_backlog"
+        )
+    ]])
+    await update.message.reply_text(
+        f"🧩 You have {total} cards due ({vocab_due} vocab + {grammar_due} grammar).\n\n"
+        f"Spread them into daily installments — keep {db.CATCHUP_PER_DAY} today, "
+        f"then ~{db.CATCHUP_NEXT_DAY}/day after?",
+        reply_markup=keyboard,
     )
 
 

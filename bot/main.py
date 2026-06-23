@@ -14,6 +14,7 @@ from bot.handlers import (
     cmd_developer,
     cmd_settings,
     cmd_admin,
+    cmd_catchup,
     callback_request_access,
     callback_approve_user,
     callback_deny_user,
@@ -56,6 +57,7 @@ def main() -> None:
     app.add_handler(CommandHandler("settings", cmd_settings))
     app.add_handler(CommandHandler("grammar", cmd_grammar))
     app.add_handler(CommandHandler("vocab", cmd_vocab))
+    app.add_handler(CommandHandler("catchup", cmd_catchup))
     app.add_handler(CommandHandler("admin", cmd_admin))  # admin-only, hidden from menu
 
     # Access request flow (new-user onboarding, admin-approved)
@@ -132,6 +134,7 @@ def main() -> None:
             BotCommand("grammar", "📚 Start grammar session"),
             BotCommand("vocab", "▶️ Start vocabulary session"),
             BotCommand("stats", "📊 Grammar + vocabulary progress"),
+            BotCommand("catchup", "🧩 Spread a big backlog into installments"),
             BotCommand("leaderboard", "🏆 Top streak holders"),
             BotCommand("settings", "⚙️ Study direction & CEFR levels"),
             BotCommand("developer", "👨‍💻 About the developer"),

@@ -56,6 +56,10 @@ new logic — keep it pure, persist separately.
   `db.CATCHUP_PER_DAY` (60 today), `db.CATCHUP_NEXT_DAY` (40/day after),
   `db.NEW_CARD_PAUSE_THRESHOLD` (40 — new cards pause above this combined due).
   `handlers._start_session`/`_start_grammar_session` gate new cards through it.
+  Users can spread on demand any time via **`/catchup`** (`handlers.cmd_catchup`),
+  which offers the `spread_backlog` button when combined due > `BACKLOG_OFFER_THRESHOLD`
+  — not only from the morning/nag message. `scheduler._new_cards_shown` keeps those
+  messages' displayed counts consistent with the new-card pause rule.
 
 ## What this is
 

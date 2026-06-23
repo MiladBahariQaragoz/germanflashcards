@@ -15,6 +15,14 @@ BERLIN = pytz_timezone("Europe/Berlin")
 logger = logging.getLogger(__name__)
 
 
+def _new_cards_shown(combined_due: int) -> int:
+    """
+    New cards added per domain for display, mirroring the session builder: 20 each
+    unless a combined review backlog pauses new cards (db.NEW_CARD_PAUSE_THRESHOLD).
+    """
+    return 20 if combined_due <= db.NEW_CARD_PAUSE_THRESHOLD else 0
+
+
 def _session_keyboard(total_due: int) -> InlineKeyboardMarkup:
     """Start buttons, plus a one-time 'spread backlog' offer when due is large."""
     rows = [
@@ -51,8 +59,9 @@ async def morning_trigger(bot) -> None:
                 db.count_due_grammar_cards(user_id, cefr_levels=cefr),
                 db.count_due_cards(user_id, cefr_levels=cefr),
             )
-            grammar_display = grammar_due + (20 if grammar_due <= 150 else 0)
-            vocab_display = vocab_due + (20 if vocab_due <= 150 else 0)
+            new_each = _new_cards_shown(grammar_due + vocab_due)
+            grammar_display = grammar_due + new_each
+            vocab_display = vocab_due + new_each
 
             text = (
                 f"Guten Morgen! 🌅\n\n"
@@ -86,23 +95,30 @@ async def nag_check(bot) -> None:
             settings = await db.get_user_settings(user_id)
             cefr = settings["cefr_levels"]
 
+            # New-card display pauses on a combined backlog, so estimate both due counts.
+            grammar_due, vocab_due = await asyncio.gather(
+                db.count_due_grammar_cards(user_id, cefr_levels=cefr),
+                db.count_due_cards(user_id, cefr_levels=cefr),
+            )
+            new_each = _new_cards_shown(grammar_due + vocab_due)
+
             # Grammar remaining
             grammar_remaining = 0
             if not grammar_session.kill_switch:
-                if grammar_session.active:
-                    grammar_remaining = grammar_session.remaining_count()
-                else:
-                    grammar_due = await db.count_due_grammar_cards(user_id, cefr_levels=cefr)
-                    grammar_remaining = grammar_due + (20 if grammar_due <= 150 else 0)
+                grammar_remaining = (
+                    grammar_session.remaining_count()
+                    if grammar_session.active
+                    else grammar_due + new_each
+                )
 
             # Vocab remaining
             vocab_remaining = 0
             if not vocab_session.kill_switch:
-                if vocab_session.active:
-                    vocab_remaining = vocab_session.remaining_count()
-                else:
-                    vocab_due = await db.count_due_cards(user_id, cefr_levels=cefr)
-                    vocab_remaining = vocab_due + (20 if vocab_due <= 150 else 0)
+                vocab_remaining = (
+                    vocab_session.remaining_count()
+                    if vocab_session.active
+                    else vocab_due + new_each
+                )
 
             if grammar_remaining == 0 and vocab_remaining == 0:
                 continue
