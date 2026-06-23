@@ -10,6 +10,7 @@ from bot import config
 from bot import db
 from bot import fsrs_service
 from bot import queue_manager as qm
+from bot import catchup as catchup_logic
 
 
 # ---------------------------------------------------------------------------
@@ -413,10 +414,14 @@ async def _start_session(
 ) -> None:
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    due = await db.get_due_cards(user_id, cefr_levels=cefr)
+    due, grammar_due = await asyncio.gather(
+        db.get_due_cards(user_id, cefr_levels=cefr),
+        db.count_due_grammar_cards(user_id, cefr_levels=cefr),
+    )
+    # Pause new cards while a combined review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
     new = (
         await db.get_new_cards(user_id, 20, cefr_levels=cefr)
-        if len(due) <= 150
+        if catchup_logic.new_cards_allowed(len(due) + grammar_due, db.NEW_CARD_PAUSE_THRESHOLD)
         else []
     )
     session = qm.get_session(user_id)
@@ -470,10 +475,14 @@ async def _start_grammar_session(
 ) -> None:
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    due = await db.get_due_grammar_cards(user_id, cefr_levels=cefr)
+    due, vocab_due = await asyncio.gather(
+        db.get_due_grammar_cards(user_id, cefr_levels=cefr),
+        db.count_due_cards(user_id, cefr_levels=cefr),
+    )
+    # Pause new cards while a combined review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
     new = (
         await db.get_new_grammar_cards(user_id, 20, cefr_levels=cefr)
-        if len(due) <= 150
+        if catchup_logic.new_cards_allowed(len(due) + vocab_due, db.NEW_CARD_PAUSE_THRESHOLD)
         else []
     )
     session = qm.get_grammar_session(user_id)

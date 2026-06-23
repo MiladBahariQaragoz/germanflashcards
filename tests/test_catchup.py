@@ -1,6 +1,6 @@
 import pytest
 
-from bot.catchup import plan_installments
+from bot.catchup import plan_installments, new_cards_allowed
 
 
 def test_no_overflow_when_due_within_cap():
@@ -48,3 +48,15 @@ def test_invalid_today_max_raises():
 def test_invalid_next_day_max_raises():
     with pytest.raises(ValueError):
         plan_installments(100, 60, 0)
+
+
+# ── new_cards_allowed ───────────────────────────────────────────────────────────
+
+def test_new_cards_allowed_when_at_or_below_cap():
+    assert new_cards_allowed(0, 40) is True
+    assert new_cards_allowed(40, 40) is True
+
+
+def test_new_cards_paused_when_backlog_over_cap():
+    assert new_cards_allowed(41, 40) is False
+    assert new_cards_allowed(175, 40) is False  # big combined backlog → no new

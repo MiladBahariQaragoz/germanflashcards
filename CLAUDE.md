@@ -9,9 +9,12 @@ one-time button offered at >100 due.
 Kept here as a changelog; details are folded into the sections below.
 
 > **Update 2026-06-23:** (a) streak now advances on clearing **either** grammar
-> **or** vocab on a Berlin day (was: required both); (b) catch-up keeps 60 due
-> today but caps later days at 40/day (`CATCHUP_NEXT_DAY`) so the ~20 daily new
-> cards keep the total ~60. Sections below reflect these.
+> **or** vocab on a Berlin day (was: required both); (b) catch-up now spreads the
+> **combined** (vocab+grammar) due pool — keep 60 today, 40/day after (was: 60 per
+> domain = up to 120/day, which corrupted a user's schedule and was reverted in
+> Firestore); (c) **new cards pause while a combined review backlog exists**
+> (`db.NEW_CARD_PAUSE_THRESHOLD` = 40) and resume 20/domain once caught up, so
+> catch-up days show 0 new. Sections below reflect these.
 
 - [x] **#3 Reminder timing** — `scheduler.py` nags fire at fixed Berlin clock
   times (10–22, every 2h) via `CronTrigger` (was a drifting `IntervalTrigger`);
@@ -46,9 +49,13 @@ new logic — keep it pure, persist separately.
   often contain `_`.
 - `bot/catchup.py` — `plan_installments(due_count, today_max, next_day_max=None)`
   → day-offset per overflow card (keep `today_max` today, then chunks of
-  `next_day_max`). `db.spread_backlog` applies it (only `due_date` moves; batched
-  writes). Thresholds: `db.BACKLOG_OFFER_THRESHOLD` (100), `db.CATCHUP_PER_DAY` (60
-  today), `db.CATCHUP_NEXT_DAY` (40/day after).
+  `next_day_max`), plus `new_cards_allowed(combined_due, daily_cap)` (the new-card
+  pause rule). `db.spread_backlog` applies the plan to the **combined** vocab+grammar
+  due pool sorted by due date (only `due_date` moves; batched writes; each write
+  routed by `_card_type`). Thresholds: `db.BACKLOG_OFFER_THRESHOLD` (100),
+  `db.CATCHUP_PER_DAY` (60 today), `db.CATCHUP_NEXT_DAY` (40/day after),
+  `db.NEW_CARD_PAUSE_THRESHOLD` (40 — new cards pause above this combined due).
+  `handlers._start_session`/`_start_grammar_session` gate new cards through it.
 
 ## What this is
 

@@ -37,6 +37,10 @@ from bot import catchup as catchup_logic
 BACKLOG_OFFER_THRESHOLD = 100
 CATCHUP_PER_DAY = 60
 CATCHUP_NEXT_DAY = 40
+# New cards are paused while the user has a review backlog: they're only introduced
+# when COMBINED (vocab+grammar) due cards are at or below this steady-state cap, so a
+# catch-up day (more due than this) shows 0 new cards. Resumes once caught up.
+NEW_CARD_PAUSE_THRESHOLD = CATCHUP_NEXT_DAY  # 40
 _BATCH_LIMIT = 400  # Firestore allows 500 writes/batch; stay under for safety
 
 # The "study day" for streaks is a Berlin calendar date (not UTC), so an early
@@ -702,18 +706,21 @@ async def get_grammar_card_counts_by_state(
 
 async def _spread_due_cards(
     due_cards: list[dict], today_max: int, next_day_max: int
-) -> int:
+) -> dict[str, int]:
     """
-    Reschedule the overflow of an already-fetched due-card list across upcoming
-    days: keep `today_max` due today, then ~next_day_max/day after. Cards keep their
-    progress docs; only `due_date` moves. Works for either domain — progress doc IDs
-    are `{user_id}_{card_id}` in both. Returns the number of cards moved.
+    Reschedule the overflow of a COMBINED (vocab + grammar) due-card list across
+    upcoming days: keep the `today_max` earliest-due cards due today, then
+    ~next_day_max/day after — one shared budget across both domains. Each card keeps
+    its progress doc; only `due_date` moves, routed to the right collection by
+    `_card_type` ('grammar' → grammar_progress, else user_progress). Doc IDs are
+    `{user_id}_{card_id}` in both. Returns {'vocab': n, 'grammar': n} moved.
     """
+    moved = {"vocab": 0, "grammar": 0}
     offsets = catchup_logic.plan_installments(len(due_cards), today_max, next_day_max)
     if not offsets:
-        return 0
+        return moved
 
-    # Earliest-due cards stay today; the latest-due ones get pushed furthest out.
+    # Earliest-due cards (either domain) stay today; the latest-due get pushed furthest.
     due_cards.sort(key=lambda c: c.get("due_date") or datetime.now(timezone.utc))
     overflow = due_cards[today_max:]
     now = datetime.now(timezone.utc)
@@ -722,9 +729,10 @@ async def _spread_due_cards(
     pending = 0
     for card, day_offset in zip(overflow, offsets):
         doc_id = f"{card['user_id']}_{card['card_id']}"
-        # Both domains' progress collections use the same doc-id scheme; pick by type.
-        col = _grammar_progress_col if card.get("_card_type") == "grammar" else _progress_col
+        is_grammar = card.get("_card_type") == "grammar"
+        col = _grammar_progress_col if is_grammar else _progress_col
         batch.update(col.document(doc_id), {"due_date": now + timedelta(days=day_offset)})
+        moved["grammar" if is_grammar else "vocab"] += 1
         pending += 1
         if pending == _BATCH_LIMIT:
             await batch.commit()
@@ -732,7 +740,7 @@ async def _spread_due_cards(
             pending = 0
     if pending:
         await batch.commit()
-    return len(overflow)
+    return moved
 
 
 async def spread_backlog(
@@ -742,14 +750,12 @@ async def spread_backlog(
     next_day_max: int = CATCHUP_NEXT_DAY,
 ) -> dict[str, int]:
     """
-    Spread BOTH domains' due backlogs into daily installments: keep up to
-    `today_max` due today, then ~next_day_max/day after.
-    Returns {'vocab': moved, 'grammar': moved}.
+    Spread the user's COMBINED (vocab + grammar) due backlog into daily installments:
+    keep up to `today_max` cards due today across both domains together, then
+    ~next_day_max/day after. Returns {'vocab': moved, 'grammar': moved}.
     """
     due_vocab, due_grammar = await asyncio.gather(
         get_due_cards(user_id, cefr_levels=cefr_levels),
         get_due_grammar_cards(user_id, cefr_levels=cefr_levels),
     )
-    moved_vocab = await _spread_due_cards(due_vocab, today_max, next_day_max)
-    moved_grammar = await _spread_due_cards(due_grammar, today_max, next_day_max)
-    return {"vocab": moved_vocab, "grammar": moved_grammar}
+    return await _spread_due_cards(due_vocab + due_grammar, today_max, next_day_max)

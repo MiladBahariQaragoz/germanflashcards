@@ -30,3 +30,13 @@ def plan_installments(
         raise ValueError("next_day_max must be >= 1")
     overflow = max(0, due_count - today_max)
     return [1 + j // next_day_max for j in range(overflow)]
+
+
+def new_cards_allowed(combined_due: int, daily_cap: int) -> bool:
+    """
+    Whether to introduce new cards this session. New cards pause while a review
+    backlog exists — they're only added when the user's COMBINED (vocab + grammar)
+    due count is at or below the steady-state daily cap. Above that the user is
+    catching up, so no new cards land until they're back under the cap.
+    """
+    return combined_due <= daily_cap
