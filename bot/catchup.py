@@ -2,21 +2,31 @@
 Pure backlog-spreading math — no I/O, so it's unit-testable.
 
 When a returning user has a large pile of due cards, "spreading" keeps the first
-`per_day` earliest-due cards due today and pushes the rest onto upcoming days in
-chunks of `per_day`, so the backlog is paid down in daily installments instead of
-landing as one demoralizing wall of cards. db.spread_backlog applies these offsets
+`today_max` earliest-due cards due today and pushes the rest onto upcoming days in
+chunks of `next_day_max`, so the backlog is paid down in daily installments instead
+of landing as one demoralizing wall of cards. Today's cap is larger than the
+following days' (e.g. 60 today, 40/day after) so that the per-day review load on
+those later days leaves room for the ~20 brand-new cards introduced each day,
+keeping the total daily workload around 60. db.spread_backlog applies these offsets
 to the actual Firestore progress docs.
 """
 
 
-def plan_installments(due_count: int, per_day: int) -> list[int]:
+def plan_installments(
+    due_count: int, today_max: int, next_day_max: int | None = None
+) -> list[int]:
     """
-    Day-offset for each OVERFLOW card (those beyond the first `per_day`), in
-    due-date order. Element 0 corresponds to the (per_day+1)-th earliest-due card.
-    Offsets start at 1 (tomorrow): cards 1..per_day of the overflow → +1 day,
-    the next per_day → +2 days, and so on. Returns [] when nothing overflows.
+    Day-offset for each OVERFLOW card (those beyond the first `today_max`), in
+    due-date order. Element 0 corresponds to the (today_max+1)-th earliest-due card.
+    Offsets start at 1 (tomorrow): cards 1..next_day_max of the overflow → +1 day,
+    the next next_day_max → +2 days, and so on. `next_day_max` defaults to
+    `today_max`. Returns [] when nothing overflows.
     """
-    if per_day < 1:
-        raise ValueError("per_day must be >= 1")
-    overflow = max(0, due_count - per_day)
-    return [1 + j // per_day for j in range(overflow)]
+    if today_max < 1:
+        raise ValueError("today_max must be >= 1")
+    if next_day_max is None:
+        next_day_max = today_max
+    if next_day_max < 1:
+        raise ValueError("next_day_max must be >= 1")
+    overflow = max(0, due_count - today_max)
+    return [1 + j // next_day_max for j in range(overflow)]

@@ -1,11 +1,12 @@
 """
 Pure streak-state transitions — no I/O, so the logic is unit-testable.
 
-A streak day requires BOTH the grammar and vocab sessions to be satisfied on the
-same Berlin calendar date. A domain is "satisfied" when its session was cleared
-today OR it had nothing due that day. Firestore persistence and the Berlin-date
-clock live in db.py (record_session_cleared / get_streak); this module only does
-the date-string arithmetic on a plain user-doc dict.
+A streak day is earned by clearing EITHER the grammar or the vocab session on a
+Berlin calendar date — completing one domain is enough. (`both_done` is still
+reported for messaging: a domain is "satisfied" when its session was cleared today
+OR it had nothing due that day.) Firestore persistence and the Berlin-date clock
+live in db.py (record_session_cleared / get_streak); this module only does the
+date-string arithmetic on a plain user-doc dict.
 """
 
 
@@ -17,9 +18,10 @@ def streak_transition(
     doc `data`, return (firestore_updates, result) where result is
     {'both_done': bool, 'streak': int, 'advanced': bool}.
 
-    The other domain counts as done if it was already cleared today or has 0 due.
-    The streak only advances once per day, and resets to 1 if the previous advance
-    wasn't yesterday.
+    Clearing either domain advances the streak; the streak only advances once per
+    day and resets to 1 if the previous advance wasn't yesterday. `both_done` (the
+    other domain cleared today or 0 due) is reported for messaging only and no
+    longer gates the streak.
     """
     other = "vocab" if domain == "grammar" else "grammar"
     other_done = data.get(f"{other}_cleared_date") == today or other_domain_due == 0
@@ -28,7 +30,7 @@ def streak_transition(
     streak = data.get("streak_count", 0)
     advanced = False
 
-    if other_done and data.get("last_streak_date") != today:
+    if data.get("last_streak_date") != today:
         streak = streak + 1 if data.get("last_streak_date") == yesterday else 1
         updates["last_streak_date"] = today
         updates["streak_count"] = streak

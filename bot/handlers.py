@@ -461,15 +461,14 @@ async def _on_vocab_session_cleared(
         user_id, "vocab", other_domain_due=grammar_due
     )
     if result["both_done"]:
-        text = (
-            "🗂️ Vocabulary done — both sessions complete for today! 🎉\n\n"
-            + _streak_line(result["streak"])
-        )
+        text = "🗂️ Vocabulary done — both sessions complete for today! 🎉"
     else:
         text = (
             "🗂️ Vocabulary session complete! 🎉\n\n"
-            "One more to go — don't forget your grammar session: /grammar"
+            "Grammar is optional today — keep going with /grammar if you like."
         )
+    if result["advanced"]:
+        text += "\n\n" + _streak_line(result["streak"])
     await context.bot.send_message(chat_id=chat_id, text=text)
 
 
@@ -484,15 +483,14 @@ async def _on_grammar_session_cleared(
         user_id, "grammar", other_domain_due=vocab_due
     )
     if result["both_done"]:
-        text = (
-            "📚 Grammatik fertig — both sessions complete for today! 🎉\n\n"
-            + _streak_line(result["streak"])
-        )
+        text = "📚 Grammatik fertig — both sessions complete for today! 🎉"
     else:
         text = (
             "📚 Grammatik fertig! Grammar session complete. 🎉\n\n"
-            "Don't forget your vocabulary session — /vocab"
+            "Vocab is optional today — keep going with /vocab if you like."
         )
+    if result["advanced"]:
+        text += "\n\n" + _streak_line(result["streak"])
     await context.bot.send_message(chat_id=chat_id, text=text)
 
 
@@ -726,16 +724,15 @@ async def callback_grade_grammar(
 async def callback_spread_backlog(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
-    """Spread the user's due backlog into daily installments (~CATCHUP_PER_DAY/day)."""
+    """Spread the user's due backlog into daily installments (CATCHUP_PER_DAY today,
+    then ~CATCHUP_NEXT_DAY/day)."""
     query = update.callback_query
     await query.answer()
     if not await _is_authorized(update):
         return
     user_id = update.effective_user.id
     settings = await db.get_user_settings(user_id)
-    moved = await db.spread_backlog(
-        user_id, settings["cefr_levels"], per_day=db.CATCHUP_PER_DAY
-    )
+    moved = await db.spread_backlog(user_id, settings["cefr_levels"])
     total = moved["vocab"] + moved["grammar"]
     if total == 0:
         await query.edit_message_text(
@@ -743,7 +740,8 @@ async def callback_spread_backlog(
         )
         return
     await query.edit_message_text(
-        f"✅ Backlog spread into daily installments (~{db.CATCHUP_PER_DAY}/day).\n\n"
+        f"✅ Backlog spread into daily installments "
+        f"({db.CATCHUP_PER_DAY} today, then ~{db.CATCHUP_NEXT_DAY}/day).\n\n"
         f"Moved {total} card{'s' if total != 1 else ''} to upcoming days "
         f"({moved['vocab']} vocab, {moved['grammar']} grammar).\n\n"
         f"Today is manageable now — tap /grammar or /vocab to begin! 💪"

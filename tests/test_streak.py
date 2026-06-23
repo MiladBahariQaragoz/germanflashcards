@@ -18,13 +18,14 @@ def test_first_ever_completion_starts_streak_at_one():
     assert updates["streak_count"] == 1
 
 
-def test_other_domain_with_due_cards_blocks_advance():
-    # Vocab cleared but grammar still has 5 due and wasn't cleared today.
+def test_clearing_one_domain_advances_even_if_other_has_due():
+    # Vocab cleared but grammar still has 5 due — clearing one domain is enough now.
     updates, result = transition({}, "vocab", other_due=5)
-    assert result["both_done"] is False
-    assert result["advanced"] is False
-    assert "last_streak_date" not in updates
-    assert updates["vocab_cleared_date"] == TODAY  # still recorded
+    assert result["both_done"] is False  # other domain not done → messaging only
+    assert result["advanced"] is True
+    assert result["streak"] == 1
+    assert updates["last_streak_date"] == TODAY
+    assert updates["vocab_cleared_date"] == TODAY
 
 
 def test_other_domain_cleared_today_completes_day():

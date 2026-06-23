@@ -28,10 +28,13 @@ from google.cloud.firestore_v1 import FieldFilter
 from bot import streak as streak_logic
 from bot import catchup as catchup_logic
 
-# Backlog catch-up: offer to spread when combined due exceeds this, targeting
-# roughly this many review cards per day. See spread_backlog.
+# Backlog catch-up: offer to spread when combined due exceeds this. Keep up to
+# CATCHUP_PER_DAY review cards due today, then cap later days at CATCHUP_NEXT_DAY so
+# the ~20 new cards introduced daily still fit under a ~60-card total. See
+# spread_backlog.
 BACKLOG_OFFER_THRESHOLD = 100
 CATCHUP_PER_DAY = 60
+CATCHUP_NEXT_DAY = 40
 _BATCH_LIMIT = 400  # Firestore allows 500 writes/batch; stay under for safety
 
 # The "study day" for streaks is a Berlin calendar date (not UTC), so an early
@@ -422,11 +425,12 @@ async def record_session_cleared(
     user_id: int, domain: str, *, other_domain_due: int
 ) -> dict:
     """
-    Mark `domain` ('vocab'|'grammar') cleared for today and, if BOTH domains are
-    satisfied today, advance the streak.
+    Mark `domain` ('vocab'|'grammar') cleared for today and advance the streak —
+    clearing either domain is enough (once per Berlin day).
 
-    other_domain_due — count of cards still due in the *other* domain. The other
-    domain counts as satisfied if it was already cleared today or has 0 due.
+    other_domain_due — count of cards still due in the *other* domain. Used only to
+    report `both_done` (true if the other domain was cleared today or has 0 due),
+    which drives the completion message; it no longer gates the streak.
 
     Returns {'both_done': bool, 'streak': int, 'advanced': bool}.
     """
@@ -607,20 +611,22 @@ async def get_grammar_card_counts_by_state(
 # Backlog catch-up (installments)
 # ---------------------------------------------------------------------------
 
-async def _spread_due_cards(due_cards: list[dict], per_day: int) -> int:
+async def _spread_due_cards(
+    due_cards: list[dict], today_max: int, next_day_max: int
+) -> int:
     """
     Reschedule the overflow of an already-fetched due-card list across upcoming
-    days (~per_day/day). Cards keep their progress docs; only `due_date` moves.
-    Works for either domain — progress doc IDs are `{user_id}_{card_id}` in both.
-    Returns the number of cards moved.
+    days: keep `today_max` due today, then ~next_day_max/day after. Cards keep their
+    progress docs; only `due_date` moves. Works for either domain — progress doc IDs
+    are `{user_id}_{card_id}` in both. Returns the number of cards moved.
     """
-    offsets = catchup_logic.plan_installments(len(due_cards), per_day)
+    offsets = catchup_logic.plan_installments(len(due_cards), today_max, next_day_max)
     if not offsets:
         return 0
 
     # Earliest-due cards stay today; the latest-due ones get pushed furthest out.
     due_cards.sort(key=lambda c: c.get("due_date") or datetime.now(timezone.utc))
-    overflow = due_cards[per_day:]
+    overflow = due_cards[today_max:]
     now = datetime.now(timezone.utc)
 
     batch = _db.batch()
@@ -643,16 +649,18 @@ async def _spread_due_cards(due_cards: list[dict], per_day: int) -> int:
 async def spread_backlog(
     user_id: int,
     cefr_levels: list[str] | None = None,
-    per_day: int = CATCHUP_PER_DAY,
+    today_max: int = CATCHUP_PER_DAY,
+    next_day_max: int = CATCHUP_NEXT_DAY,
 ) -> dict[str, int]:
     """
-    Spread BOTH domains' due backlogs into daily installments of ~per_day.
+    Spread BOTH domains' due backlogs into daily installments: keep up to
+    `today_max` due today, then ~next_day_max/day after.
     Returns {'vocab': moved, 'grammar': moved}.
     """
     due_vocab, due_grammar = await asyncio.gather(
         get_due_cards(user_id, cefr_levels=cefr_levels),
         get_due_grammar_cards(user_id, cefr_levels=cefr_levels),
     )
-    moved_vocab = await _spread_due_cards(due_vocab, per_day)
-    moved_grammar = await _spread_due_cards(due_grammar, per_day)
+    moved_vocab = await _spread_due_cards(due_vocab, today_max, next_day_max)
+    moved_grammar = await _spread_due_cards(due_grammar, today_max, next_day_max)
     return {"vocab": moved_vocab, "grammar": moved_grammar}

@@ -4,10 +4,14 @@ Guidance for Claude Code (and humans) working in this repository.
 
 ## Work log — 2026-06-17 (5 enhancements, all shipped ✅)
 
-All five items below are implemented and covered by `pytest` (44 tests green).
-Decisions baked in: streak needs **both** grammar+vocab satisfied on the same
-Berlin day; catch-up is a one-time button offered at >100 due, target ~60/day.
+All five items below are implemented and covered by `pytest`. Catch-up is a
+one-time button offered at >100 due.
 Kept here as a changelog; details are folded into the sections below.
+
+> **Update 2026-06-23:** (a) streak now advances on clearing **either** grammar
+> **or** vocab on a Berlin day (was: required both); (b) catch-up keeps 60 due
+> today but caps later days at 40/day (`CATCHUP_NEXT_DAY`) so the ~20 daily new
+> cards keep the total ~60. Sections below reflect these.
 
 - [x] **#3 Reminder timing** — `scheduler.py` nags fire at fixed Berlin clock
   times (10–22, every 2h) via `CronTrigger` (was a drifting `IntervalTrigger`);
@@ -31,17 +35,20 @@ new logic — keep it pure, persist separately.
 
 - `bot/queue_manager.py` — session queues + progress tracking.
 - `bot/streak.py` — `streak_transition()` / `current_streak()` / `rank_streaks()`.
-  A day counts when both domains are satisfied (session cleared OR 0 due) on the
-  same Berlin date; streak advances once/day, resets to 1 after a gap. `db` stores
+  A day counts when **either** domain's session is cleared on a Berlin date;
+  streak advances once/day, resets to 1 after a gap. (`both_done` — other domain
+  cleared today OR 0 due — is still computed but only drives messaging.) `db` stores
   `streak_count`, `last_streak_date`, `{vocab,grammar}_cleared_date` on the user
   doc; empty sessions auto-satisfy a domain via `handlers._on_domain_empty`.
   `rank_streaks()` backs the public `/leaderboard` (`db.get_leaderboard` →
   `handlers.cmd_leaderboard`): top active streaks, lapsed excluded, ties by
   username. Rendered as **plain text** (no Markdown) since Telegram usernames
   often contain `_`.
-- `bot/catchup.py` — `plan_installments(due_count, per_day)` → day-offset per
-  overflow card. `db.spread_backlog` applies it (only `due_date` moves; batched
-  writes). Thresholds: `db.BACKLOG_OFFER_THRESHOLD` (100), `db.CATCHUP_PER_DAY` (60).
+- `bot/catchup.py` — `plan_installments(due_count, today_max, next_day_max=None)`
+  → day-offset per overflow card (keep `today_max` today, then chunks of
+  `next_day_max`). `db.spread_backlog` applies it (only `due_date` moves; batched
+  writes). Thresholds: `db.BACKLOG_OFFER_THRESHOLD` (100), `db.CATCHUP_PER_DAY` (60
+  today), `db.CATCHUP_NEXT_DAY` (40/day after).
 
 ## What this is
 
