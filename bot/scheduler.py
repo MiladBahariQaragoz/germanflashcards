@@ -23,6 +23,23 @@ def _new_cards_shown(combined_due: int) -> int:
     return 20 if combined_due <= db.NEW_CARD_PAUSE_THRESHOLD else 0
 
 
+def _leaderboard_block(entries: list[dict]) -> str:
+    """
+    Compact plain-text streak leaderboard for the morning nudge (no Markdown —
+    Telegram usernames often contain '_'). Mirrors handlers.cmd_leaderboard.
+    """
+    if not entries:
+        return "🏆 Streak Leaders\nNo active streaks yet — be the first today!"
+    medals = {0: "🥇", 1: "🥈", 2: "🥉"}
+    lines = ["🏆 Streak Leaders"]
+    for i, e in enumerate(entries):
+        name = f"@{e['username']}" if e["username"] else f"User {e['user_id']}"
+        rank = medals.get(i, f"{i + 1}.")
+        days = "day" if e["streak"] == 1 else "days"
+        lines.append(f"{rank} {name} — 🔥 {e['streak']} {days}")
+    return "\n".join(lines)
+
+
 def _session_keyboard(total_due: int) -> InlineKeyboardMarkup:
     """Start buttons, plus a one-time 'spread backlog' offer when due is large."""
     rows = [
@@ -50,6 +67,9 @@ async def morning_trigger(bot) -> None:
     user_ids = {u["user_id"] for u in all_users}
     user_ids.add(config.AUTHORIZED_CHAT_ID)
 
+    # Global leaderboard — fetched once and appended to everyone's morning nudge.
+    leaderboard_text = _leaderboard_block(await db.get_leaderboard(limit=5))
+
     for user_id in user_ids:
         try:
             settings = await db.get_user_settings(user_id)
@@ -66,7 +86,8 @@ async def morning_trigger(bot) -> None:
             text = (
                 f"Guten Morgen! 🌅\n\n"
                 f"📚 Grammar: {grammar_display} card{'s' if grammar_display != 1 else ''}\n"
-                f"🗂️ Vocab: {vocab_display} card{'s' if vocab_display != 1 else ''}"
+                f"🗂️ Vocab: {vocab_display} card{'s' if vocab_display != 1 else ''}\n\n"
+                f"{leaderboard_text}"
             )
             await bot.send_message(
                 chat_id=user_id,

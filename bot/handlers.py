@@ -82,21 +82,26 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     cefr = settings["cefr_levels"]
     cefr_label = ", ".join(sorted(cefr))
 
-    vocab_counts, grammar_counts, streak = await asyncio.gather(
+    vocab_counts, grammar_counts, streak, vocab_due, grammar_due = await asyncio.gather(
         db.get_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_grammar_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_streak(user_id),
+        db.count_due_cards(user_id, cefr_levels=cefr),
+        db.count_due_grammar_cards(user_id, cefr_levels=cefr),
     )
 
     text = (
         f"📊 Stats (levels: {cefr_label})\n"
-        f"{_streak_line(streak)}\n\n"
+        f"{_streak_line(streak)}\n"
+        f"📅 Due today: {vocab_due + grammar_due} ({vocab_due} vocab + {grammar_due} grammar)\n\n"
         f"🗂️ *Vocabulary*\n"
+        f"Due today: {vocab_due}\n"
         f"New: {vocab_counts['New']}\n"
         f"Learning: {vocab_counts['Learning']}\n"
         f"Review: {vocab_counts['Review']}\n"
         f"Relearning: {vocab_counts['Relearning']}\n\n"
         f"📚 *Grammar*\n"
+        f"Due today: {grammar_due}\n"
         f"New: {grammar_counts['New']}\n"
         f"Learning: {grammar_counts['Learning']}\n"
         f"Review: {grammar_counts['Review']}\n"
