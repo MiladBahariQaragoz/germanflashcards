@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from telegram import BotCommand
+from telegram import BotCommand, BotCommandScopeChat
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
 
 from bot.config import BOT_TOKEN, AUTHORIZED_CHAT_ID
@@ -15,12 +15,15 @@ from bot.handlers import (
     cmd_settings,
     cmd_admin,
     cmd_catchup,
+    cmd_broadcast,
     callback_request_access,
     callback_approve_user,
     callback_deny_user,
     callback_admin_remove,
     callback_admin_remove_confirm,
     callback_admin_remove_cancel,
+    callback_broadcast_send,
+    callback_broadcast_cancel,
     callback_start_session,
     callback_start_grammar_session,
     callback_show_answer,
@@ -58,7 +61,8 @@ def main() -> None:
     app.add_handler(CommandHandler("grammar", cmd_grammar))
     app.add_handler(CommandHandler("vocab", cmd_vocab))
     app.add_handler(CommandHandler("catchup", cmd_catchup))
-    app.add_handler(CommandHandler("admin", cmd_admin))  # admin-only, hidden from menu
+    app.add_handler(CommandHandler("admin", cmd_admin))        # admin-only
+    app.add_handler(CommandHandler("broadcast", cmd_broadcast))  # admin-only
 
     # Access request flow (new-user onboarding, admin-approved)
     app.add_handler(
@@ -80,6 +84,14 @@ def main() -> None:
     )
     app.add_handler(
         CallbackQueryHandler(callback_admin_remove_cancel, pattern="^admin_rmno$")
+    )
+
+    # Admin broadcast flow (/broadcast <msg> → preview → confirm → send to all)
+    app.add_handler(
+        CallbackQueryHandler(callback_broadcast_send, pattern="^broadcast_send$")
+    )
+    app.add_handler(
+        CallbackQueryHandler(callback_broadcast_cancel, pattern="^broadcast_cancel$")
     )
 
     # Session callbacks
@@ -109,8 +121,6 @@ def main() -> None:
         CallbackQueryHandler(callback_settings_cefr, pattern="^settings_cefr:")
     )
 
-    # Bot command menu shown to everyone. /admin is intentionally omitted — it's
-    # admin-only (guarded in the handler) and stays hidden from the menu.
     # Ping the admin once per new deploy. Deploy = git pull + restart, so we compare
     # the current commit against the last-announced one (stored in Firestore) and
     # only message when it changed — plain crash restarts (same commit) stay quiet.
@@ -129,6 +139,8 @@ def main() -> None:
         except Exception as e:
             logging.getLogger(__name__).warning("deploy announce failed: %s", e)
 
+    # Command menu: everyone sees `commands`; the admin's chat additionally sees the
+    # admin-only entries (via a chat-scoped command list).
     async def set_commands():
         commands = [
             BotCommand("grammar", "📚 Start grammar session"),
@@ -141,6 +153,13 @@ def main() -> None:
             BotCommand("start", "ℹ️ About / request access"),
         ]
         await app.bot.set_my_commands(commands)
+        admin_commands = commands + [
+            BotCommand("admin", "🛠️ User roster & silent removal"),
+            BotCommand("broadcast", "📢 Message all users"),
+        ]
+        await app.bot.set_my_commands(
+            admin_commands, scope=BotCommandScopeChat(chat_id=AUTHORIZED_CHAT_ID)
+        )
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(set_commands())

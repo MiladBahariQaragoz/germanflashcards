@@ -361,6 +361,75 @@ async def callback_admin_remove_cancel(
     await query.edit_message_text("↩️ Cancelled. Run /admin to refresh the list.")
 
 
+async def cmd_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Admin-only: broadcast a message to every registered user. Shows a preview with
+    a confirm step before anything is sent. Usage: /broadcast <message>.
+    """
+    if not _is_admin(update):
+        return
+    # Keep everything after the command verbatim (preserves newlines/formatting).
+    parts = (update.message.text or "").split(maxsplit=1)
+    message = parts[1].strip() if len(parts) > 1 else ""
+    if not message:
+        await update.message.reply_text(
+            "📢 Usage: /broadcast <message>\n\n"
+            "Sends your message to every registered user (after a confirm)."
+        )
+        return
+    context.user_data["pending_broadcast"] = message
+    recipients = len(await db.get_all_users())
+    keyboard = InlineKeyboardMarkup([[
+        InlineKeyboardButton("📢 Send to all", callback_data="broadcast_send"),
+        InlineKeyboardButton("↩️ Cancel", callback_data="broadcast_cancel"),
+    ]])
+    await update.message.reply_text(
+        f"📢 Preview — this will go to {recipients} user{'s' if recipients != 1 else ''}:\n\n"
+        f"{message}",
+        reply_markup=keyboard,
+    )
+
+
+async def callback_broadcast_send(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Admin confirmed — deliver the pending broadcast to every registered user."""
+    query = update.callback_query
+    await query.answer()
+    if not _is_admin(update):
+        return
+    message = context.user_data.pop("pending_broadcast", None)
+    if not message:
+        await query.edit_message_text("⚠️ Nothing to send — the broadcast expired. Try /broadcast again.")
+        return
+    text = f"📢 Message from the admin:\n\n{message}"
+    users = await db.get_all_users()
+    sent = failed = 0
+    for u in users:
+        try:
+            await context.bot.send_message(chat_id=u["user_id"], text=text)
+            sent += 1
+        except Exception as e:
+            failed += 1
+            logger.warning("broadcast to %s failed: %s", u.get("user_id"), e)
+    await query.edit_message_text(
+        f"✅ Broadcast sent to {sent} user{'s' if sent != 1 else ''}"
+        + (f" ({failed} failed)." if failed else ".")
+    )
+
+
+async def callback_broadcast_cancel(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Admin backed out of a broadcast."""
+    query = update.callback_query
+    await query.answer()
+    if not _is_admin(update):
+        return
+    context.user_data.pop("pending_broadcast", None)
+    await query.edit_message_text("↩️ Broadcast cancelled — nothing was sent.")
+
+
 async def cmd_settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await _is_authorized(update):
         return
