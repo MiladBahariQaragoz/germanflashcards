@@ -122,6 +122,20 @@ the same change. Keep them symmetrical.
   `db.approve_access_request` registers them. State lives in the `access_requests`
   collection (`pending`/`approved`/`denied`); the `users` doc is created only on
   approval, so `is_registered_user` / `_is_authorized` stay accurate.
+- **Admin tools (admin = `AUTHORIZED_CHAT_ID`).** `/admin` (handler-guarded by
+  `_is_admin`, deliberately NOT in the command menu) lists every user with their
+  current streak + due counts (`db.get_admin_overview`) and a 🗑 button each.
+  Removal is a confirm step (`admin_rm:` → `admin_rmok:`/`admin_rmno`) →
+  `db.remove_user` deletes the `users` doc, the `access_requests` doc, and all the
+  user's progress docs in both domains, and `qm.drop_user` clears in-memory
+  sessions. It's **silent** — the removed user is never messaged; they can `/start`
+  to request access again.
+- **Deploy ping.** On startup `main.announce_deploy` messages the admin the current
+  git version (`bot/version.get_version` → `git log -1 --format=%h %s`) but only
+  when it differs from the last-announced version stored in Firestore
+  (`meta/deploy`, via `db.get/set_last_deploy_version`). So a real deploy
+  (git pull + restart → new commit) pings once; a plain crash-restart on the same
+  commit stays quiet.
 
 ## Commands
 

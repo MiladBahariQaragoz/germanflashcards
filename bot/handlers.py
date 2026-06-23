@@ -266,6 +266,99 @@ async def callback_deny_user(
         logger.warning("could not notify denied user %s: %s", target_id, e)
 
 
+# ---------------------------------------------------------------------------
+# Admin: user roster + silent removal (admin-only, not in the public menu)
+# ---------------------------------------------------------------------------
+
+def _is_admin(update: Update) -> bool:
+    return (
+        update.effective_user is not None
+        and update.effective_user.id == config.AUTHORIZED_CHAT_ID
+    )
+
+
+def _admin_user_label(row: dict) -> str:
+    return f"@{row['username']}" if row["username"] else f"User {row['user_id']}"
+
+
+async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Admin-only: list every user, how they're doing, and a remove button each."""
+    if not _is_admin(update):
+        return
+    rows = await db.get_admin_overview()
+    if not rows:
+        await update.message.reply_text("👥 No registered users yet.")
+        return
+    # Plain text (no Markdown): usernames often contain '_'.
+    medals = {0: "🥇", 1: "🥈", 2: "🥉"}
+    lines = [f"👥 Users ({len(rows)}) — streak · due V/G · levels\n"]
+    buttons = []
+    for i, r in enumerate(rows):
+        rank = medals.get(i, f"{i + 1}.")
+        label = _admin_user_label(r)
+        levels = ",".join(sorted(r["cefr_levels"]))
+        lines.append(
+            f"{rank} {label} — 🔥 {r['streak']}d · "
+            f"due {r['vocab_due']}/{r['grammar_due']} · {levels}"
+        )
+        buttons.append([
+            InlineKeyboardButton(f"🗑 {label}", callback_data=f"admin_rm:{r['user_id']}")
+        ])
+    await update.message.reply_text(
+        "\n".join(lines), reply_markup=InlineKeyboardMarkup(buttons)
+    )
+
+
+async def callback_admin_remove(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Admin tapped 🗑 on a user — ask for confirmation before deleting."""
+    query = update.callback_query
+    await query.answer()
+    if not _is_admin(update):
+        return
+    target_id = int(query.data.split(":")[1])
+    keyboard = InlineKeyboardMarkup([[
+        InlineKeyboardButton("✅ Remove", callback_data=f"admin_rmok:{target_id}"),
+        InlineKeyboardButton("↩️ Cancel", callback_data="admin_rmno"),
+    ]])
+    await query.edit_message_text(
+        f"⚠️ Remove user {target_id}?\n\n"
+        "This deletes their access and all their progress (both domains), "
+        "silently — they are NOT notified. They can /start to request access again.",
+        reply_markup=keyboard,
+    )
+
+
+async def callback_admin_remove_confirm(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Admin confirmed removal — delete the user silently."""
+    query = update.callback_query
+    await query.answer()
+    if not _is_admin(update):
+        return
+    target_id = int(query.data.split(":")[1])
+    deleted = await db.remove_user(target_id)
+    qm.drop_user(target_id)
+    await query.edit_message_text(
+        f"✅ Removed user {target_id} silently.\n"
+        f"Deleted {deleted['vocab']} vocab + {deleted['grammar']} grammar progress docs.\n\n"
+        "Run /admin to refresh the list."
+    )
+
+
+async def callback_admin_remove_cancel(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
+    """Admin backed out of a removal."""
+    query = update.callback_query
+    await query.answer()
+    if not _is_admin(update):
+        return
+    await query.edit_message_text("↩️ Cancelled. Run /admin to refresh the list.")
+
+
 async def cmd_settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await _is_authorized(update):
         return

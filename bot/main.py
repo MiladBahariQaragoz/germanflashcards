@@ -3,7 +3,7 @@ import logging
 from telegram import BotCommand
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
 
-from bot.config import BOT_TOKEN
+from bot.config import BOT_TOKEN, AUTHORIZED_CHAT_ID
 from bot.handlers import (
     cmd_start,
     cmd_session,
@@ -13,9 +13,13 @@ from bot.handlers import (
     cmd_leaderboard,
     cmd_developer,
     cmd_settings,
+    cmd_admin,
     callback_request_access,
     callback_approve_user,
     callback_deny_user,
+    callback_admin_remove,
+    callback_admin_remove_confirm,
+    callback_admin_remove_cancel,
     callback_start_session,
     callback_start_grammar_session,
     callback_show_answer,
@@ -26,6 +30,8 @@ from bot.handlers import (
     callback_settings_cefr,
     callback_spread_backlog,
 )
+from bot import db
+from bot.version import get_version
 from bot.scheduler import setup_scheduler
 
 logging.basicConfig(
@@ -50,6 +56,7 @@ def main() -> None:
     app.add_handler(CommandHandler("settings", cmd_settings))
     app.add_handler(CommandHandler("grammar", cmd_grammar))
     app.add_handler(CommandHandler("vocab", cmd_vocab))
+    app.add_handler(CommandHandler("admin", cmd_admin))  # admin-only, hidden from menu
 
     # Access request flow (new-user onboarding, admin-approved)
     app.add_handler(
@@ -60,6 +67,17 @@ def main() -> None:
     )
     app.add_handler(
         CallbackQueryHandler(callback_deny_user, pattern="^deny_user:")
+    )
+
+    # Admin user-removal flow (tap 🗑 in /admin → confirm → silent delete)
+    app.add_handler(
+        CallbackQueryHandler(callback_admin_remove, pattern="^admin_rm:")
+    )
+    app.add_handler(
+        CallbackQueryHandler(callback_admin_remove_confirm, pattern="^admin_rmok:")
+    )
+    app.add_handler(
+        CallbackQueryHandler(callback_admin_remove_cancel, pattern="^admin_rmno$")
     )
 
     # Session callbacks
@@ -89,8 +107,26 @@ def main() -> None:
         CallbackQueryHandler(callback_settings_cefr, pattern="^settings_cefr:")
     )
 
-    # Bot command menu (same for everyone; admin approves new users via inline
-    # buttons in the access-request message, so there's no admin-only command).
+    # Bot command menu shown to everyone. /admin is intentionally omitted — it's
+    # admin-only (guarded in the handler) and stays hidden from the menu.
+    # Ping the admin once per new deploy. Deploy = git pull + restart, so we compare
+    # the current commit against the last-announced one (stored in Firestore) and
+    # only message when it changed — plain crash restarts (same commit) stay quiet.
+    async def announce_deploy():
+        version = get_version()
+        try:
+            last = await db.get_last_deploy_version()
+            if version == last or version == "unknown":
+                return
+            await app.bot.send_message(
+                chat_id=AUTHORIZED_CHAT_ID,
+                text=f"🚀 New version deployed & running:\n`{version}`",
+                parse_mode="Markdown",
+            )
+            await db.set_last_deploy_version(version)
+        except Exception as e:
+            logging.getLogger(__name__).warning("deploy announce failed: %s", e)
+
     async def set_commands():
         commands = [
             BotCommand("grammar", "📚 Start grammar session"),
@@ -103,7 +139,9 @@ def main() -> None:
         ]
         await app.bot.set_my_commands(commands)
 
-    asyncio.get_event_loop().run_until_complete(set_commands())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(set_commands())
+    loop.run_until_complete(announce_deploy())
 
     scheduler = setup_scheduler(app.bot)
     scheduler.start()

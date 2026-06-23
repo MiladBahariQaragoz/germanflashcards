@@ -1,3 +1,4 @@
+from bot import queue_manager as qm
 from bot.queue_manager import SessionQueue
 
 CARD_A = {"_id": "aaa", "word": "Hund", "translation": "dog"}
@@ -110,3 +111,14 @@ def test_reset_clears_progress():
     q.mark_reviewed()
     q.reset()
     assert q.progress() == (0, 0)
+
+
+def test_drop_user_forgets_both_domain_sessions():
+    uid = 99999
+    qm.get_session(uid)
+    qm.get_grammar_session(uid)
+    assert uid in qm._sessions and uid in qm._grammar_sessions
+    qm.drop_user(uid)
+    assert uid not in qm._sessions and uid not in qm._grammar_sessions
+    # Idempotent — dropping an unknown user doesn't raise.
+    qm.drop_user(uid)

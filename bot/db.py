@@ -8,6 +8,8 @@ Collections:
                       cefr_level with "_Grammar" suffix e.g. A1_Grammar/B2_Grammar)
   grammar_progress/ — per-user FSRS state for REVIEWED grammar cards (same pattern as user_progress)
   users/            — registered user profiles and preferences
+  access_requests/  — invite-onboarding state (pending/approved/denied)
+  meta/             — singleton app state (e.g. meta/deploy = last announced version)
   otps/             — one-time invite codes
 
 Progress document ID format: "{user_id}_{card_id}" (same for both user_progress and grammar_progress)
@@ -52,6 +54,7 @@ _requests_col = _db.collection("access_requests")
 _cards_col = _db.collection("cards")
 _grammar_cards_col = _db.collection("grammar_cards")
 _grammar_progress_col = _db.collection("grammar_progress")
+_meta_col = _db.collection("meta")  # small singleton docs (e.g. last deployed version)
 
 
 # ---------------------------------------------------------------------------
@@ -408,6 +411,92 @@ async def update_user_settings(user_id: int, fields: dict) -> None:
     # set(merge=True) creates the doc if missing, or merges fields if it exists.
     # This prevents update() failing silently on users who never called /start.
     await _users_col.document(str(user_id)).set(fields, merge=True)
+
+
+# ---------------------------------------------------------------------------
+# Admin: user roster + silent removal
+# ---------------------------------------------------------------------------
+
+async def _user_overview_row(data: dict) -> dict:
+    """Per-user admin summary: identity + current streak + due counts (both domains)."""
+    user_id = data.get("user_id")
+    cefr = data.get("cefr_levels", DEFAULT_CEFR_LEVELS)
+    vocab_due, grammar_due = await asyncio.gather(
+        count_due_cards(user_id, cefr_levels=cefr),
+        count_due_grammar_cards(user_id, cefr_levels=cefr),
+    )
+    return {
+        "user_id": user_id,
+        "username": data.get("username") or "",
+        "streak": streak_logic.current_streak(data, _berlin_date(), _berlin_date(1)),
+        "cefr_levels": cefr,
+        "vocab_due": vocab_due,
+        "grammar_due": grammar_due,
+        "registered_at": data.get("registered_at"),
+    }
+
+
+async def get_admin_overview() -> list[dict]:
+    """
+    Roster of every registered user with how they're doing (streak + due counts),
+    for the admin's /admin view. Sorted by current streak (desc), then username.
+    """
+    users = await get_all_users()
+    rows = await asyncio.gather(*(_user_overview_row(u) for u in users))
+    rows.sort(key=lambda r: (-r["streak"], r["username"].lower()))
+    return rows
+
+
+async def _delete_progress_for_user(col, user_id: int) -> int:
+    """Batch-delete every progress doc owned by `user_id` in `col`. Returns count."""
+    docs = await col.where(filter=FieldFilter("user_id", "==", user_id)).get()
+    batch = _db.batch()
+    pending = 0
+    for doc in docs:
+        batch.delete(doc.reference)
+        pending += 1
+        if pending == _BATCH_LIMIT:
+            await batch.commit()
+            batch = _db.batch()
+            pending = 0
+    if pending:
+        await batch.commit()
+    return len(docs)
+
+
+async def remove_user(user_id: int) -> dict:
+    """
+    Silently remove a user from the bot: delete their users/ doc (so they lose
+    access), their access_requests/ doc (so a fresh /start can request again), and
+    all their progress docs in both domains. Does NOT notify the user. Returns
+    {'vocab': n, 'grammar': n} progress docs deleted.
+    """
+    vocab_deleted, grammar_deleted = await asyncio.gather(
+        _delete_progress_for_user(_progress_col, user_id),
+        _delete_progress_for_user(_grammar_progress_col, user_id),
+    )
+    await asyncio.gather(
+        _users_col.document(str(user_id)).delete(),
+        _requests_col.document(str(user_id)).delete(),
+    )
+    return {"vocab": vocab_deleted, "grammar": grammar_deleted}
+
+
+# ---------------------------------------------------------------------------
+# Deploy version tracking (powers the "new version deployed" admin ping)
+# ---------------------------------------------------------------------------
+
+async def get_last_deploy_version() -> str | None:
+    """The version string last announced to the admin, or None if never set."""
+    doc = await _meta_col.document("deploy").get()
+    return (doc.to_dict() or {}).get("version") if doc.exists else None
+
+
+async def set_last_deploy_version(version: str) -> None:
+    """Record the version just announced so the next restart on the same commit stays quiet."""
+    await _meta_col.document("deploy").set(
+        {"version": version, "announced_at": datetime.now(timezone.utc)}, merge=True
+    )
 
 
 # ---------------------------------------------------------------------------

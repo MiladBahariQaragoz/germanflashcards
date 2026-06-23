@@ -96,3 +96,9 @@ def reset_all_grammar_sessions() -> None:
     """Reset every active grammar session (called by the morning scheduler)."""
     for s in _grammar_sessions.values():
         s.reset()
+
+
+def drop_user(user_id: int) -> None:
+    """Forget a user's in-memory sessions in both domains (used on admin removal)."""
+    _sessions.pop(user_id, None)
+    _grammar_sessions.pop(user_id, None)
