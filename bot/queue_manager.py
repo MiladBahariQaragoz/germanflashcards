@@ -81,24 +81,20 @@ def reset_all_sessions() -> None:
         s.reset()
 
 
-# Grammar session registry — completely independent from vocab sessions.
-_grammar_sessions: dict[int, SessionQueue] = {}
-
+# Vocab and grammar now share ONE session per user (unified review pool): the
+# review queue mixes both domains, so these grammar-named accessors are kept as
+# thin aliases of the single session to avoid churning every call site.
 
 def get_grammar_session(user_id: int) -> SessionQueue:
-    """Return the grammar SessionQueue for this user, creating one if it doesn't exist."""
-    if user_id not in _grammar_sessions:
-        _grammar_sessions[user_id] = SessionQueue()
-    return _grammar_sessions[user_id]
+    """Alias of get_session — vocab and grammar share the same unified queue."""
+    return get_session(user_id)
 
 
 def reset_all_grammar_sessions() -> None:
-    """Reset every active grammar session (called by the morning scheduler)."""
-    for s in _grammar_sessions.values():
-        s.reset()
+    """Alias of reset_all_sessions — there is a single session per user."""
+    reset_all_sessions()
 
 
 def drop_user(user_id: int) -> None:
-    """Forget a user's in-memory sessions in both domains (used on admin removal)."""
+    """Forget a user's in-memory session (used on admin removal)."""
     _sessions.pop(user_id, None)
-    _grammar_sessions.pop(user_id, None)
