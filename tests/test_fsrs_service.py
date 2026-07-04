@@ -23,6 +23,13 @@ def test_rate_card_good_returns_required_fields():
     assert "last_review" in update_dict
 
 
+def test_rate_card_returns_interval_sessions():
+    update_dict, _ = rate_card(NEW_CARD, rating_int=3)
+    assert "interval_sessions" in update_dict
+    assert isinstance(update_dict["interval_sessions"], int)
+    assert update_dict["interval_sessions"] >= 0
+
+
 def test_rate_card_good_increases_stability():
     update_dict, _ = rate_card(NEW_CARD, rating_int=3)
     assert update_dict["stability"] is not None
@@ -66,7 +73,13 @@ def test_format_interval_hours():
     assert format_interval_from_due(due, now) == "2h"
 
 
-def test_format_interval_days():
+def test_format_interval_days_shown_as_sessions():
     now = datetime(2026, 4, 24, 12, 0, 0, tzinfo=timezone.utc)
     due = datetime(2026, 5, 1, 12, 0, 0, tzinfo=timezone.utc)
-    assert format_interval_from_due(due, now) == "7d"
+    assert format_interval_from_due(due, now) == "7 sessions"
+
+
+def test_format_interval_one_day_is_singular_session():
+    now = datetime(2026, 4, 24, 12, 0, 0, tzinfo=timezone.utc)
+    due = datetime(2026, 4, 25, 12, 0, 0, tzinfo=timezone.utc)
+    assert format_interval_from_due(due, now) == "1 session"
