@@ -4,6 +4,6 @@ steps:
     args:
       - '-c'
       - |
-        gcloud compute ssh --zone=us-central1-a german-bot --project=learn-german-bot --command="cd /home/Student/germanflashcards && git pull && sudo systemctl restart germanbot"
+        gcloud compute ssh Student@german-bot --zone=us-central1-a --project=learn-german-bot --command="cd /home/Student/germanflashcards && git pull --ff-only && sudo systemctl restart germanbot"
 options:
   logging: CLOUD_LOGGING_ONLY
