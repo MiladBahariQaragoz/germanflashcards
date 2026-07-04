@@ -36,7 +36,10 @@ These hold business logic deliberately split out of `db.py`/`handlers.py` (which
 need Firestore / Telegram) so it can be tested offline. Follow this pattern for
 new logic — keep it pure, persist separately.
 
-- `bot/queue_manager.py` — session queues + progress tracking.
+- `bot/queue_manager.py` — the single per-user session queue + progress tracking.
+- `bot/scheduling.py` — `interval_to_sessions(due, now)` (FSRS day-interval → whole
+  sessions; `<1d → 0`) and `due_session_for(counter, interval_sessions)`. See
+  "Session model" above.
 - `bot/streak.py` — `streak_transition()` / `current_streak()` / `rank_streaks()`.
   A day counts when **either** domain's session is cleared on a Berlin date;
   streak advances once/day, resets to 1 after a gap. (`both_done` — other domain
@@ -48,10 +51,11 @@ new logic — keep it pure, persist separately.
   username. Rendered as **plain text** (no Markdown) since Telegram usernames
   often contain `_`.
 - `bot/catchup.py` — `plan_installments(due_count, today_max, next_day_max=None)`
-  → day-offset per overflow card (keep `today_max` today, then chunks of
-  `next_day_max`), plus `new_cards_allowed(combined_due, daily_cap)` (the new-card
-  pause rule). `db.spread_backlog` applies the plan to the **combined** vocab+grammar
-  due pool sorted by due date (only `due_date` moves; batched writes; each write
+  → offset per overflow card (keep `today_max` now, then chunks of `next_day_max`;
+  offsets are unitless — now interpreted as **session** offsets), plus
+  `new_cards_allowed(combined_due, daily_cap)` (the new-card pause rule).
+  `db.spread_backlog` applies the plan to the **combined** vocab+grammar due pool
+  sorted by `due_session` (only `due_session` moves; batched writes; each write
   routed by `_card_type`). Thresholds: `db.BACKLOG_OFFER_THRESHOLD` (100),
   `db.CATCHUP_PER_DAY` (60 today), `db.CATCHUP_NEXT_DAY` (40/day after),
   `db.NEW_CARD_PAUSE_THRESHOLD` (40 — new cards pause above this combined due).
@@ -67,15 +71,39 @@ A **multi-user Telegram bot** for learning German via spaced repetition (FSRS).
 Backend is **Google Cloud Firestore**. Runtime is **Python 3.11+ / asyncio**,
 built on `python-telegram-bot`. Deployed on a GCE VM as a systemd service.
 
-There are two **independent** study domains that mirror each other exactly:
+There are two study domains that share their card storage but pool reviews:
 
-| Domain  | Card collection  | Progress collection  | Session registry (in-memory) |
-|---------|------------------|----------------------|------------------------------|
-| Vocab   | `cards`          | `user_progress`      | `queue_manager._sessions`    |
-| Grammar | `grammar_cards`  | `grammar_progress`   | `queue_manager._grammar_sessions` |
+| Domain  | Card collection  | Progress collection  | New cards from |
+|---------|------------------|----------------------|----------------|
+| Vocab   | `cards`          | `user_progress`      | `/vocab`       |
+| Grammar | `grammar_cards`  | `grammar_progress`   | `/grammar`     |
 
-When you add a feature to one domain, the parallel domain almost always needs
-the same change. Keep them symmetrical.
+The **card/progress collections stay separate per domain**, so most data-layer
+changes still need mirroring across both. But the **review pool is unified**: a
+single in-memory session per user (`queue_manager._sessions`) holds due reviews from
+*both* domains; only the NEW cards a session injects are domain-scoped to the button
+pressed. `queue_manager.get_grammar_session` / `reset_all_grammar_sessions` are now
+thin aliases of the single-session functions (see "Session model" below).
+
+## Session model (session-based scheduling)
+
+Scheduling runs on a **session axis, not a calendar axis**. FSRS still computes
+intervals from real elapsed time, but a card it spaces "5 days" out reappears **5
+sessions later** instead:
+
+- Each user has a shared `session_counter` on their `users` doc. It advances **+1 on
+  every session start** (`handlers._start_session` / `_start_grammar_session` call
+  `db.increment_session_counter`). The morning reset does **not** start a session.
+- Each progress doc stores `due_session`. A card is due when `due_session <=
+  session_counter` (`db.get_due_cards` / `get_due_grammar_cards` filter on this).
+- On review, `fsrs_service.rate_card` returns `interval_sessions`
+  (`bot/scheduling.interval_to_sessions`: `<1d → 0` so learning steps reshow in the
+  same session via the again-pile; `>=1d → round(days)`). The grade handlers set
+  `due_session = session_counter + interval_sessions`.
+- `db.spread_backlog` moves overflow cards forward by **session** offsets on
+  `due_session` (was days on `due_date`). `due_date` is still written by FSRS and kept
+  for reference/migration, but no longer decides due-ness.
+- Backfill for pre-existing docs: `python -m scripts.backfill_due_session` (idempotent).
 
 ## Module map (`bot/`)
 
@@ -170,6 +198,7 @@ pytest tests/test_queue_manager.py -q
 # One-time data loads (require ADC / GOOGLE_CLOUD_PROJECT)
 python scripts/upload_grammar.py     # → grammar_cards
 python -m scripts.migrate_v2         # → cards + user_progress (also needs MONGODB_URI)
+python -m scripts.backfill_due_session  # backfill due_session on existing progress docs (idempotent)
 ```
 
 ## Testing
@@ -197,7 +226,8 @@ python -m scripts.migrate_v2         # → cards + user_progress (also needs MON
 - Auth to Firestore is via **Application Default Credentials** — no key files,
   no `MONGODB_URI` for the running bot.
 - **Firestore composite indexes are manual.** Session queries need
-  `(user_id ASC, due_date ASC)` on both `user_progress` and `grammar_progress`.
+  `(user_id ASC, due_session ASC)` on both `user_progress` and `grammar_progress`
+  (replaced the old `due_date` indexes when scheduling moved to the session axis).
   Adding a new multi-field query may require creating a new index in the console.
 
 ## Repo notes / gotchas
@@ -213,8 +243,9 @@ python -m scripts.migrate_v2         # → cards + user_progress (also needs MON
   runtime. Maintainers `git clone` that repo and copy the JSON in. The public
   history was scrubbed of these files (force-pushed), so they're gone from `master`.
 - Architecture/design history lives in `docs/superpowers/`.
-- ⚠️ **Latent due-date timezone quirk:** "due today" in `db.get_due_cards` is
-  computed off `_end_of_today_utc()` (UTC calendar date), while the daily reset and
-  streaks use **Berlin** dates. Around midnight Berlin these disagree by a day. Not
-  fixed (out of scope for the 2026-06-17 work); be aware when touching due-date or
-  streak logic. The streak "study day" is intentionally Berlin-based.
+- **Due-ness is session-based, not date-based** (as of the session-scheduling
+  change). `db.get_due_cards` filters on `due_session <= session_counter`, so the old
+  `_end_of_today_utc()` UTC-vs-Berlin midnight quirk no longer affects which cards are
+  due — it's been removed. The streak "study day" is still intentionally Berlin-based
+  (`streak.py`), so streak/reminder logic remains on the Berlin calendar; only card
+  scheduling left the calendar axis.
