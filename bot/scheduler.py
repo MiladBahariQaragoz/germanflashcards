@@ -60,8 +60,7 @@ def _session_keyboard(total_due: int) -> InlineKeyboardMarkup:
 
 async def morning_trigger(bot) -> None:
     """Reset all queues and send each user their daily grammar + vocab card counts."""
-    qm.reset_all_sessions()
-    qm.reset_all_grammar_sessions()
+    qm.reset_all_sessions()  # one unified session per user
 
     all_users = await db.get_all_users()
     user_ids = {u["user_id"] for u in all_users}
@@ -74,10 +73,11 @@ async def morning_trigger(bot) -> None:
         try:
             settings = await db.get_user_settings(user_id)
             cefr = settings["cefr_levels"]
+            counter = settings["session_counter"]
 
             grammar_due, vocab_due = await asyncio.gather(
-                db.count_due_grammar_cards(user_id, cefr_levels=cefr),
-                db.count_due_cards(user_id, cefr_levels=cefr),
+                db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
+                db.count_due_cards(user_id, counter, cefr_levels=cefr),
             )
             new_each = _new_cards_shown(grammar_due + vocab_due)
             grammar_display = grammar_due + new_each
@@ -106,67 +106,46 @@ async def nag_check(bot) -> None:
 
     for user_id in user_ids:
         try:
-            grammar_session = qm.get_grammar_session(user_id)
-            vocab_session = qm.get_session(user_id)
+            # One unified session per user (vocab + grammar share the same queue).
+            session = qm.get_session(user_id)
 
-            # Both done — skip entirely
-            if grammar_session.kill_switch and vocab_session.kill_switch:
+            # Already cleared today — skip entirely.
+            if session.kill_switch:
                 continue
 
             settings = await db.get_user_settings(user_id)
             cefr = settings["cefr_levels"]
+            counter = settings["session_counter"]
 
-            # New-card display pauses on a combined backlog, so estimate both due counts.
+            # New-card display pauses on a combined backlog, so estimate due counts.
             grammar_due, vocab_due = await asyncio.gather(
-                db.count_due_grammar_cards(user_id, cefr_levels=cefr),
-                db.count_due_cards(user_id, cefr_levels=cefr),
+                db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
+                db.count_due_cards(user_id, counter, cefr_levels=cefr),
             )
             new_each = _new_cards_shown(grammar_due + vocab_due)
 
-            # Grammar remaining
-            grammar_remaining = 0
-            if not grammar_session.kill_switch:
-                grammar_remaining = (
-                    grammar_session.remaining_count()
-                    if grammar_session.active
-                    else grammar_due + new_each
-                )
+            # Live remaining once a session is running; otherwise the combined due
+            # pool plus a new-card allowance for the first session they start.
+            if session.active:
+                remaining = session.remaining_count()
+            else:
+                remaining = grammar_due + vocab_due + new_each
 
-            # Vocab remaining
-            vocab_remaining = 0
-            if not vocab_session.kill_switch:
-                vocab_remaining = (
-                    vocab_session.remaining_count()
-                    if vocab_session.active
-                    else vocab_due + new_each
-                )
-
-            if grammar_remaining == 0 and vocab_remaining == 0:
+            if remaining == 0:
                 continue
 
-            parts = []
-            if grammar_remaining > 0:
-                parts.append(
-                    f"📚 {grammar_remaining} grammar card{'s' if grammar_remaining != 1 else ''}"
-                )
-            if vocab_remaining > 0:
-                parts.append(
-                    f"🗂️ {vocab_remaining} vocab card{'s' if vocab_remaining != 1 else ''}"
-                )
-
-            remaining_text = " and ".join(parts)
-            total = grammar_remaining + vocab_remaining
-            tomorrow_pile = total * 2
+            tomorrow_pile = remaining * 2
 
             await bot.send_message(
                 chat_id=user_id,
                 text=(
-                    f"⏰ You still have {remaining_text} left for today.\n\n"
+                    f"⏰ You still have {remaining} card{'s' if remaining != 1 else ''} "
+                    f"left for today.\n\n"
                     f"Skip today and these pile onto tomorrow — "
-                    f"you could be facing ~{tomorrow_pile} instead of ~{total}. "
+                    f"you could be facing ~{tomorrow_pile} instead of ~{remaining}. "
                     f"A few minutes now saves double the work tomorrow! 💪"
                 ),
-                reply_markup=_session_keyboard(grammar_remaining + vocab_remaining),
+                reply_markup=_session_keyboard(remaining),
             )
         except Exception as e:
             logger.warning("nag_check failed for user %s: %s", user_id, e)

@@ -65,11 +65,6 @@ _meta_col = _db.collection("meta")  # small singleton docs (e.g. last deployed v
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _end_of_today_utc() -> datetime:
-    now = datetime.now(timezone.utc)
-    return now.replace(hour=23, minute=59, second=59, microsecond=999999)
-
-
 def _progress_doc_id(user_id: int, card_id: str) -> str:
     return f"{user_id}_{card_id}"
 
@@ -141,19 +136,21 @@ def _grammar_col_doc_to_card(doc, user_id: int) -> dict:
 
 async def get_due_cards(
     user_id: int,
+    current_session: int,
     cefr_levels: list[str] | None = None,
 ) -> list[dict]:
-    """Non-New cards whose due_date falls on or before end of today.
+    """Non-New cards whose due_session is at or before the user's session counter.
 
+    current_session — the user's shared session counter; a card is due once this
+    reaches its stored `due_session`.
     cefr_levels — when provided, only cards whose cefr_level is in the list
     are returned.  Filtering is done in Python to avoid a composite index on
-    (user_id, due_date <=, cefr_level in).
+    (user_id, due_session <=, cefr_level in).
     """
-    cutoff = _end_of_today_utc()
     query = (
         _progress_col
         .where(filter=FieldFilter("user_id", "==", user_id))
-        .where(filter=FieldFilter("due_date", "<=", cutoff))
+        .where(filter=FieldFilter("due_session", "<=", current_session))
     )
     docs = await query.get()
     cefr_set = set(cefr_levels) if cefr_levels else None
@@ -167,9 +164,10 @@ async def get_due_cards(
 
 async def count_due_cards(
     user_id: int,
+    current_session: int,
     cefr_levels: list[str] | None = None,
 ) -> int:
-    return len(await get_due_cards(user_id, cefr_levels=cefr_levels))
+    return len(await get_due_cards(user_id, current_session, cefr_levels=cefr_levels))
 
 
 async def get_new_cards(
@@ -384,7 +382,26 @@ async def register_user(user_id: int, username: str | None) -> None:
         "registered_at": datetime.now(timezone.utc),
         "study_direction": DEFAULT_STUDY_DIRECTION,
         "cefr_levels": DEFAULT_CEFR_LEVELS,
+        "session_counter": 0,
     })
+
+
+async def get_session_counter(user_id: int) -> int:
+    """The user's current shared session counter (0 if never set)."""
+    doc = await _users_col.document(str(user_id)).get()
+    return (doc.to_dict() or {}).get("session_counter", 0) if doc.exists else 0
+
+
+async def increment_session_counter(user_id: int) -> int:
+    """Advance the user's session counter by one and return the new value.
+
+    Called once per session start (any domain). Cards are due when their stored
+    `due_session` is <= this counter.
+    """
+    ref = _users_col.document(str(user_id))
+    await ref.set({"session_counter": firestore.Increment(1)}, merge=True)
+    doc = await ref.get()
+    return (doc.to_dict() or {}).get("session_counter", 0)
 
 
 async def is_registered_user(user_id: int) -> bool:
@@ -403,11 +420,13 @@ async def get_user_settings(user_id: int) -> dict:
         return {
             "study_direction": DEFAULT_STUDY_DIRECTION,
             "cefr_levels": DEFAULT_CEFR_LEVELS,
+            "session_counter": 0,
         }
     data = doc.to_dict()
     return {
         "study_direction": data.get("study_direction", DEFAULT_STUDY_DIRECTION),
         "cefr_levels": data.get("cefr_levels", DEFAULT_CEFR_LEVELS),
+        "session_counter": data.get("session_counter", 0),
     }
 
 
@@ -425,9 +444,10 @@ async def _user_overview_row(data: dict) -> dict:
     """Per-user admin summary: identity + current streak + due counts (both domains)."""
     user_id = data.get("user_id")
     cefr = data.get("cefr_levels", DEFAULT_CEFR_LEVELS)
+    counter = data.get("session_counter", 0)
     vocab_due, grammar_due = await asyncio.gather(
-        count_due_cards(user_id, cefr_levels=cefr),
-        count_due_grammar_cards(user_id, cefr_levels=cefr),
+        count_due_cards(user_id, counter, cefr_levels=cefr),
+        count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
     )
     return {
         "user_id": user_id,
@@ -556,15 +576,15 @@ async def get_leaderboard(limit: int = 10) -> list[dict]:
 
 async def get_due_grammar_cards(
     user_id: int,
+    current_session: int,
     cefr_levels: list[str] | None = None,
 ) -> list[dict]:
-    """Non-New grammar cards whose due_date falls on or before end of today."""
-    cutoff = _end_of_today_utc()
+    """Non-New grammar cards whose due_session is at or before the session counter."""
     grammar_cefr = _grammar_cefr_levels(cefr_levels)
     query = (
         _grammar_progress_col
         .where(filter=FieldFilter("user_id", "==", user_id))
-        .where(filter=FieldFilter("due_date", "<=", cutoff))
+        .where(filter=FieldFilter("due_session", "<=", current_session))
     )
     docs = await query.get()
     cefr_set = set(grammar_cefr) if grammar_cefr else None
@@ -578,9 +598,10 @@ async def get_due_grammar_cards(
 
 async def count_due_grammar_cards(
     user_id: int,
+    current_session: int,
     cefr_levels: list[str] | None = None,
 ) -> int:
-    return len(await get_due_grammar_cards(user_id, cefr_levels=cefr_levels))
+    return len(await get_due_grammar_cards(user_id, current_session, cefr_levels=cefr_levels))
 
 
 async def get_new_grammar_cards(
@@ -705,33 +726,32 @@ async def get_grammar_card_counts_by_state(
 # ---------------------------------------------------------------------------
 
 async def _spread_due_cards(
-    due_cards: list[dict], today_max: int, next_day_max: int
+    due_cards: list[dict], current_session: int, today_max: int, next_day_max: int
 ) -> dict[str, int]:
     """
     Reschedule the overflow of a COMBINED (vocab + grammar) due-card list across
-    upcoming days: keep the `today_max` earliest-due cards due today, then
-    ~next_day_max/day after — one shared budget across both domains. Each card keeps
-    its progress doc; only `due_date` moves, routed to the right collection by
-    `_card_type` ('grammar' → grammar_progress, else user_progress). Doc IDs are
-    `{user_id}_{card_id}` in both. Returns {'vocab': n, 'grammar': n} moved.
+    upcoming sessions: keep the `today_max` earliest-due cards due now, then
+    ~next_day_max per session after — one shared budget across both domains. Each
+    card keeps its progress doc; only `due_session` moves, routed to the right
+    collection by `_card_type` ('grammar' → grammar_progress, else user_progress).
+    Doc IDs are `{user_id}_{card_id}` in both. Returns {'vocab': n, 'grammar': n} moved.
     """
     moved = {"vocab": 0, "grammar": 0}
     offsets = catchup_logic.plan_installments(len(due_cards), today_max, next_day_max)
     if not offsets:
         return moved
 
-    # Earliest-due cards (either domain) stay today; the latest-due get pushed furthest.
-    due_cards.sort(key=lambda c: c.get("due_date") or datetime.now(timezone.utc))
+    # Earliest-due cards (either domain) stay; the latest-due get pushed furthest.
+    due_cards.sort(key=lambda c: c.get("due_session", 0))
     overflow = due_cards[today_max:]
-    now = datetime.now(timezone.utc)
 
     batch = _db.batch()
     pending = 0
-    for card, day_offset in zip(overflow, offsets):
+    for card, session_offset in zip(overflow, offsets):
         doc_id = f"{card['user_id']}_{card['card_id']}"
         is_grammar = card.get("_card_type") == "grammar"
         col = _grammar_progress_col if is_grammar else _progress_col
-        batch.update(col.document(doc_id), {"due_date": now + timedelta(days=day_offset)})
+        batch.update(col.document(doc_id), {"due_session": current_session + session_offset})
         moved["grammar" if is_grammar else "vocab"] += 1
         pending += 1
         if pending == _BATCH_LIMIT:
@@ -745,17 +765,20 @@ async def _spread_due_cards(
 
 async def spread_backlog(
     user_id: int,
+    current_session: int,
     cefr_levels: list[str] | None = None,
     today_max: int = CATCHUP_PER_DAY,
     next_day_max: int = CATCHUP_NEXT_DAY,
 ) -> dict[str, int]:
     """
-    Spread the user's COMBINED (vocab + grammar) due backlog into daily installments:
-    keep up to `today_max` cards due today across both domains together, then
-    ~next_day_max/day after. Returns {'vocab': moved, 'grammar': moved}.
+    Spread the user's COMBINED (vocab + grammar) due backlog into installments:
+    keep up to `today_max` cards due now across both domains together, then
+    ~next_day_max per upcoming session. Returns {'vocab': moved, 'grammar': moved}.
     """
     due_vocab, due_grammar = await asyncio.gather(
-        get_due_cards(user_id, cefr_levels=cefr_levels),
-        get_due_grammar_cards(user_id, cefr_levels=cefr_levels),
+        get_due_cards(user_id, current_session, cefr_levels=cefr_levels),
+        get_due_grammar_cards(user_id, current_session, cefr_levels=cefr_levels),
     )
-    return await _spread_due_cards(due_vocab + due_grammar, today_max, next_day_max)
+    return await _spread_due_cards(
+        due_vocab + due_grammar, current_session, today_max, next_day_max
+    )

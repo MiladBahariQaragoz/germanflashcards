@@ -11,6 +11,7 @@ from bot import db
 from bot import fsrs_service
 from bot import queue_manager as qm
 from bot import catchup as catchup_logic
+from bot import scheduling
 
 
 # ---------------------------------------------------------------------------
@@ -80,14 +81,15 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
+    counter = settings["session_counter"]
     cefr_label = ", ".join(sorted(cefr))
 
     vocab_counts, grammar_counts, streak, vocab_due, grammar_due = await asyncio.gather(
         db.get_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_grammar_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_streak(user_id),
-        db.count_due_cards(user_id, cefr_levels=cefr),
-        db.count_due_grammar_cards(user_id, cefr_levels=cefr),
+        db.count_due_cards(user_id, counter, cefr_levels=cefr),
+        db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
     )
 
     text = (
@@ -489,14 +491,18 @@ async def _start_session(
 ) -> None:
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    due, grammar_due = await asyncio.gather(
-        db.get_due_cards(user_id, cefr_levels=cefr),
-        db.count_due_grammar_cards(user_id, cefr_levels=cefr),
+    # Every session start advances the shared counter; the review pool is unified
+    # across both domains, only the NEW cards are vocab-specific here.
+    counter = await db.increment_session_counter(user_id)
+    due_vocab, due_grammar = await asyncio.gather(
+        db.get_due_cards(user_id, counter, cefr_levels=cefr),
+        db.get_due_grammar_cards(user_id, counter, cefr_levels=cefr),
     )
+    due = due_vocab + due_grammar
     # Pause new cards while a combined review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
     new = (
         await db.get_new_cards(user_id, 20, cefr_levels=cefr)
-        if catchup_logic.new_cards_allowed(len(due) + grammar_due, db.NEW_CARD_PAUSE_THRESHOLD)
+        if catchup_logic.new_cards_allowed(len(due), db.NEW_CARD_PAUSE_THRESHOLD)
         else []
     )
     session = qm.get_session(user_id)
@@ -505,7 +511,7 @@ async def _start_session(
     if card is None:
         await _on_domain_empty(context, chat_id, user_id, "vocab")
         return
-    await _send_card_front(
+    await _send_next_card(
         context, chat_id, card,
         study_direction=settings["study_direction"],
         progress=session.progress(),
@@ -541,6 +547,30 @@ async def _send_card_front(
     )
 
 
+async def _send_next_card(
+    context: ContextTypes.DEFAULT_TYPE,
+    chat_id: int,
+    card: dict,
+    study_direction: str = "DE->EN",
+    progress: tuple[int, int] | None = None,
+) -> None:
+    """Render a card from the unified queue by its domain.
+
+    The review pool mixes vocab and grammar, so each popped card is displayed with
+    its own domain's front + grade buttons (grammar cards carry `_card_type`).
+    """
+    if card.get("_card_type") == "grammar":
+        await _send_grammar_card_front(
+            context, chat_id, card,
+            study_direction=study_direction, progress=progress,
+        )
+    else:
+        await _send_card_front(
+            context, chat_id, card,
+            study_direction=study_direction, progress=progress,
+        )
+
+
 # ---------------------------------------------------------------------------
 # Grammar session helpers
 # ---------------------------------------------------------------------------
@@ -550,23 +580,27 @@ async def _start_grammar_session(
 ) -> None:
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    due, vocab_due = await asyncio.gather(
-        db.get_due_grammar_cards(user_id, cefr_levels=cefr),
-        db.count_due_cards(user_id, cefr_levels=cefr),
+    # Every session start advances the shared counter; the review pool is unified
+    # across both domains, only the NEW cards are grammar-specific here.
+    counter = await db.increment_session_counter(user_id)
+    due_vocab, due_grammar = await asyncio.gather(
+        db.get_due_cards(user_id, counter, cefr_levels=cefr),
+        db.get_due_grammar_cards(user_id, counter, cefr_levels=cefr),
     )
+    due = due_vocab + due_grammar
     # Pause new cards while a combined review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
     new = (
         await db.get_new_grammar_cards(user_id, 20, cefr_levels=cefr)
-        if catchup_logic.new_cards_allowed(len(due) + vocab_due, db.NEW_CARD_PAUSE_THRESHOLD)
+        if catchup_logic.new_cards_allowed(len(due), db.NEW_CARD_PAUSE_THRESHOLD)
         else []
     )
-    session = qm.get_grammar_session(user_id)
+    session = qm.get_session(user_id)
     session.build(due_cards=due, new_cards=new)
     card = session.pop_next()
     if card is None:
         await _on_domain_empty(context, chat_id, user_id, "grammar")
         return
-    await _send_grammar_card_front(
+    await _send_next_card(
         context, chat_id, card,
         study_direction=settings["study_direction"],
         progress=session.progress(),
@@ -615,11 +649,12 @@ async def _on_domain_empty(
     session.kill_switch = True
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
+    counter = settings["session_counter"]
     if domain == "vocab":
-        other_due = await db.count_due_grammar_cards(user_id, cefr_levels=cefr)
+        other_due = await db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr)
         text = "No vocab cards due today! 🎉"
     else:
-        other_due = await db.count_due_cards(user_id, cefr_levels=cefr)
+        other_due = await db.count_due_cards(user_id, counter, cefr_levels=cefr)
         text = "No grammar cards due today! 🎉"
     result = await db.record_session_cleared(user_id, domain, other_domain_due=other_due)
     if result["advanced"]:
@@ -632,7 +667,7 @@ async def _on_vocab_session_cleared(
 ) -> None:
     settings = await db.get_user_settings(user_id)
     grammar_due = await db.count_due_grammar_cards(
-        user_id, cefr_levels=settings["cefr_levels"]
+        user_id, settings["session_counter"], cefr_levels=settings["cefr_levels"]
     )
     result = await db.record_session_cleared(
         user_id, "vocab", other_domain_due=grammar_due
@@ -654,7 +689,7 @@ async def _on_grammar_session_cleared(
 ) -> None:
     settings = await db.get_user_settings(user_id)
     vocab_due = await db.count_due_cards(
-        user_id, cefr_levels=settings["cefr_levels"]
+        user_id, settings["session_counter"], cefr_levels=settings["cefr_levels"]
     )
     result = await db.record_session_cleared(
         user_id, "grammar", other_domain_due=vocab_due
@@ -761,6 +796,10 @@ async def callback_grade(
         return
 
     update_fields, _ = fsrs_service.rate_card(card, rating_int)
+    counter = await db.get_session_counter(user_id)
+    update_fields["due_session"] = scheduling.due_session_for(
+        counter, update_fields.pop("interval_sessions")
+    )
     await db.update_card_after_review(user_id, card_id, update_fields, card)
     await query.edit_message_reply_markup(reply_markup=None)
 
@@ -780,7 +819,7 @@ async def callback_grade(
         return
 
     settings = await db.get_user_settings(user_id)
-    await _send_card_front(
+    await _send_next_card(
         context, chat_id, next_card,
         study_direction=settings["study_direction"],
         progress=session.progress(),
@@ -872,10 +911,14 @@ async def callback_grade_grammar(
         return
 
     update_fields, _ = fsrs_service.rate_card(card, rating_int)
+    counter = await db.get_session_counter(user_id)
+    update_fields["due_session"] = scheduling.due_session_for(
+        counter, update_fields.pop("interval_sessions")
+    )
     await db.update_grammar_card_after_review(user_id, card_id, update_fields, card)
     await query.edit_message_reply_markup(reply_markup=None)
 
-    session = qm.get_grammar_session(user_id)
+    session = qm.get_session(user_id)
     if rating_int == 1:
         updated_card = {**card, **update_fields}
         session.add_to_again_pile(updated_card)
@@ -891,7 +934,7 @@ async def callback_grade_grammar(
         return
 
     settings = await db.get_user_settings(user_id)
-    await _send_grammar_card_front(
+    await _send_next_card(
         context, chat_id, next_card,
         study_direction=settings["study_direction"],
         progress=session.progress(),
@@ -909,9 +952,10 @@ async def cmd_catchup(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     user_id = update.effective_user.id
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
+    counter = settings["session_counter"]
     grammar_due, vocab_due = await asyncio.gather(
-        db.count_due_grammar_cards(user_id, cefr_levels=cefr),
-        db.count_due_cards(user_id, cefr_levels=cefr),
+        db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
+        db.count_due_cards(user_id, counter, cefr_levels=cefr),
     )
     total = grammar_due + vocab_due
     if total <= db.BACKLOG_OFFER_THRESHOLD:
@@ -944,7 +988,9 @@ async def callback_spread_backlog(
         return
     user_id = update.effective_user.id
     settings = await db.get_user_settings(user_id)
-    moved = await db.spread_backlog(user_id, settings["cefr_levels"])
+    moved = await db.spread_backlog(
+        user_id, settings["session_counter"], settings["cefr_levels"]
+    )
     total = moved["vocab"] + moved["grammar"]
     if total == 0:
         await query.edit_message_text(
