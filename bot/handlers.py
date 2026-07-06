@@ -43,17 +43,24 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text(
             "👋 Willkommen! This bot helps you learn German using spaced repetition (FSRS).\n\n"
             "📋 *Commands*\n"
-            "📚 /grammar — Start your grammar session (sentence exercises)\n"
-            "▶️ /vocab — Start your vocabulary session\n"
-            "📊 /stats — Grammar + vocabulary progress\n"
-            "🧩 /catchup — Spread a big backlog into daily installments\n"
+            "📚 /grammar — Study session, starting with fresh grammar\n"
+            "▶️ /vocab — Study session, starting with fresh vocabulary\n"
+            "📊 /stats — Your progress & next-session size\n"
+            "🧩 /catchup — How your review backlog is handled\n"
             "🏆 /leaderboard — Top streak holders\n"
             "⚙️ /settings — Study direction & CEFR levels\n"
             "👨‍💻 /developer — About the developer\n\n"
-            "⏰ *Daily routine*\n"
-            "Every morning at 8:00 (Berlin time) you'll get a message with today's grammar and vocab counts. "
-            "Complete both sessions for the best results! "
-            "Reminders are sent every 2 hours if sessions are unfinished.\n\n"
+            "🔁 *How it works*\n"
+            "Grammar and vocabulary reviews share one queue, so /grammar and /vocab pull "
+            "from the same due cards — they differ only in which *new* cards they add. "
+            "Each session is capped at a manageable size, so even a big backlog comes back "
+            "a little at a time instead of all at once. Cards are scheduled by session, "
+            "not by the calendar — a card spaced “5 sessions” reappears after five more "
+            "study sessions.\n\n"
+            "⏰ *Daily rhythm*\n"
+            "Every morning at 8:00 (Berlin time) you'll get your next-session count. "
+            "Study on any given day to keep your 🔥 streak alive — clearing either grammar "
+            "or vocab counts. Reminders come every 2 hours while cards are still waiting.\n\n"
             "Ready? Start with 📚 /grammar or ▶️ /vocab! 🚀",
             parse_mode="Markdown",
         )
@@ -668,10 +675,11 @@ async def _on_domain_empty(
     counter = settings["session_counter"]
     if domain == "vocab":
         other_due = await db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr)
-        text = "No vocab cards due today! 🎉"
     else:
         other_due = await db.count_due_cards(user_id, counter, cefr_levels=cefr)
-        text = "No grammar cards due today! 🎉"
+    # The queue is unified, so an empty session means nothing is waiting in either
+    # domain and no new cards are due to be introduced right now.
+    text = "🎉 Nothing to review right now — you're all caught up!"
     result = await db.record_session_cleared(user_id, domain, other_domain_due=other_due)
     if result["advanced"]:
         text += "\n\n" + _streak_line(result["streak"])
@@ -689,11 +697,11 @@ async def _on_vocab_session_cleared(
         user_id, "vocab", other_domain_due=grammar_due
     )
     if result["both_done"]:
-        text = "🗂️ Vocabulary done — both sessions complete for today! 🎉"
+        text = "🗂️ Session complete — you're all caught up! 🎉"
     else:
         text = (
-            "🗂️ Vocabulary session complete! 🎉\n\n"
-            "Grammar is optional today — keep going with /grammar if you like."
+            "🗂️ Session complete! 🎉\n\n"
+            "Want more? Tap /grammar to keep going with fresh grammar cards."
         )
     if result["advanced"]:
         text += "\n\n" + _streak_line(result["streak"])
@@ -711,11 +719,11 @@ async def _on_grammar_session_cleared(
         user_id, "grammar", other_domain_due=vocab_due
     )
     if result["both_done"]:
-        text = "📚 Grammatik fertig — both sessions complete for today! 🎉"
+        text = "📚 Grammatik fertig — you're all caught up! 🎉"
     else:
         text = (
-            "📚 Grammatik fertig! Grammar session complete. 🎉\n\n"
-            "Vocab is optional today — keep going with /vocab if you like."
+            "📚 Grammatik fertig! Session complete. 🎉\n\n"
+            "Want more? Tap /vocab to keep going with fresh vocabulary cards."
         )
     if result["advanced"]:
         text += "\n\n" + _streak_line(result["streak"])
@@ -959,9 +967,10 @@ async def callback_grade_grammar(
 
 async def cmd_catchup(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
-    Let the user spread their backlog into installments on demand — not only from
-    the morning/nag message. Offers the spread button when combined due exceeds
-    BACKLOG_OFFER_THRESHOLD; otherwise tells them there's nothing to spread.
+    Explain how the review backlog is paced. Spreading is now automatic — every
+    session is capped at db.DAILY_REVIEW_CAP reviews, so a big pile always comes
+    back a little at a time. This command just reassures the user and shows the
+    size of their next session.
     """
     if not await _is_authorized(update):
         return
@@ -969,56 +978,37 @@ async def cmd_catchup(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
     counter = settings["session_counter"]
-    grammar_due, vocab_due = await asyncio.gather(
-        db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
-        db.count_due_cards(user_id, counter, cefr_levels=cefr),
-    )
-    total = grammar_due + vocab_due
-    if total <= db.BACKLOG_OFFER_THRESHOLD:
-        await update.message.reply_text(
-            f"🧩 You have {total} cards due — under {db.BACKLOG_OFFER_THRESHOLD}, so "
-            "there's no need to spread. Just tap /grammar or /vocab. 💪"
-        )
-        return
-    keyboard = InlineKeyboardMarkup([[
-        InlineKeyboardButton(
-            "🧩 Spread into daily installments", callback_data="spread_backlog"
-        )
-    ]])
+    preview = await db.preview_next_session(user_id, counter, cefr_levels=cefr)
+    new_each = 20 if preview["allow_new"] else 0
+    next_session = preview["total"] + new_each
+    new_note = " (including new cards)" if new_each else ""
     await update.message.reply_text(
-        f"🧩 You have {total} cards due ({vocab_due} vocab + {grammar_due} grammar).\n\n"
-        f"Spread them into daily installments — keep {db.CATCHUP_PER_DAY} today, "
-        f"then ~{db.CATCHUP_NEXT_DAY}/day after?",
-        reply_markup=keyboard,
+        "🧩 *Your backlog is on autopilot*\n\n"
+        f"Reviews are served in bite-size sessions — up to {db.DAILY_REVIEW_CAP} at a "
+        "time — so a large pile never lands all at once. Anything you don't reach "
+        "simply waits for your next session.\n\n"
+        f"Next session: *{next_session}* card{'s' if next_session != 1 else ''}"
+        f"{new_note}.\n\n"
+        "Just tap /grammar or /vocab whenever you're ready. 💪",
+        parse_mode="Markdown",
     )
 
 
 async def callback_spread_backlog(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
-    """Spread the user's due backlog into daily installments (CATCHUP_PER_DAY today,
-    then ~CATCHUP_NEXT_DAY/day)."""
+    """Retired action. Backlog spreading is now automatic (every session is capped
+    at db.DAILY_REVIEW_CAP reviews), so this no longer moves any cards. Kept only so
+    the button on older messages still in a user's chat is handled gracefully."""
     query = update.callback_query
     await query.answer()
     if not await _is_authorized(update):
         return
-    user_id = update.effective_user.id
-    settings = await db.get_user_settings(user_id)
-    moved = await db.spread_backlog(
-        user_id, settings["session_counter"], settings["cefr_levels"]
-    )
-    total = moved["vocab"] + moved["grammar"]
-    if total == 0:
-        await query.edit_message_text(
-            "Your backlog already fits in a single day — nothing to spread. 👍"
-        )
-        return
     await query.edit_message_text(
-        f"✅ Backlog spread into daily installments "
-        f"({db.CATCHUP_PER_DAY} today, then ~{db.CATCHUP_NEXT_DAY}/day).\n\n"
-        f"Moved {total} card{'s' if total != 1 else ''} to upcoming days "
-        f"({moved['vocab']} vocab, {moved['grammar']} grammar).\n\n"
-        f"Today is manageable now — tap /grammar or /vocab to begin! 💪"
+        "🧩 Good news — backlog spreading is now automatic!\n\n"
+        f"Every session is capped at {db.DAILY_REVIEW_CAP} reviews, so a big pile "
+        "always comes back a little at a time. Nothing to do here — just tap "
+        "/grammar or /vocab whenever you're ready. 💪"
     )
 
 

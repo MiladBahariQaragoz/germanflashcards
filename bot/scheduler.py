@@ -32,22 +32,15 @@ def _leaderboard_block(entries: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def _session_keyboard(total_due: int) -> InlineKeyboardMarkup:
-    """Start buttons, plus a one-time 'spread backlog' offer when due is large."""
-    rows = [
+def _session_keyboard() -> InlineKeyboardMarkup:
+    """Grammar / Vocab start buttons. Backlog is auto-capped per session now, so
+    there is no manual 'spread' offer anymore."""
+    return InlineKeyboardMarkup([
         [
             InlineKeyboardButton("📚 Start Grammar", callback_data="start_grammar_session"),
             InlineKeyboardButton("🗂️ Start Vocab", callback_data="start_session"),
         ]
-    ]
-    if total_due > db.BACKLOG_OFFER_THRESHOLD:
-        rows.append([
-            InlineKeyboardButton(
-                "🧩 Too many? Spread into daily installments",
-                callback_data="spread_backlog",
-            )
-        ])
-    return InlineKeyboardMarkup(rows)
+    ])
 
 
 async def morning_trigger(bot) -> None:
@@ -74,26 +67,25 @@ async def morning_trigger(bot) -> None:
             preview = await db.preview_next_session(user_id, counter, cefr_levels=cefr)
             new_each = 20 if preview["allow_new"] else 0
             display = preview["total"] + new_each
+            new_note = f" (incl. {new_each} new)" if new_each else ""
 
             text = (
                 f"Guten Morgen! 🌅\n\n"
-                f"📅 {preview['total']} review{'s' if preview['total'] != 1 else ''} "
-                f"due (shared pool)\n"
-                f"📚 Grammar: {display} card{'s' if display != 1 else ''}\n"
-                f"🗂️ Vocab: {display} card{'s' if display != 1 else ''}\n\n"
+                f"📅 Next session: {display} card{'s' if display != 1 else ''}{new_note}\n"
+                f"🔁 Grammar and vocab share one review queue — tap either to begin.\n\n"
                 f"{leaderboard_text}"
             )
             await bot.send_message(
                 chat_id=user_id,
                 text=text,
-                reply_markup=_session_keyboard(preview["total"]),
+                reply_markup=_session_keyboard(),
             )
         except Exception as e:
             logger.warning("morning_trigger failed for user %s: %s", user_id, e)
 
 
 async def nag_check(bot) -> None:
-    """Remind users who haven't finished one or both sessions today."""
+    """Remind users who still have cards waiting in their session today."""
     all_users = await db.get_all_users()
     user_ids = {u["user_id"] for u in all_users}
     user_ids.add(config.AUTHORIZED_CHAT_ID)
@@ -126,18 +118,15 @@ async def nag_check(bot) -> None:
             if remaining == 0:
                 continue
 
-            tomorrow_pile = remaining * 2
-
             await bot.send_message(
                 chat_id=user_id,
                 text=(
                     f"⏰ You still have {remaining} card{'s' if remaining != 1 else ''} "
-                    f"left for today.\n\n"
-                    f"Skip today and these pile onto tomorrow — "
-                    f"you could be facing ~{tomorrow_pile} instead of ~{remaining}. "
-                    f"A few minutes now saves double the work tomorrow! 💪"
+                    f"waiting.\n\n"
+                    f"A few minutes now keeps your 🔥 streak alive and your memory "
+                    f"fresh. Tap below to pick up where you left off! 💪"
                 ),
-                reply_markup=_session_keyboard(remaining),
+                reply_markup=_session_keyboard(),
             )
         except Exception as e:
             logger.warning("nag_check failed for user %s: %s", user_id, e)

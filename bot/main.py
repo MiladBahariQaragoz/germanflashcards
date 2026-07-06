@@ -145,8 +145,8 @@ def main() -> None:
         commands = [
             BotCommand("grammar", "📚 Start grammar session"),
             BotCommand("vocab", "▶️ Start vocabulary session"),
-            BotCommand("stats", "📊 Grammar + vocabulary progress"),
-            BotCommand("catchup", "🧩 Spread a big backlog into installments"),
+            BotCommand("stats", "📊 Progress & next-session size"),
+            BotCommand("catchup", "🧩 How your review backlog is handled"),
             BotCommand("leaderboard", "🏆 Top streak holders"),
             BotCommand("settings", "⚙️ Study direction & CEFR levels"),
             BotCommand("developer", "👨‍💻 About the developer"),
