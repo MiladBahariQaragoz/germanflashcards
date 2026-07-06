@@ -37,6 +37,12 @@ from bot import catchup as catchup_logic
 BACKLOG_OFFER_THRESHOLD = 100
 CATCHUP_PER_DAY = 60
 CATCHUP_NEXT_DAY = 40
+# Hard cap on how many DUE review cards a single session serves, regardless of how
+# large the backlog is. The rest stay due and surface in later sessions, so a
+# returning user with a huge pile never faces a wall. This is the durable guard —
+# it holds even though every session start advances session_counter (which alone
+# would re-expose spread-out installments). See catchup.cap_daily_due.
+DAILY_REVIEW_CAP = CATCHUP_PER_DAY  # 60
 # New cards are paused while the user has a review backlog: they're only introduced
 # when COMBINED (vocab+grammar) due cards are at or below this steady-state cap, so a
 # catch-up day (more due than this) shows 0 new cards. Resumes once caught up.

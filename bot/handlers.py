@@ -500,11 +500,15 @@ async def _start_session(
     )
     due = due_vocab + due_grammar
     # Pause new cards while a combined review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
+    # The pause decision uses the TRUE (uncapped) backlog size.
     new = (
         await db.get_new_cards(user_id, 20, cefr_levels=cefr)
         if catchup_logic.new_cards_allowed(len(due), db.NEW_CARD_PAUSE_THRESHOLD)
         else []
     )
+    # Serve at most DAILY_REVIEW_CAP due cards (oldest first); the rest stay due and
+    # surface in later sessions, so a big backlog never lands as one wall.
+    due = catchup_logic.cap_daily_due(due, db.DAILY_REVIEW_CAP)
     session = qm.get_session(user_id)
     session.build(due_cards=due, new_cards=new)
     card = session.pop_next()
@@ -589,11 +593,15 @@ async def _start_grammar_session(
     )
     due = due_vocab + due_grammar
     # Pause new cards while a combined review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
+    # The pause decision uses the TRUE (uncapped) backlog size.
     new = (
         await db.get_new_grammar_cards(user_id, 20, cefr_levels=cefr)
         if catchup_logic.new_cards_allowed(len(due), db.NEW_CARD_PAUSE_THRESHOLD)
         else []
     )
+    # Serve at most DAILY_REVIEW_CAP due cards (oldest first); the rest stay due and
+    # surface in later sessions, so a big backlog never lands as one wall.
+    due = catchup_logic.cap_daily_due(due, db.DAILY_REVIEW_CAP)
     session = qm.get_session(user_id)
     session.build(due_cards=due, new_cards=new)
     card = session.pop_next()

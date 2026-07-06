@@ -1,6 +1,6 @@
 import pytest
 
-from bot.catchup import plan_installments, new_cards_allowed
+from bot.catchup import plan_installments, new_cards_allowed, cap_daily_due
 
 
 def test_no_overflow_when_due_within_cap():
@@ -60,3 +60,22 @@ def test_new_cards_allowed_when_at_or_below_cap():
 def test_new_cards_paused_when_backlog_over_cap():
     assert new_cards_allowed(41, 40) is False
     assert new_cards_allowed(175, 40) is False  # big combined backlog → no new
+
+
+# ── cap_daily_due ─────────────────────────────────────────────────────────────
+
+def test_cap_serves_oldest_due_first_up_to_cap():
+    # A 200-card backlog capped at 60 yields exactly the 60 earliest-due cards.
+    cards = [{"due_session": s} for s in range(200, 0, -1)]  # 200..1
+    capped = cap_daily_due(cards, 60)
+    assert len(capped) == 60
+    assert [c["due_session"] for c in capped] == list(range(1, 61))
+
+
+def test_cap_returns_all_when_under_cap_sorted_by_due_session():
+    cards = [{"due_session": 3}, {"due_session": 1}, {"due_session": 2}]
+    assert [c["due_session"] for c in cap_daily_due(cards, 60)] == [1, 2, 3]
+
+
+def test_cap_empty_list():
+    assert cap_daily_due([], 60) == []

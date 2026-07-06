@@ -32,6 +32,19 @@ def plan_installments(
     return [1 + j // next_day_max for j in range(overflow)]
 
 
+def cap_daily_due(due_cards: list[dict], cap: int) -> list[dict]:
+    """
+    The at-most-`cap` earliest-due cards to serve in one session, oldest first.
+
+    A session serves only this slice of the due backlog; the rest stay due and
+    surface in later sessions. This bounds each session at `cap` review cards no
+    matter how large the backlog is — so a 200-card pile never lands as one wall.
+    It replaces relying on due_session offsets alone, which collapse because every
+    session start advances the session counter and re-exposes the next installment.
+    """
+    return sorted(due_cards, key=lambda c: c.get("due_session", 0))[:cap]
+
+
 def new_cards_allowed(combined_due: int, daily_cap: int) -> bool:
     """
     Whether to introduce new cards this session. New cards pause while a review
