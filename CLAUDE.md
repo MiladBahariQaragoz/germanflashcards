@@ -8,6 +8,17 @@ All five items below are implemented and covered by `pytest`. Catch-up is a
 one-time button offered at >100 due.
 Kept here as a changelog; details are folded into the sections below.
 
+> **Update 2026-07-06 (scheduling rework, shipped ✅):** big model change —
+> (a) **per-session cap** (`db.DAILY_REVIEW_CAP` = 60): a session serves at most 60
+> due cards so a backlog never lands as one wall; manual catch-up/spreading is
+> **retired** (cap replaced it; `/catchup` is now informational, the spread callback
+> is neutralised). (b) **Vocab and grammar de-unified back into separate sessions**,
+> each with its own in-memory queue and its own counter. (c) **Counters advance only
+> on session COMPLETION, never on open** — opening/peeking no longer inflates counts;
+> next-due is still set the instant a card is answered. (d) `/stats`, morning and nag
+> report **per domain** via `db.preview_domain`. See "Session model" below — this
+> supersedes the counter/unified-pool details in the 2026-06 notes.
+
 > **Update 2026-06-23:** (a) streak now advances on clearing **either** grammar
 > **or** vocab on a Berlin day (was: required both); (b) catch-up now spreads the
 > **combined** (vocab+grammar) due pool — keep 60 today, 40/day after (was: 60 per
@@ -36,7 +47,8 @@ These hold business logic deliberately split out of `db.py`/`handlers.py` (which
 need Firestore / Telegram) so it can be tested offline. Follow this pattern for
 new logic — keep it pure, persist separately.
 
-- `bot/queue_manager.py` — the single per-user session queue + progress tracking.
+- `bot/queue_manager.py` — the per-user, per-domain session queues (`_sessions` for
+  vocab, `_grammar_sessions` for grammar) + progress tracking.
 - `bot/scheduling.py` — `interval_to_sessions(due, now)` (FSRS day-interval → whole
   sessions; `<1d → 0`) and `due_session_for(counter, interval_sessions)`. See
   "Session model" above.
@@ -50,20 +62,15 @@ new logic — keep it pure, persist separately.
   `handlers.cmd_leaderboard`): top active streaks, lapsed excluded, ties by
   username. Rendered as **plain text** (no Markdown) since Telegram usernames
   often contain `_`.
-- `bot/catchup.py` — `plan_installments(due_count, today_max, next_day_max=None)`
-  → offset per overflow card (keep `today_max` now, then chunks of `next_day_max`;
-  offsets are unitless — now interpreted as **session** offsets), plus
-  `new_cards_allowed(combined_due, daily_cap)` (the new-card pause rule).
-  `db.spread_backlog` applies the plan to the **combined** vocab+grammar due pool
-  sorted by `due_session` (only `due_session` moves; batched writes; each write
-  routed by `_card_type`). Thresholds: `db.BACKLOG_OFFER_THRESHOLD` (100),
-  `db.CATCHUP_PER_DAY` (60 today), `db.CATCHUP_NEXT_DAY` (40/day after),
-  `db.NEW_CARD_PAUSE_THRESHOLD` (40 — new cards pause above this combined due).
-  `handlers._start_session`/`_start_grammar_session` gate new cards through it.
-  Users can spread on demand any time via **`/catchup`** (`handlers.cmd_catchup`),
-  which offers the `spread_backlog` button when combined due > `BACKLOG_OFFER_THRESHOLD`
-  — not only from the morning/nag message. `scheduler._new_cards_shown` keeps those
-  messages' displayed counts consistent with the new-card pause rule.
+- `bot/catchup.py` — `cap_daily_due(due_cards, cap)` (the per-session cap: at most
+  `cap` earliest-due cards; the durable guard against a backlog wall), plus
+  `new_cards_allowed(domain_due, daily_cap)` (per-domain new-card pause rule) and
+  `session_preview(due_cards, cap)` (per-domain split helper). Thresholds:
+  `db.DAILY_REVIEW_CAP` (60/domain), `db.NEW_CARD_PAUSE_THRESHOLD` (40 — new cards
+  pause above this per-domain due). `handlers._start_session`/`_start_grammar_session`
+  apply the cap and gate new cards. `plan_installments` / `db.spread_backlog` remain
+  but are **retired** (the cap replaced manual spreading); `/catchup`
+  (`handlers.cmd_catchup`) is now informational only.
 
 ## What this is
 
@@ -79,31 +86,50 @@ There are two study domains that share their card storage but pool reviews:
 | Grammar | `grammar_cards`  | `grammar_progress`   | `/grammar`     |
 
 The **card/progress collections stay separate per domain**, so most data-layer
-changes still need mirroring across both. But the **review pool is unified**: a
-single in-memory session per user (`queue_manager._sessions`) holds due reviews from
-*both* domains; only the NEW cards a session injects are domain-scoped to the button
-pressed. `queue_manager.get_grammar_session` / `reset_all_grammar_sessions` are now
-thin aliases of the single-session functions (see "Session model" below).
+changes still need mirroring across both. **Vocab and grammar are also separate
+sessions** (as of 2026-07-06): each has its own in-memory queue
+(`queue_manager._sessions` for vocab, `_grammar_sessions` for grammar) and its own
+session counter. `/vocab` serves only vocab due + new vocab; `/grammar` serves only
+grammar due + new grammar (see "Session model" below). An earlier design briefly
+unified the two into one shared review pool — that was reverted.
 
-## Session model (session-based scheduling)
+## Session model (session-based scheduling, per domain)
 
 Scheduling runs on a **session axis, not a calendar axis**. FSRS still computes
 intervals from real elapsed time, but a card it spaces "5 days" out reappears **5
-sessions later** instead:
+sessions later** instead. Each domain has its **own** counter and advances
+independently:
 
-- Each user has a shared `session_counter` on their `users` doc. It advances **+1 on
-  every session start** (`handlers._start_session` / `_start_grammar_session` call
-  `db.increment_session_counter`). The morning reset does **not** start a session.
-- Each progress doc stores `due_session`. A card is due when `due_session <=
-  session_counter` (`db.get_due_cards` / `get_due_grammar_cards` filter on this).
-- On review, `fsrs_service.rate_card` returns `interval_sessions`
-  (`bot/scheduling.interval_to_sessions`: `<1d → 0` so learning steps reshow in the
-  same session via the again-pile; `>=1d → round(days)`). The grade handlers set
-  `due_session = session_counter + interval_sessions`.
-- `db.spread_backlog` moves overflow cards forward by **session** offsets on
-  `due_session` (was days on `due_date`). `due_date` is still written by FSRS and kept
-  for reference/migration, but no longer decides due-ness.
-- Backfill for pre-existing docs: `python -m scripts.backfill_due_session` (idempotent).
+- Each user has `vocab_session_counter` and `grammar_session_counter` on their
+  `users` doc (legacy docs inherit the old shared `session_counter` on first use via
+  `db._counter_from_data`; read via `db.get_domain_counter`).
+- A counter advances **+1 only when that domain's session is COMPLETED** (the queue
+  is cleared) — in `handlers._on_vocab_session_cleared` /
+  `_on_grammar_session_cleared` via `db.increment_domain_counter`. It does **not**
+  advance on session *open* (opening/peeking must never inflate the due count) and
+  **not** on an empty session (`_on_domain_empty` does no work → no tick).
+- Each progress doc stores `due_session`. A card is due when `due_session <=` its
+  domain counter (`db.get_due_cards` / `get_due_grammar_cards` filter on this).
+- **Next-due is set the instant a card is answered** (not batched at session
+  boundaries). The grade handlers read the domain counter and set
+  `due_session = counter + interval_sessions`, then persist the doc immediately.
+  `fsrs_service.rate_card` returns `interval_sessions` via
+  `bot/scheduling.interval_to_sessions` (`<1d → 0` so learning steps reshow in the
+  same session via the again-pile; `>=1d → round(days)`).
+- **Per-session cap:** a session serves at most `db.DAILY_REVIEW_CAP` (60) due cards
+  (oldest first, `catchup.cap_daily_due`); the rest stay due for later sessions, so a
+  large backlog never lands as one wall. New cards (up to 20/domain) are added only
+  when that domain's uncapped due is `<= db.NEW_CARD_PAUSE_THRESHOLD` (40).
+- `db.preview_domain(user_id, domain, counter, cefr)` computes what tapping a domain
+  will serve (capped due + new allowance); `/stats`, morning and nag use it so the
+  numbers always match what a session actually shows.
+- `due_date` is still written by FSRS and kept for reference/migration, but no longer
+  decides due-ness. Backfill for pre-existing docs:
+  `python -m scripts.backfill_due_session` (idempotent).
+- **Retired:** manual backlog spreading (`db.spread_backlog`, `/catchup`'s spread
+  button) — the per-session cap replaced it. `handlers.callback_spread_backlog` is
+  kept but neutralised so stale inline buttons on old messages don't fire the old
+  session-axis spread; `/catchup` is now purely informational.
 
 ## Module map (`bot/`)
 
