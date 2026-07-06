@@ -63,38 +63,41 @@ class SessionQueue:
         self.reviewed = 0
 
 
-# Per-user session registry.
+# Per-user session registries — one per study domain. Vocab and grammar are
+# SEPARATE sessions: opening one must not disturb the other, and each domain
+# advances its own session counter only when its session is completed.
 # Keys are user_id (int), values are SessionQueue instances.
 _sessions: dict[int, SessionQueue] = {}
+_grammar_sessions: dict[int, SessionQueue] = {}
 
 
 def get_session(user_id: int) -> SessionQueue:
-    """Return the SessionQueue for this user, creating one if it doesn't exist."""
+    """Return the user's VOCAB SessionQueue, creating one if it doesn't exist."""
     if user_id not in _sessions:
         _sessions[user_id] = SessionQueue()
     return _sessions[user_id]
 
 
 def reset_all_sessions() -> None:
-    """Reset every active session (called by the morning scheduler)."""
+    """Reset every active vocab session (called by the morning scheduler)."""
     for s in _sessions.values():
         s.reset()
 
 
-# Vocab and grammar now share ONE session per user (unified review pool): the
-# review queue mixes both domains, so these grammar-named accessors are kept as
-# thin aliases of the single session to avoid churning every call site.
-
 def get_grammar_session(user_id: int) -> SessionQueue:
-    """Alias of get_session — vocab and grammar share the same unified queue."""
-    return get_session(user_id)
+    """Return the user's GRAMMAR SessionQueue, creating one if it doesn't exist."""
+    if user_id not in _grammar_sessions:
+        _grammar_sessions[user_id] = SessionQueue()
+    return _grammar_sessions[user_id]
 
 
 def reset_all_grammar_sessions() -> None:
-    """Alias of reset_all_sessions — there is a single session per user."""
-    reset_all_sessions()
+    """Reset every active grammar session (called by the morning scheduler)."""
+    for s in _grammar_sessions.values():
+        s.reset()
 
 
 def drop_user(user_id: int) -> None:
-    """Forget a user's in-memory session (used on admin removal)."""
+    """Forget a user's in-memory sessions in both domains (used on admin removal)."""
     _sessions.pop(user_id, None)
+    _grammar_sessions.pop(user_id, None)

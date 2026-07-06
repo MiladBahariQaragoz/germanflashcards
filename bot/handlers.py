@@ -88,38 +88,32 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    counter = settings["session_counter"]
     cefr_label = ", ".join(sorted(cefr))
 
-    vocab_counts, grammar_counts, streak, preview = await asyncio.gather(
+    vocab_counts, grammar_counts, streak, vocab_prev, grammar_prev = await asyncio.gather(
         db.get_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_grammar_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_streak(user_id),
-        db.preview_next_session(user_id, counter, cefr_levels=cefr),
+        db.preview_domain(user_id, "vocab", settings["vocab_session_counter"], cefr_levels=cefr),
+        db.preview_domain(user_id, "grammar", settings["grammar_session_counter"], cefr_levels=cefr),
     )
-    # The review queue is unified — tapping /vocab or /grammar both serve the same
-    # capped due pool, differing only in which new cards get added. So the headline
-    # is a single figure: capped due reviews + the new-card allowance (20 when the
-    # backlog is small enough for new cards to resume). This matches what an open
-    # actually shows, so /stats never disagrees with the session again.
-    new_each = 20 if preview["allow_new"] else 0
-    next_session = preview["total"] + new_each
-    new_note = f" (incl. {new_each} new)" if new_each else ""
+    # Vocab and grammar are separate sessions with their own counts. Each headline is
+    # that session's next load = capped reviews due + its new-card allowance, matching
+    # exactly what tapping the button serves.
+    def _line(prev: dict) -> str:
+        note = f" (incl. {prev['new']} new)" if prev["new"] else ""
+        return f"{prev['total']} card{'s' if prev['total'] != 1 else ''}{note}"
 
     text = (
         f"📊 Stats (levels: {cefr_label})\n"
-        f"{_streak_line(streak)}\n"
-        f"📅 Next session: {next_session} card{'s' if next_session != 1 else ''}"
-        f"{new_note}\n"
-        f"   ({preview['total']} review{'s' if preview['total'] != 1 else ''} due, "
-        f"same pool for grammar & vocab)\n\n"
-        f"🗂️ *Vocabulary* (deck totals)\n"
-        f"New: {vocab_counts['New']}\n"
+        f"{_streak_line(streak)}\n\n"
+        f"🗂️ *Vocabulary* — next session: {_line(vocab_prev)}\n"
+        f"New in deck: {vocab_counts['New']}\n"
         f"Learning: {vocab_counts['Learning']}\n"
         f"Review: {vocab_counts['Review']}\n"
         f"Relearning: {vocab_counts['Relearning']}\n\n"
-        f"📚 *Grammar* (deck totals)\n"
-        f"New: {grammar_counts['New']}\n"
+        f"📚 *Grammar* — next session: {_line(grammar_prev)}\n"
+        f"New in deck: {grammar_counts['New']}\n"
         f"Learning: {grammar_counts['Learning']}\n"
         f"Review: {grammar_counts['Review']}\n"
         f"Relearning: {grammar_counts['Relearning']}"
@@ -506,15 +500,12 @@ async def _start_session(
 ) -> None:
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    # Every session start advances the shared counter; the review pool is unified
-    # across both domains, only the NEW cards are vocab-specific here.
-    counter = await db.increment_session_counter(user_id)
-    due_vocab, due_grammar = await asyncio.gather(
-        db.get_due_cards(user_id, counter, cefr_levels=cefr),
-        db.get_due_grammar_cards(user_id, counter, cefr_levels=cefr),
-    )
-    due = due_vocab + due_grammar
-    # Pause new cards while a combined review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
+    # Vocab is its own session with its own counter. Opening does NOT advance the
+    # counter (that happens only when the session is completed), so peeking never
+    # inflates the count. Only vocab cards are served here.
+    counter = settings["vocab_session_counter"]
+    due = await db.get_due_cards(user_id, counter, cefr_levels=cefr)
+    # Pause new cards while a vocab review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
     # The pause decision uses the TRUE (uncapped) backlog size.
     new = (
         await db.get_new_cards(user_id, 20, cefr_levels=cefr)
@@ -599,15 +590,12 @@ async def _start_grammar_session(
 ) -> None:
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    # Every session start advances the shared counter; the review pool is unified
-    # across both domains, only the NEW cards are grammar-specific here.
-    counter = await db.increment_session_counter(user_id)
-    due_vocab, due_grammar = await asyncio.gather(
-        db.get_due_cards(user_id, counter, cefr_levels=cefr),
-        db.get_due_grammar_cards(user_id, counter, cefr_levels=cefr),
-    )
-    due = due_vocab + due_grammar
-    # Pause new cards while a combined review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
+    # Grammar is its own session with its own counter. Opening does NOT advance the
+    # counter (that happens only when the session is completed), so peeking never
+    # inflates the count. Only grammar cards are served here.
+    counter = settings["grammar_session_counter"]
+    due = await db.get_due_grammar_cards(user_id, counter, cefr_levels=cefr)
+    # Pause new cards while a grammar review backlog exists (see NEW_CARD_PAUSE_THRESHOLD).
     # The pause decision uses the TRUE (uncapped) backlog size.
     new = (
         await db.get_new_grammar_cards(user_id, 20, cefr_levels=cefr)
@@ -617,7 +605,7 @@ async def _start_grammar_session(
     # Serve at most DAILY_REVIEW_CAP due cards (oldest first); the rest stay due and
     # surface in later sessions, so a big backlog never lands as one wall.
     due = catchup_logic.cap_daily_due(due, db.DAILY_REVIEW_CAP)
-    session = qm.get_session(user_id)
+    session = qm.get_grammar_session(user_id)
     session.build(due_cards=due, new_cards=new)
     card = session.pop_next()
     if card is None:
@@ -672,14 +660,18 @@ async def _on_domain_empty(
     session.kill_switch = True
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    counter = settings["session_counter"]
+    # Nothing was due and no new cards to introduce — the session did no work, so the
+    # counter does NOT advance. The other domain's due count still feeds streak logic.
     if domain == "vocab":
-        other_due = await db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr)
+        other_due = await db.count_due_grammar_cards(
+            user_id, settings["grammar_session_counter"], cefr_levels=cefr
+        )
+        text = "🗂️ No vocabulary due right now — you're all caught up! 🎉"
     else:
-        other_due = await db.count_due_cards(user_id, counter, cefr_levels=cefr)
-    # The queue is unified, so an empty session means nothing is waiting in either
-    # domain and no new cards are due to be introduced right now.
-    text = "🎉 Nothing to review right now — you're all caught up!"
+        other_due = await db.count_due_cards(
+            user_id, settings["vocab_session_counter"], cefr_levels=cefr
+        )
+        text = "📚 No grammar due right now — you're all caught up! 🎉"
     result = await db.record_session_cleared(user_id, domain, other_domain_due=other_due)
     if result["advanced"]:
         text += "\n\n" + _streak_line(result["streak"])
@@ -689,9 +681,11 @@ async def _on_domain_empty(
 async def _on_vocab_session_cleared(
     context: ContextTypes.DEFAULT_TYPE, chat_id: int, user_id: int
 ) -> None:
+    # The vocab session was completed — advance ONLY the vocab counter.
+    await db.increment_domain_counter(user_id, "vocab")
     settings = await db.get_user_settings(user_id)
     grammar_due = await db.count_due_grammar_cards(
-        user_id, settings["session_counter"], cefr_levels=settings["cefr_levels"]
+        user_id, settings["grammar_session_counter"], cefr_levels=settings["cefr_levels"]
     )
     result = await db.record_session_cleared(
         user_id, "vocab", other_domain_due=grammar_due
@@ -711,9 +705,11 @@ async def _on_vocab_session_cleared(
 async def _on_grammar_session_cleared(
     context: ContextTypes.DEFAULT_TYPE, chat_id: int, user_id: int
 ) -> None:
+    # The grammar session was completed — advance ONLY the grammar counter.
+    await db.increment_domain_counter(user_id, "grammar")
     settings = await db.get_user_settings(user_id)
     vocab_due = await db.count_due_cards(
-        user_id, settings["session_counter"], cefr_levels=settings["cefr_levels"]
+        user_id, settings["vocab_session_counter"], cefr_levels=settings["cefr_levels"]
     )
     result = await db.record_session_cleared(
         user_id, "grammar", other_domain_due=vocab_due
@@ -820,7 +816,7 @@ async def callback_grade(
         return
 
     update_fields, _ = fsrs_service.rate_card(card, rating_int)
-    counter = await db.get_session_counter(user_id)
+    counter = await db.get_domain_counter(user_id, "vocab")
     update_fields["due_session"] = scheduling.due_session_for(
         counter, update_fields.pop("interval_sessions")
     )
@@ -935,14 +931,14 @@ async def callback_grade_grammar(
         return
 
     update_fields, _ = fsrs_service.rate_card(card, rating_int)
-    counter = await db.get_session_counter(user_id)
+    counter = await db.get_domain_counter(user_id, "grammar")
     update_fields["due_session"] = scheduling.due_session_for(
         counter, update_fields.pop("interval_sessions")
     )
     await db.update_grammar_card_after_review(user_id, card_id, update_fields, card)
     await query.edit_message_reply_markup(reply_markup=None)
 
-    session = qm.get_session(user_id)
+    session = qm.get_grammar_session(user_id)
     if rating_int == 1:
         updated_card = {**card, **update_fields}
         session.add_to_again_pile(updated_card)
@@ -977,18 +973,23 @@ async def cmd_catchup(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     user_id = update.effective_user.id
     settings = await db.get_user_settings(user_id)
     cefr = settings["cefr_levels"]
-    counter = settings["session_counter"]
-    preview = await db.preview_next_session(user_id, counter, cefr_levels=cefr)
-    new_each = 20 if preview["allow_new"] else 0
-    next_session = preview["total"] + new_each
-    new_note = " (including new cards)" if new_each else ""
+    vocab_prev, grammar_prev = await asyncio.gather(
+        db.preview_domain(user_id, "vocab", settings["vocab_session_counter"], cefr_levels=cefr),
+        db.preview_domain(user_id, "grammar", settings["grammar_session_counter"], cefr_levels=cefr),
+    )
+
+    def _line(prev: dict) -> str:
+        note = f" (incl. {prev['new']} new)" if prev["new"] else ""
+        return f"{prev['total']} card{'s' if prev['total'] != 1 else ''}{note}"
+
     await update.message.reply_text(
         "🧩 *Your backlog is on autopilot*\n\n"
-        f"Reviews are served in bite-size sessions — up to {db.DAILY_REVIEW_CAP} at a "
-        "time — so a large pile never lands all at once. Anything you don't reach "
-        "simply waits for your next session.\n\n"
-        f"Next session: *{next_session}* card{'s' if next_session != 1 else ''}"
-        f"{new_note}.\n\n"
+        f"Reviews are served in bite-size sessions — up to {db.DAILY_REVIEW_CAP} per "
+        "domain — so a large pile never lands all at once. Anything you don't reach "
+        "simply waits for your next session, and the clock only ticks when you finish "
+        "a session (so peeking never grows the pile).\n\n"
+        f"🗂️ Vocab next session: *{_line(vocab_prev)}*\n"
+        f"📚 Grammar next session: *{_line(grammar_prev)}*\n\n"
         "Just tap /grammar or /vocab whenever you're ready. 💪",
         parse_mode="Markdown",
     )

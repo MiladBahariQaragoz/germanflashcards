@@ -43,9 +43,16 @@ def _session_keyboard() -> InlineKeyboardMarkup:
     ])
 
 
+def _preview_line(prev: dict) -> str:
+    """'40 cards (incl. 20 new)' for a domain's next-session preview."""
+    note = f" (incl. {prev['new']} new)" if prev["new"] else ""
+    return f"{prev['total']} card{'s' if prev['total'] != 1 else ''}{note}"
+
+
 async def morning_trigger(bot) -> None:
-    """Reset all queues and send each user their daily grammar + vocab card counts."""
-    qm.reset_all_sessions()  # one unified session per user
+    """Reset both sessions and send each user their vocab + grammar next-session sizes."""
+    qm.reset_all_sessions()
+    qm.reset_all_grammar_sessions()
 
     all_users = await db.get_all_users()
     user_ids = {u["user_id"] for u in all_users}
@@ -58,21 +65,19 @@ async def morning_trigger(bot) -> None:
         try:
             settings = await db.get_user_settings(user_id)
             cefr = settings["cefr_levels"]
-            counter = settings["session_counter"]
 
-            # Preview what the next session serves (counter+1, capped) so the counts
-            # match what tapping Start actually shows. The review pool is unified, so
-            # both buttons serve the same capped due pool; they differ only in which
-            # new cards get added. Each line therefore shows: shared due + 20 new.
-            preview = await db.preview_next_session(user_id, counter, cefr_levels=cefr)
-            new_each = 20 if preview["allow_new"] else 0
-            display = preview["total"] + new_each
-            new_note = f" (incl. {new_each} new)" if new_each else ""
+            # Vocab and grammar are separate sessions with their own counts. Preview
+            # each at its own counter (no increment on open) so the numbers match what
+            # tapping the button actually serves.
+            vocab_prev, grammar_prev = await asyncio.gather(
+                db.preview_domain(user_id, "vocab", settings["vocab_session_counter"], cefr_levels=cefr),
+                db.preview_domain(user_id, "grammar", settings["grammar_session_counter"], cefr_levels=cefr),
+            )
 
             text = (
                 f"Guten Morgen! 🌅\n\n"
-                f"📅 Next session: {display} card{'s' if display != 1 else ''}{new_note}\n"
-                f"🔁 Grammar and vocab share one review queue — tap either to begin.\n\n"
+                f"🗂️ Vocab: {_preview_line(vocab_prev)}\n"
+                f"📚 Grammar: {_preview_line(grammar_prev)}\n\n"
                 f"{leaderboard_text}"
             )
             await bot.send_message(
@@ -92,28 +97,28 @@ async def nag_check(bot) -> None:
 
     for user_id in user_ids:
         try:
-            # One unified session per user (vocab + grammar share the same queue).
-            session = qm.get_session(user_id)
-
-            # Already cleared today — skip entirely.
-            if session.kill_switch:
-                continue
+            vocab_session = qm.get_session(user_id)
+            grammar_session = qm.get_grammar_session(user_id)
 
             settings = await db.get_user_settings(user_id)
             cefr = settings["cefr_levels"]
-            counter = settings["session_counter"]
 
-            # Preview what the next session serves (counter+1, capped) so the nag
-            # count matches what tapping Start actually shows.
-            preview = await db.preview_next_session(user_id, counter, cefr_levels=cefr)
-            new_each = 20 if preview["allow_new"] else 0
+            vocab_prev, grammar_prev = await asyncio.gather(
+                db.preview_domain(user_id, "vocab", settings["vocab_session_counter"], cefr_levels=cefr),
+                db.preview_domain(user_id, "grammar", settings["grammar_session_counter"], cefr_levels=cefr),
+            )
 
-            # Live remaining once a session is running; otherwise the capped review
-            # load plus a new-card allowance for the first session they start.
-            if session.active:
-                remaining = session.remaining_count()
-            else:
-                remaining = preview["total"] + new_each
+            # Per domain: a cleared session counts 0; a live one uses its real
+            # remaining; otherwise the previewed next-session size.
+            def _remaining(session, prev):
+                if session.kill_switch:
+                    return 0
+                return session.remaining_count() if session.active else prev["total"]
+
+            remaining = (
+                _remaining(vocab_session, vocab_prev)
+                + _remaining(grammar_session, grammar_prev)
+            )
 
             if remaining == 0:
                 continue

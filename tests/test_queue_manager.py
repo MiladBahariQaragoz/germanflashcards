@@ -113,13 +113,16 @@ def test_reset_clears_progress():
     assert q.progress() == (0, 0)
 
 
-def test_drop_user_forgets_the_unified_session():
+def test_drop_user_forgets_both_domain_sessions():
     uid = 99999
     qm.get_session(uid)
-    # Grammar accessor is an alias — the same single session per user.
-    assert qm.get_grammar_session(uid) is qm.get_session(uid)
+    qm.get_grammar_session(uid)
+    # Vocab and grammar are separate sessions with their own registries.
+    assert qm.get_grammar_session(uid) is not qm.get_session(uid)
     assert uid in qm._sessions
+    assert uid in qm._grammar_sessions
     qm.drop_user(uid)
     assert uid not in qm._sessions
+    assert uid not in qm._grammar_sessions
     # Idempotent — dropping an unknown user doesn't raise.
     qm.drop_user(uid)

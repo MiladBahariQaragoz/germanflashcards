@@ -176,34 +176,27 @@ async def count_due_cards(
     return len(await get_due_cards(user_id, current_session, cefr_levels=cefr_levels))
 
 
-async def preview_next_session(
+async def preview_domain(
     user_id: int,
-    current_session: int,
+    domain: str,
+    counter: int,
     cefr_levels: list[str] | None = None,
 ) -> dict:
     """
-    What the user's NEXT session will actually serve. A session start advances the
-    counter by one before querying, so we preview at `current_session + 1`, combine
-    both domains, and apply the daily cap — the same math the session builder uses.
-    Returns {'vocab': n, 'grammar': n, 'total': n, 'allow_new': bool}, where
-    total is the capped review load and allow_new reflects the true (uncapped)
-    combined backlog (new cards pause while a backlog exists).
+    What tapping `domain` ('vocab'|'grammar') will serve next — the same math the
+    session builder uses, so /stats and the messages agree with the real session.
+    The counter no longer advances on open, so we preview at the current `counter`.
+    Returns {'due': capped review count, 'allow_new': bool, 'new': 0|20,
+    'total': due + new}.
     """
-    nxt = current_session + 1
-    due_vocab, due_grammar = await asyncio.gather(
-        get_due_cards(user_id, nxt, cefr_levels=cefr_levels),
-        get_due_grammar_cards(user_id, nxt, cefr_levels=cefr_levels),
-    )
-    combined = due_vocab + due_grammar
-    vocab, grammar, total = catchup_logic.session_preview(combined, DAILY_REVIEW_CAP)
-    return {
-        "vocab": vocab,
-        "grammar": grammar,
-        "total": total,
-        "allow_new": catchup_logic.new_cards_allowed(
-            len(combined), NEW_CARD_PAUSE_THRESHOLD
-        ),
-    }
+    if domain == "vocab":
+        due = await get_due_cards(user_id, counter, cefr_levels=cefr_levels)
+    else:
+        due = await get_due_grammar_cards(user_id, counter, cefr_levels=cefr_levels)
+    capped = min(len(due), DAILY_REVIEW_CAP)
+    allow_new = catchup_logic.new_cards_allowed(len(due), NEW_CARD_PAUSE_THRESHOLD)
+    new = 20 if allow_new else 0
+    return {"due": capped, "allow_new": allow_new, "new": new, "total": capped + new}
 
 
 async def get_new_cards(
@@ -418,26 +411,46 @@ async def register_user(user_id: int, username: str | None) -> None:
         "registered_at": datetime.now(timezone.utc),
         "study_direction": DEFAULT_STUDY_DIRECTION,
         "cefr_levels": DEFAULT_CEFR_LEVELS,
-        "session_counter": 0,
+        "vocab_session_counter": 0,
+        "grammar_session_counter": 0,
     })
 
 
-async def get_session_counter(user_id: int) -> int:
-    """The user's current shared session counter (0 if never set)."""
+# Vocab and grammar each have their OWN session counter. A counter advances only
+# when that domain's session is completed (not merely opened), so peeking never
+# inflates the due count. A card is due when its stored `due_session` <= its
+# domain's counter. Legacy docs may only have the old shared `session_counter`;
+# we fall back to it so due-ness is preserved until the per-domain counter is set.
+def _counter_field(domain: str) -> str:
+    return "vocab_session_counter" if domain == "vocab" else "grammar_session_counter"
+
+
+def _counter_from_data(data: dict, domain: str) -> int:
+    field = _counter_field(domain)
+    if field in data:
+        return data.get(field, 0)
+    return data.get("session_counter", 0)  # inherit the legacy shared counter
+
+
+async def get_domain_counter(user_id: int, domain: str) -> int:
+    """The user's session counter for `domain` ('vocab'|'grammar'), 0 if unset."""
     doc = await _users_col.document(str(user_id)).get()
-    return (doc.to_dict() or {}).get("session_counter", 0) if doc.exists else 0
+    return _counter_from_data(doc.to_dict() or {}, domain) if doc.exists else 0
 
 
-async def increment_session_counter(user_id: int) -> int:
-    """Advance the user's session counter by one and return the new value.
+async def increment_domain_counter(user_id: int, domain: str) -> int:
+    """Advance `domain`'s session counter by one and return the new value.
 
-    Called once per session start (any domain). Cards are due when their stored
-    `due_session` is <= this counter.
+    Called once when a domain's session is COMPLETED. Not atomic, but per-user
+    contention is effectively nil. Seeds from the legacy shared counter if the
+    per-domain field doesn't exist yet.
     """
     ref = _users_col.document(str(user_id))
-    await ref.set({"session_counter": firestore.Increment(1)}, merge=True)
     doc = await ref.get()
-    return (doc.to_dict() or {}).get("session_counter", 0)
+    current = _counter_from_data(doc.to_dict() or {}, domain)
+    new_value = current + 1
+    await ref.set({_counter_field(domain): new_value}, merge=True)
+    return new_value
 
 
 async def is_registered_user(user_id: int) -> bool:
@@ -456,13 +469,15 @@ async def get_user_settings(user_id: int) -> dict:
         return {
             "study_direction": DEFAULT_STUDY_DIRECTION,
             "cefr_levels": DEFAULT_CEFR_LEVELS,
-            "session_counter": 0,
+            "vocab_session_counter": 0,
+            "grammar_session_counter": 0,
         }
     data = doc.to_dict()
     return {
         "study_direction": data.get("study_direction", DEFAULT_STUDY_DIRECTION),
         "cefr_levels": data.get("cefr_levels", DEFAULT_CEFR_LEVELS),
-        "session_counter": data.get("session_counter", 0),
+        "vocab_session_counter": _counter_from_data(data, "vocab"),
+        "grammar_session_counter": _counter_from_data(data, "grammar"),
     }
 
 
@@ -480,10 +495,9 @@ async def _user_overview_row(data: dict) -> dict:
     """Per-user admin summary: identity + current streak + due counts (both domains)."""
     user_id = data.get("user_id")
     cefr = data.get("cefr_levels", DEFAULT_CEFR_LEVELS)
-    counter = data.get("session_counter", 0)
     vocab_due, grammar_due = await asyncio.gather(
-        count_due_cards(user_id, counter, cefr_levels=cefr),
-        count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
+        count_due_cards(user_id, _counter_from_data(data, "vocab"), cefr_levels=cefr),
+        count_due_grammar_cards(user_id, _counter_from_data(data, "grammar"), cefr_levels=cefr),
     )
     return {
         "user_id": user_id,
