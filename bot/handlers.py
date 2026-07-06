@@ -84,26 +84,34 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     counter = settings["session_counter"]
     cefr_label = ", ".join(sorted(cefr))
 
-    vocab_counts, grammar_counts, streak, vocab_due, grammar_due = await asyncio.gather(
+    vocab_counts, grammar_counts, streak, preview = await asyncio.gather(
         db.get_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_grammar_card_counts_by_state(user_id, cefr_levels=cefr),
         db.get_streak(user_id),
-        db.count_due_cards(user_id, counter, cefr_levels=cefr),
-        db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
+        db.preview_next_session(user_id, counter, cefr_levels=cefr),
     )
+    # The review queue is unified — tapping /vocab or /grammar both serve the same
+    # capped due pool, differing only in which new cards get added. So the headline
+    # is a single figure: capped due reviews + the new-card allowance (20 when the
+    # backlog is small enough for new cards to resume). This matches what an open
+    # actually shows, so /stats never disagrees with the session again.
+    new_each = 20 if preview["allow_new"] else 0
+    next_session = preview["total"] + new_each
+    new_note = f" (incl. {new_each} new)" if new_each else ""
 
     text = (
         f"📊 Stats (levels: {cefr_label})\n"
         f"{_streak_line(streak)}\n"
-        f"📅 Due today: {vocab_due + grammar_due} ({vocab_due} vocab + {grammar_due} grammar)\n\n"
-        f"🗂️ *Vocabulary*\n"
-        f"Due today: {vocab_due}\n"
+        f"📅 Next session: {next_session} card{'s' if next_session != 1 else ''}"
+        f"{new_note}\n"
+        f"   ({preview['total']} review{'s' if preview['total'] != 1 else ''} due, "
+        f"same pool for grammar & vocab)\n\n"
+        f"🗂️ *Vocabulary* (deck totals)\n"
         f"New: {vocab_counts['New']}\n"
         f"Learning: {vocab_counts['Learning']}\n"
         f"Review: {vocab_counts['Review']}\n"
         f"Relearning: {vocab_counts['Relearning']}\n\n"
-        f"📚 *Grammar*\n"
-        f"Due today: {grammar_due}\n"
+        f"📚 *Grammar* (deck totals)\n"
         f"New: {grammar_counts['New']}\n"
         f"Learning: {grammar_counts['Learning']}\n"
         f"Review: {grammar_counts['Review']}\n"

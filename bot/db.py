@@ -176,6 +176,36 @@ async def count_due_cards(
     return len(await get_due_cards(user_id, current_session, cefr_levels=cefr_levels))
 
 
+async def preview_next_session(
+    user_id: int,
+    current_session: int,
+    cefr_levels: list[str] | None = None,
+) -> dict:
+    """
+    What the user's NEXT session will actually serve. A session start advances the
+    counter by one before querying, so we preview at `current_session + 1`, combine
+    both domains, and apply the daily cap — the same math the session builder uses.
+    Returns {'vocab': n, 'grammar': n, 'total': n, 'allow_new': bool}, where
+    total is the capped review load and allow_new reflects the true (uncapped)
+    combined backlog (new cards pause while a backlog exists).
+    """
+    nxt = current_session + 1
+    due_vocab, due_grammar = await asyncio.gather(
+        get_due_cards(user_id, nxt, cefr_levels=cefr_levels),
+        get_due_grammar_cards(user_id, nxt, cefr_levels=cefr_levels),
+    )
+    combined = due_vocab + due_grammar
+    vocab, grammar, total = catchup_logic.session_preview(combined, DAILY_REVIEW_CAP)
+    return {
+        "vocab": vocab,
+        "grammar": grammar,
+        "total": total,
+        "allow_new": catchup_logic.new_cards_allowed(
+            len(combined), NEW_CARD_PAUSE_THRESHOLD
+        ),
+    }
+
+
 async def get_new_cards(
     user_id: int,
     limit: int = 20,

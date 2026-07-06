@@ -1,6 +1,11 @@
 import pytest
 
-from bot.catchup import plan_installments, new_cards_allowed, cap_daily_due
+from bot.catchup import (
+    plan_installments,
+    new_cards_allowed,
+    cap_daily_due,
+    session_preview,
+)
 
 
 def test_no_overflow_when_due_within_cap():
@@ -79,3 +84,24 @@ def test_cap_returns_all_when_under_cap_sorted_by_due_session():
 
 def test_cap_empty_list():
     assert cap_daily_due([], 60) == []
+
+
+# ── session_preview ───────────────────────────────────────────────────────────
+
+def test_session_preview_splits_capped_serve_by_domain():
+    # 50 vocab + 50 grammar all equally due; cap 60 keeps the first 60 in order
+    # (stable sort), i.e. 50 vocab then 10 grammar.
+    due = (
+        [{"due_session": 1} for _ in range(50)]
+        + [{"due_session": 1, "_card_type": "grammar"} for _ in range(50)]
+    )
+    assert session_preview(due, 60) == (50, 10, 60)
+
+
+def test_session_preview_under_cap_returns_all():
+    due = [{"due_session": 1}, {"due_session": 2, "_card_type": "grammar"}]
+    assert session_preview(due, 60) == (1, 1, 2)
+
+
+def test_session_preview_empty():
+    assert session_preview([], 60) == (0, 0, 0)

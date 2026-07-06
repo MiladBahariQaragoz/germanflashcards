@@ -15,14 +15,6 @@ BERLIN = pytz_timezone("Europe/Berlin")
 logger = logging.getLogger(__name__)
 
 
-def _new_cards_shown(combined_due: int) -> int:
-    """
-    New cards added per domain for display, mirroring the session builder: 20 each
-    unless a combined review backlog pauses new cards (db.NEW_CARD_PAUSE_THRESHOLD).
-    """
-    return 20 if combined_due <= db.NEW_CARD_PAUSE_THRESHOLD else 0
-
-
 def _leaderboard_block(entries: list[dict]) -> str:
     """
     Compact plain-text streak leaderboard for the morning nudge (no Markdown —
@@ -75,24 +67,26 @@ async def morning_trigger(bot) -> None:
             cefr = settings["cefr_levels"]
             counter = settings["session_counter"]
 
-            grammar_due, vocab_due = await asyncio.gather(
-                db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
-                db.count_due_cards(user_id, counter, cefr_levels=cefr),
-            )
-            new_each = _new_cards_shown(grammar_due + vocab_due)
-            grammar_display = grammar_due + new_each
-            vocab_display = vocab_due + new_each
+            # Preview what the next session serves (counter+1, capped) so the counts
+            # match what tapping Start actually shows. The review pool is unified, so
+            # both buttons serve the same capped due pool; they differ only in which
+            # new cards get added. Each line therefore shows: shared due + 20 new.
+            preview = await db.preview_next_session(user_id, counter, cefr_levels=cefr)
+            new_each = 20 if preview["allow_new"] else 0
+            display = preview["total"] + new_each
 
             text = (
                 f"Guten Morgen! 🌅\n\n"
-                f"📚 Grammar: {grammar_display} card{'s' if grammar_display != 1 else ''}\n"
-                f"🗂️ Vocab: {vocab_display} card{'s' if vocab_display != 1 else ''}\n\n"
+                f"📅 {preview['total']} review{'s' if preview['total'] != 1 else ''} "
+                f"due (shared pool)\n"
+                f"📚 Grammar: {display} card{'s' if display != 1 else ''}\n"
+                f"🗂️ Vocab: {display} card{'s' if display != 1 else ''}\n\n"
                 f"{leaderboard_text}"
             )
             await bot.send_message(
                 chat_id=user_id,
                 text=text,
-                reply_markup=_session_keyboard(grammar_due + vocab_due),
+                reply_markup=_session_keyboard(preview["total"]),
             )
         except Exception as e:
             logger.warning("morning_trigger failed for user %s: %s", user_id, e)
@@ -117,19 +111,17 @@ async def nag_check(bot) -> None:
             cefr = settings["cefr_levels"]
             counter = settings["session_counter"]
 
-            # New-card display pauses on a combined backlog, so estimate due counts.
-            grammar_due, vocab_due = await asyncio.gather(
-                db.count_due_grammar_cards(user_id, counter, cefr_levels=cefr),
-                db.count_due_cards(user_id, counter, cefr_levels=cefr),
-            )
-            new_each = _new_cards_shown(grammar_due + vocab_due)
+            # Preview what the next session serves (counter+1, capped) so the nag
+            # count matches what tapping Start actually shows.
+            preview = await db.preview_next_session(user_id, counter, cefr_levels=cefr)
+            new_each = 20 if preview["allow_new"] else 0
 
-            # Live remaining once a session is running; otherwise the combined due
-            # pool plus a new-card allowance for the first session they start.
+            # Live remaining once a session is running; otherwise the capped review
+            # load plus a new-card allowance for the first session they start.
             if session.active:
                 remaining = session.remaining_count()
             else:
-                remaining = grammar_due + vocab_due + new_each
+                remaining = preview["total"] + new_each
 
             if remaining == 0:
                 continue

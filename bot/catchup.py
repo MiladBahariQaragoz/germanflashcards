@@ -45,6 +45,18 @@ def cap_daily_due(due_cards: list[dict], cap: int) -> list[dict]:
     return sorted(due_cards, key=lambda c: c.get("due_session", 0))[:cap]
 
 
+def session_preview(due_cards: list[dict], cap: int) -> tuple[int, int, int]:
+    """
+    (vocab, grammar, total) review cards the next session will actually serve from
+    `due_cards` after applying the daily `cap`. Grammar cards carry
+    `_card_type == 'grammar'`. Used so /stats and the morning/nag messages show the
+    same number a session serves, instead of a raw due count read one session behind.
+    """
+    served = cap_daily_due(due_cards, cap)
+    grammar = sum(1 for c in served if c.get("_card_type") == "grammar")
+    return len(served) - grammar, grammar, len(served)
+
+
 def new_cards_allowed(combined_due: int, daily_cap: int) -> bool:
     """
     Whether to introduce new cards this session. New cards pause while a review
